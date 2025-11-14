@@ -1,12 +1,17 @@
 "use client";
+import { createClient } from "@/utils/supabase/client";
+import { User } from "@supabase/auth-js";
 import Image from "next/image";
-import Link from "next/link";
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
-import { DropdownItem } from "../ui/dropdown/DropdownItem";
 
 export default function UserDropdown() {
+    const supabase = createClient();
+    const router = useRouter();
+
     const [isOpen, setIsOpen] = useState(false);
+    const [user, setUser] = useState<User>()
 
     function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.stopPropagation();
@@ -17,13 +22,33 @@ export default function UserDropdown() {
         setIsOpen(false);
     }
 
+    async function logout() {
+        await supabase.auth.signOut()
+        router.push('/login');
+    }
+
+    useEffect(() => {
+        setCurrentUser()
+    }, []);
+
+    async function setCurrentUser() {
+        const user = await supabase.auth.getUser()
+
+        if (user.data.user == null) {
+            router.push("/login")
+            return
+        }
+
+        setUser(user.data.user)
+    }
+
     return (
         <div className="relative">
             <button
                 onClick={toggleDropdown}
                 className="flex items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
             >
-                <span className="block mr-1 font-medium text-theme-sm">Musharof</span>
+                <span className="block mr-1 font-medium text-theme-sm">{user?.email}</span>
 
                 <svg
                     className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
@@ -52,69 +77,15 @@ export default function UserDropdown() {
             >
                 <div>
                     <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-                        Musharof Chowdhury
+                        {user?.email}
                     </span>
                     <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-                        randomuser@pimjo.com
+                        {user?.role}
                     </span>
                 </div>
 
-                <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
-                    <li>
-                        <DropdownItem
-                            onItemClick={closeDropdown}
-                            tag="a"
-                            href="/dashboard/profile"
-                            className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-                        >
-                            <Image
-                                width={24}
-                                height={24}
-                                className="dark:hidden"
-                                src="/images/icons/avatar.svg"
-                                alt="Avatar"
-                            />
-
-                            <Image
-                                width={24}
-                                height={24}
-                                className="hidden dark:block"
-                                src="/images/icons/avatar-dark.svg"
-                                alt="Avatar"
-                            />
-
-                            Profil
-                        </DropdownItem>
-                    </li>
-                    <li>
-                        <DropdownItem
-                            onItemClick={closeDropdown}
-                            tag="a"
-                            href="/dashboard/profile"
-                            className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-                        >
-                            <Image
-                                width={24}
-                                height={24}
-                                className="dark:hidden"
-                                src="/images/icons/settings.svg"
-                                alt="Avatar"
-                            />
-
-                            <Image
-                                width={24}
-                                height={24}
-                                className="hidden dark:block"
-                                src="/images/icons/settings-dark.svg"
-                                alt="Avatar"
-                            />
-
-                            Kontoeinstellungen
-                        </DropdownItem>
-                    </li>
-                </ul>
-                <Link
-                    href="/signin"
+                <button
+                    onClick={logout}
                     className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                 >
                     <Image
@@ -133,7 +104,7 @@ export default function UserDropdown() {
                         alt="Avatar"
                     />
                     Abmelden
-                </Link>
+                </button>
             </Dropdown>
         </div>
     );
