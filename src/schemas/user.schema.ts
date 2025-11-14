@@ -1,0 +1,21 @@
+import { z } from "zod";
+
+const ApiDataSchema = z.object({
+    id: z.uuid(),
+    user_metadata: z.object(),
+    email: z.string().nullable(),
+    role: z.string().nullable(),
+    created_at: z.coerce.date()
+});
+
+export const UserListItemDataSchema = ApiDataSchema.transform((apiData) => {
+    return {
+        id: apiData.id,
+        displayName: apiData.user_metadata?.display_name,
+        email: apiData.email,
+        role: apiData.role,
+        createdAt: apiData.created_at
+    }
+})
+
+export const UserListDataSchema =  z.array(UserListItemDataSchema);

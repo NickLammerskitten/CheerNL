@@ -1,15 +1,18 @@
 "use client";
 import { useSidebar } from "@/context/SidebarContext";
+import { createClient } from "@/utils/supabase/client";
+import { User } from "@supabase/auth-js";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { GridIcon, GroupIcon } from "../icons";
 
 type NavItem = {
     name: string;
     icon: React.ReactNode;
     path: string;
+    adminRoute?: boolean;
 };
 
 const navItems: NavItem[] = [
@@ -26,42 +29,71 @@ const othersItems: NavItem[] = [
         name: "Teams",
         path: "/teams",
     },
+    {
+        icon: <GroupIcon />,
+        name: "Benutzer",
+        path: "/users",
+        adminRoute: true,
+    },
 ];
 
 const AppSidebar: React.FC = () => {
     const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
     const pathname = usePathname();
 
-    const renderMenuItems = (
-        navItems: NavItem[],
-    ) => (
-        <ul className="flex flex-col gap-4">
-            {navItems.map((nav) => (
-                <li key={nav.name}>
-                    <Link
-                        href={'/dashboard' + nav.path}
-                        className={`menu-item group ${
-                            isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
-                        }`}
-                    >
-                        <span
-                            className={`${
-                                isActive(nav.path)
-                                    ? "menu-item-icon-active"
-                                    : "menu-item-icon-inactive"
-                            }`}
-                        >
-                          {nav.icon}
-                        </span>
+    const supabase = createClient();
 
-                        {(isExpanded || isHovered || isMobileOpen) && (
-                            <span className={`menu-item-text`}>{nav.name}</span>
-                        )}
-                    </Link>
-                </li>
-            ))}
-        </ul>
-    );
+    const [user, setUser] = useState<User>()
+
+    useEffect(() => {
+        fetchUser();
+    }, []);
+
+    const fetchUser = async () => {
+        const user = await supabase.auth.getUser();
+
+        if (user.data.user === null) {
+            throw Error("Aktueller Benutzer nicht gefunden")
+        }
+
+        setUser(user.data.user)
+    }
+
+    const renderMenuItems = (
+            navItems: NavItem[],
+        ) => (
+            <ul className="flex flex-col gap-4">
+                {navItems.map((nav, index) =>
+                    <div key={index}>
+                        {nav.adminRoute && user?.role !== "service_role" ? <></> :
+                            <li key={nav.name}>
+                                <Link
+                                    href={'/dashboard' + nav.path}
+                                    className={`menu-item group ${
+                                        isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
+                                    }`}
+                                >
+                                    <span
+                                        className={`${
+                                            isActive(nav.path)
+                                                ? "menu-item-icon-active"
+                                                : "menu-item-icon-inactive"
+                                        }`}
+                                    >
+                                      {nav.icon}
+                                    </span>
+
+                                    {(isExpanded || isHovered || isMobileOpen) && (
+                                        <span className={`menu-item-text`}>{nav.name}</span>
+                                    )}
+                                </Link>
+                            </li>
+                        }
+                    </div>,
+                )}
+            </ul>
+        )
+    ;
 
     // const isActive = (path: string) => path === pathname;
     const isActive = useCallback((path: string) => path === pathname, [pathname]);
