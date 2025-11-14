@@ -8,14 +8,23 @@ create table public.team
     updated_at timestamp with time zone
 );
 
-alter table public.team
-    owner to supabase_admin;
+ALTER TABLE public.team
+    ENABLE ROW LEVEL SECURITY;
 
-grant delete, insert, references, select, trigger, truncate, update on public.team to postgres;
+create policy "Team-All for Authenticated"
+    on "public"."team"
+    as PERMISSIVE
+    FOR ALL
+    to authenticated
+    using (
+    true
+    );
 
-grant delete, insert, references, select, trigger, truncate, update on public.team to anon;
-
-grant delete, insert, references, select, trigger, truncate, update on public.team to authenticated;
-
-grant delete, insert, references, select, trigger, truncate, update on public.team to service_role;
-
+create policy "Team-Read for all"
+    on "public"."team"
+    as PERMISSIVE
+    FOR ALL
+    to public
+    using (
+    true
+    );
