@@ -18,3 +18,12 @@ export async function fetchTeamList(): Promise<TeamListData[]> {
         throw new Error("Ungültige Daten von der API empfangen.");
     }
 }
+
+export async function fetchTeamCount(): Promise<number> {
+    const supabase = await createClient();
+    const { count } = await supabase
+        .from('team')
+        .select('*', { count: 'exact', head: true })
+
+    return count ?? 0
+}
