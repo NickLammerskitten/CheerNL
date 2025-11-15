@@ -1,10 +1,12 @@
-import { UserListDataSchema } from "@/schemas/user.schema";
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
+"use server"
+
+import { UserListData, UserListDataSchema } from "@/schemas/user.schema";
+import { AuthError, createClient, SupabaseClient } from '@supabase/supabase-js'
 
 async function createAdminClient(): Promise<SupabaseClient> {
     return createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SECREAT_KEY!,
+        process.env.SUPABASE_SECRET_KEY!,
         {
             auth: {
                 persistSession: false,
@@ -16,7 +18,7 @@ async function createAdminClient(): Promise<SupabaseClient> {
 
 }
 
-export async function fetchAllUsers() {
+export async function fetchAllUsers(): Promise<UserListData> {
     const supabase = await createAdminClient()
     const { data: users, error } = await supabase.auth.admin.listUsers()
 
@@ -30,4 +32,24 @@ export async function fetchAllUsers() {
         console.error("Zod Validierungsfehler:", validationError);
         throw new Error("Ungültige Daten von der API empfangen.");
     }
+}
+
+export async function createUser(
+    email: string,
+    password: string,
+    displayName: string,
+): Promise<AuthError | null> {
+    const supabase = await createAdminClient()
+
+    const { error } = await supabase.auth.admin.createUser({
+        email: email,
+        password: password,
+        user_metadata: { display_name: displayName },
+    })
+
+    if (error) {
+        return error
+    }
+
+    return null
 }
