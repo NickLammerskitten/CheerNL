@@ -13,14 +13,12 @@ export default async function Teams() {
                     <TableRow>
                         <TableCell
                             isHeader
-                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                         >
                             Name
                         </TableCell>
 
                         <TableCell
                             isHeader
-                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                         >
                             Erstellt am
                         </TableCell>
@@ -31,11 +29,11 @@ export default async function Teams() {
                     {teams.map((team, index) => {
                         return (
                             <TableRow key={index}>
-                                <TableCell className="px-5 py-4 sm:px-6 text-start">
+                                <TableCell>
                                     {team.name}
                                 </TableCell>
 
-                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                <TableCell>
                                     {team.createdAt.toLocaleDateString("de-DE")}
                                 </TableCell>
                             </TableRow>

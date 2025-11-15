@@ -1,4 +1,7 @@
+"use client"
+
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import DeleteUserModal from "@/components/users/delete-user-modal";
 import { UserListData } from "@/schemas/user.schema";
 import React from "react";
 
@@ -12,54 +15,51 @@ export default function UsersTable({ users }: UsersTableProps) {
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableCell
-                        isHeader
-                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                    >
-                        Id
-                    </TableCell>
-
-                    <TableCell
-                        isHeader
-                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                    >
+                    <TableCell isHeader>
                         E-Mail
                     </TableCell>
 
-                    <TableCell
-                        isHeader
-                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                    >
+                    <TableCell isHeader>
                         Rolle
                     </TableCell>
 
-                    <TableCell
-                        isHeader
-                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                    >
+                    <TableCell isHeader>
                         Erstellt am
+                    </TableCell>
+
+                    <TableCell isHeader>
+                        <></>
                     </TableCell>
                 </TableRow>
             </TableHeader>
 
-            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+            <TableBody className="divide-y divide-gray-100">
                 {users.map((user, index) => {
                     return (
+
                         <TableRow key={index}>
-                            <TableCell className="px-5 py-4 sm:px-6 text-start">
-                                {user.id}
+                            <TableCell
+                                dataLabel={"E-Mail"}
+                            >
+                                <span>{user.email}</span>
                             </TableCell>
 
-                            <TableCell className="px-5 py-4 sm:px-6 text-start">
-                                {user.email}
+                            <TableCell
+                                dataLabel={"Rolle"}
+                            >
+                                {user.role === "authenticated" ? 'Benutzer' : user.role === 'service_role'
+                                    ? 'Admin'
+                                    : user.role}
                             </TableCell>
 
-                            <TableCell className="px-5 py-4 sm:px-6 text-start">
-                                {user.role}
-                            </TableCell>
-
-                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                            <TableCell
+                                dataLabel={"Erstellt am"}
+                            >
                                 {user.createdAt.toLocaleDateString("de-DE")}
+                            </TableCell>
+
+                            <TableCell className="px-5 py-4 sm:px-6 text-start">
+                                <DeleteUserModal userId={user.id} />
                             </TableCell>
                         </TableRow>
                     )

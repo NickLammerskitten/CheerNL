@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
-import { GridIcon, GroupIcon } from "../icons";
+import { GridIcon, GroupIcon, LockIcon } from "../icons";
 
 type NavItem = {
     name: string;
@@ -30,7 +30,7 @@ const othersItems: NavItem[] = [
         path: "/teams",
     },
     {
-        icon: <GroupIcon />,
+        icon: <LockIcon />,
         name: "Benutzer",
         path: "/users",
         adminRoute: true,

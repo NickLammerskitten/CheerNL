@@ -53,3 +53,15 @@ export async function createUser(
 
     return null
 }
+
+export async function deleteUser(id: string): Promise<AuthError | null> {
+    const supabase = await createAdminClient()
+
+    const { error } = await supabase.auth.admin.deleteUser(id)
+
+    if (error) {
+        return error
+    }
+
+    return null
+}
