@@ -23,7 +23,7 @@ create policy "Team-All for Authenticated"
 create policy "Team-Read for all"
     on "public"."team"
     as PERMISSIVE
-    FOR ALL
+    FOR SELECT
     to public
     using (
     true
