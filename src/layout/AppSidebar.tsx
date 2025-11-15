@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
-import { GridIcon, GroupIcon, LockIcon } from "../icons";
+import { CalenderIcon, GridIcon, GroupIcon, LockIcon } from "../icons";
 
 type NavItem = {
     name: string;
@@ -20,6 +20,11 @@ const navItems: NavItem[] = [
         icon: <GridIcon />,
         name: "Dashboard",
         path: "/",
+    },
+    {
+        icon: <CalenderIcon />,
+        name: "Events",
+        path: "/events",
     },
 ];
 

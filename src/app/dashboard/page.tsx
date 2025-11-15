@@ -15,9 +15,9 @@ export default async function Dashboard() {
 
     return (
         <ComponentCard title={"Dashboard"}>
-            <div>
+            <span className={"dark:text-white/90"}>
                 Teams im Verein: {teams}
-            </div>
+            </span>
         </ComponentCard>
 
     );
