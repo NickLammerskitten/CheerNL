@@ -1,0 +1,212 @@
+"use client";
+
+import Input from "@/components/form/input/InputField";
+import Label from "@/components/form/Label";
+import Button from "@/components/ui/button/Button";
+import { EventDetailData, EventType, EventUpdateSchema } from "@/schemas/event.schema";
+import { saveEvent } from "@/services/event.api";
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+
+const toDateTimeLocalString = (date: Date): string => {
+    const pad = (num: number) => num.toString().padStart(2, '0');
+
+    const YYYY = date.getFullYear();
+    const MM = pad(date.getMonth() + 1);
+    const DD = pad(date.getDate());
+    const HH = pad(date.getHours());
+    const mm = pad(date.getMinutes());
+
+    return `${YYYY}-${MM}-${DD}T${HH}:${mm}`;
+};
+
+interface EventEditFormProps {
+    event: EventDetailData;
+}
+
+export default function EventEditForm({ event }: EventEditFormProps) {
+    const router = useRouter();
+
+    const pathname = usePathname();
+
+    const [title, setTitle] = useState(event.title);
+    const [type, setType] = useState(event.type);
+    const [description, setDescription] = useState(event.description ?? "");
+    const [regFrom, setRegFrom] = useState(toDateTimeLocalString(event.registrationFrom));
+    const [regTill, setRegTill] = useState(toDateTimeLocalString(event.registrationTill));
+
+    const [error, setError] = useState<string | null>(null);
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string | undefined>>({});
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setError(null);
+        setFieldErrors({});
+
+        const rawData = {
+            id: event.id,
+            title: title,
+            type: type.toString(),
+            description: description === "" ? null : description,
+            registration_from: regFrom,
+            registration_till: regTill,
+        };
+
+        const result = EventUpdateSchema.safeParse(rawData);
+
+        if (!result.success) {
+            setLoading(false);
+
+            const newFieldErrors: Record<string, string> = {};
+
+            console.log(result.error.issues);
+
+            result.error.issues.forEach((issue) => {
+                const path = issue.path.join('.');
+                newFieldErrors[path] = issue.message;
+            });
+
+            setFieldErrors(newFieldErrors);
+
+            console.log(fieldErrors)
+
+            setError("Bitte korrigieren Sie die markierten Fehler im Formular.");
+            return;
+        }
+
+        setLoading(true);
+
+        const validatedData = result.data;
+        const apiError = await saveEvent(validatedData);
+
+        setLoading(false);
+
+        if (apiError) {
+            setError(apiError);
+        } else {
+            // back to detail page
+            const lastSlashIndex = pathname.lastIndexOf('/');
+            const detailPath = pathname.substring(0, lastSlashIndex);
+            router.push(detailPath);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-5">
+
+                <Label
+                    htmlFor="title"
+                    className="dark:text-white/70"
+                >Titel</Label>
+                <div className="flex flex-col gap-1">
+                    <Input
+                        id="title"
+                        type="text"
+                        defaultValue={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="Event Titel"
+                        className={fieldErrors.title ? "border-red-500" : ""}
+                    />
+                    {fieldErrors.title && (
+                        <p className="text-xs text-red-500">{fieldErrors.title}</p>
+                    )}
+                </div>
+
+                <Label
+                    htmlFor="type"
+                    className="dark:text-white/70"
+                >Event Typ</Label>
+                <select
+                    id="type"
+                    value={type}
+                    onChange={(e) => setType(e.target.value as EventType)}
+                    className="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-3 text-sm dark:border-gray-600 dark:text-white/90"
+                >
+                    {Object.values(EventType).map((enumValue) => (
+                        <option
+                            key={enumValue}
+                            value={enumValue}
+                        >
+                            {enumValue === EventType.TUMBLINGClASS ? 'Tumbling Class' : enumValue}
+                        </option>
+                    ))}
+                </select>
+
+                <Label
+                    htmlFor="description"
+                    className="self-start pt-3 dark:text-white/70"
+                >Beschreibung</Label>
+                <div className="flex flex-col gap-1">
+                    <Input
+                        id="description"
+                        defaultValue={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Keine Beschreibung"
+                        className={fieldErrors.description ? "border-red-500" : ""}
+                    />
+                    {fieldErrors.description && (
+                        <p className="text-xs text-red-500">{fieldErrors.description}</p>
+                    )}
+                </div>
+
+                <Label
+                    htmlFor="regFrom"
+                    className="dark:text-white/70"
+                >Registrierung von</Label>
+                <div className="flex flex-col gap-1">
+                    <Input
+                        id="regFrom"
+                        type="datetime-local"
+                        defaultValue={regFrom}
+                        onChange={(e) => setRegFrom(e.target.value)}
+                        className={fieldErrors.registration_from ? "border-red-500" : ""}
+                    />
+                    {fieldErrors.registration_from && (
+                        <p className="text-xs text-red-500">{fieldErrors.registration_from}</p>
+                    )}
+                </div>
+                {/* Registrierung Bis */}
+                <Label
+                    htmlFor="regTill"
+                    className="dark:text-white/70"
+                >Registrierung bis</Label>
+                <div className="flex flex-col gap-1">
+                    <Input
+                        id="regTill"
+                        type="datetime-local"
+                        defaultValue={regTill}
+                        onChange={(e) => setRegTill(e.target.value)}
+                        className={fieldErrors.registration_till ? "border-red-500" : ""}
+                    />
+                    {fieldErrors.registration_till && (
+                        <p className="text-xs text-red-500">{fieldErrors.registration_till}</p>
+                    )}
+                </div>
+            </div>
+
+            {error && (
+                <p className="mt-4 text-sm text-error-500">
+                    {error}
+                </p>
+            )}
+
+            <div className="flex justify-end gap-3 mt-6">
+                <Button
+                    variant={"outline"}
+                    onClick={() => router.back()} // Zurück zur vorherigen Seite
+                >
+                    Abbrechen
+                </Button>
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition w-full sm:w-auto bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 px-4 py-3 text-sm"
+                >
+                    {loading ? "Speichern..." : "Änderungen speichern"}
+                </button>
+            </div>
+        </form>
+    );
+}

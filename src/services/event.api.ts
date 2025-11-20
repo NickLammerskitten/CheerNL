@@ -1,4 +1,13 @@
-import { EventDetailData, EventDetailDataSchema, EventListData, EventListDataSchema } from "@/schemas/event.schema";
+'use server'
+
+import {
+    EventDetailData,
+    EventDetailDataSchema,
+    EventListData,
+    EventListDataSchema,
+    EventUpdateData,
+    EventUpdateSchema,
+} from "@/schemas/event.schema";
 import { createClient } from "@/utils/supabase/server";
 
 export type PaginatedEventListResponse = {
@@ -52,5 +61,36 @@ export async function fetchEvent(id: string): Promise<EventDetailData> {
     } catch (validationError) {
         console.error("Zod Validierungsfehler:", validationError);
         throw new Error("Ungültige Daten von der API empfangen.");
+    }
+}
+
+export async function saveEvent(updateData: EventUpdateData): Promise<string | null> {
+    const safeData = EventUpdateSchema.safeParse(updateData);
+    if (!safeData.success) {
+        return 'Die Daten konnten nicht validiert werden';
+    }
+
+    const supabase = await createClient();
+    const { status, statusText } = await supabase
+        .from('event')
+        .update(safeData.data)
+        .eq('id', safeData.data.id)
+
+    if (status !== 204) {
+        return `Beim Bearbeiten ist ein Fehler aufgetreten: ${status} - ${statusText}`;
+    }
+
+    return null;
+}
+
+export async function deleteEvent(id: string) {
+    const supabase = await createClient();
+    const { status, statusText } = await supabase
+        .from('event')
+        .delete()
+        .eq('id', id);
+
+    if (status !== 204) {
+        throw new Error(`Beim Löschen ist ein Fehler aufgetreten: ${status} - ${statusText}`)
     }
 }
