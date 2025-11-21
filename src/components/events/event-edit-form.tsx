@@ -69,7 +69,7 @@ export default function EventEditForm({ event }: EventEditFormProps) {
             setError(apiResponse.error);
         } else {
             // navigate to detail page
-            const newId = apiResponse.id!!;
+            const newId = apiResponse.id;
             router.push('/events/' + newId);
         }
     };

@@ -5,8 +5,7 @@ import { fetchAllUsers } from "@/services/user.api";
 import React from "react";
 
 export default async function UsersPage() {
-    let users = await fetchAllUsers();
-
+    const users = await fetchAllUsers();
 
     return (
         <ComponentCard title={"Teams"}>

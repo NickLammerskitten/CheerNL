@@ -3,12 +3,12 @@ import { z } from "zod";
 export const ApiSlotListDataSchema = z.object({
     id: z.uuid(),
     event_id: z.uuid(),
-    title: z.string(),
+    title: z.string().nullable(),
     location: z.string().nullable(),
     duration_minutes: z.int(),
     recurrence_type: z.string(),
     slot_start: z.coerce.date().nullable(),
-    day_of_week: z.int().nullable(),
+    day_of_week: z.string().nullable(),
     start_time: z.string().nullable().transform((zeit) => {
         if (!zeit) {
             return null;
@@ -28,7 +28,7 @@ export const EventSlotListItemDataSchema = ApiSlotListDataSchema.transform((apiD
         durationMinutes: apiData.duration_minutes,
         recurrenceType: apiData.recurrence_type as RecurrenceType,
         slotStart: apiData.slot_start,
-        dayOfWeek: apiData.day_of_week,
+        dayOfWeek: apiData.day_of_week as DayOfWeek,
         startTime: apiData.start_time,
         createdAt: apiData.created_at,
     };
@@ -42,3 +42,48 @@ export enum RecurrenceType {
     ONCE = 'ONCE',
     WEEKLY = 'WEEKLY'
 }
+
+export enum DayOfWeek {
+    MONDAY = 'MONDAY',
+    TUESDAY = 'TUESDAY',
+    WEDNESDAY = 'WEDNESDAY',
+    THURSDAY = 'THURSDAY',
+    FRIDAY = 'FRIDAY',
+    SATURDAY = 'SATURDAY',
+    SUNDAY = 'SUNDAY'
+}
+
+/* Create */
+export const EventSlotCreateSchema = z.object({
+    event_id: z.string(),
+    title: z.string().min(1, { message: "Der Titel darf nicht leer sein." }).nullable(),
+    location: z.string().min(1, { message: "Der Ort darf nicht leer sein." }).nullable(),
+    duration_minutes: z.int().min(1, { message: "Die Dauer muss größer als 0 sein" }),
+    recurrence_type: z.string(),
+    slot_start: z.string().nullable(),
+    day_of_week: z.string().nullable(),
+    start_time: z.string().nullable(),
+})
+    .refine((data) => {
+        const recurrenceType = data.recurrence_type as RecurrenceType;
+
+        if (recurrenceType === RecurrenceType.WEEKLY) {
+            data.slot_start = null;
+
+            const dayOfWeekValid = data.day_of_week !== null
+            const startTimeValid = data.start_time !== null
+            return dayOfWeekValid && startTimeValid
+        } else if (recurrenceType === RecurrenceType.ONCE) {
+            data.day_of_week = null;
+            data.start_time = null;
+
+            return data.slot_start !== null
+        }
+
+        return false
+    }, {
+        message: "Die Zeitinformationen sind fehlerhaft. Prüfe diese auf Fehler.",
+        path: ["recurrence_type"],
+    })
+
+export type EventSlotCreateData = z.infer<typeof EventSlotCreateSchema>;

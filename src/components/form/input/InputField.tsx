@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 
 interface InputProps {
-    type?: "text" | "number" | "email" | "password" | "date" | "time" | string;
+    type?: "text" | "number" | "email" | "password" | "date" | "time" | "datetime-local" | string;
     id?: string;
     name?: string;
     placeholder?: string;

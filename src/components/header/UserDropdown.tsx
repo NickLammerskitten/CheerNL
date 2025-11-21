@@ -1,4 +1,5 @@
 "use client";
+
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/auth-js";
 import Image from "next/image";
@@ -29,7 +30,7 @@ export default function UserDropdown() {
 
     useEffect(() => {
         setCurrentUser()
-    }, []);
+    });
 
     async function setCurrentUser() {
         const user = await supabase.auth.getUser()

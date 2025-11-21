@@ -52,7 +52,7 @@ const AppSidebar: React.FC = () => {
 
     useEffect(() => {
         fetchUser();
-    }, []);
+    });
 
     const fetchUser = async () => {
         const user = await supabase.auth.getUser();

@@ -1,7 +1,8 @@
 import ComponentCard from "@/components/common/ComponentCard";
 import EditEventButton from "@/components/events/edit-event-button";
 import EventDetails from "@/components/events/event-details";
-import EventSlotsTable from "@/components/events/event-slots-table";
+import EventSlotsTable from "@/components/events/slots/event-slots-table";
+import CreateSlotModal from "@/components/events/slots/slot-create-modal";
 import { EventType } from "@/schemas/event.schema";
 import { fetchEvent } from "@/services/event.api";
 import React from "react";
@@ -33,6 +34,8 @@ export default async function EventDetailPage({
                 title={event.type === EventType.TUMBLINGClASS ? 'Classes' : 'Optionen'}
                 className={"mt-3"}
             >
+                <CreateSlotModal eventId={event.id} />
+
                 <EventSlotsTable slots={event.slots} />
             </ComponentCard>
         </>

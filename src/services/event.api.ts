@@ -89,7 +89,7 @@ export async function saveEvent(newData: EventUpdateData | EventCreateData): Pro
         return {
             success: false,
             id: null,
-            error: `Beim Bearbeiten ist ein Fehler aufgetreten: ${status} - ${statusText}`,
+            error: `Es ist ein Fehler aufgetreten: ${status} - ${statusText}`,
         }
     }
 

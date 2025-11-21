@@ -2,6 +2,8 @@ create type "public"."event_type" as enum ('TUMBLING_CLASS');
 
 create type "public"."recurrence_type" as enum ('ONCE', 'WEEKLY');
 
+create type "public"."day_of_week" as enum ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY');
+
 create table "public"."event"
 (
     "id"                uuid                     not null default gen_random_uuid(),
@@ -28,7 +30,7 @@ create table "public"."event_slot"
     "duration_minutes" smallint                 not null,
     "recurrence_type"  public.recurrence_type   not null,
     "slot_start"       timestamp with time zone,
-    "day_of_week"      smallint,
+    "day_of_week"      public.day_of_week,
     "start_time"       time with time zone
 );
 
