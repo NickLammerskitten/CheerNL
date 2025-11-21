@@ -83,7 +83,7 @@ const AppHeader: React.FC = () => {
                     </button>
 
                     <Link
-                        href="/dashboard"
+                        href="/"
                         className="lg:hidden"
                     >
                         <Image

@@ -25,15 +25,15 @@ export default function EventTable({ initialEvents, totalPages }: EventTableProp
         const params = new URLSearchParams(searchParams.toString());
         params.set("page", page.toString());
 
-        router.push(`/dashboard/events?${params.toString()}`)
+        router.push(`/events?${params.toString()}`)
     };
 
     const handleCreate = () => {
-        router.push('/dashboard/events/create')
+        router.push('/events/create')
     }
 
     const handleView = (id: string) => {
-        router.push(`/dashboard/events/${id}`)
+        router.push(`/events/${id}`)
     }
 
     return (

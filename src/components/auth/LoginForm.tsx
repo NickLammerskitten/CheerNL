@@ -31,7 +31,7 @@ export default function LoginForm() {
             console.error(error);
             setError("E-Mail oder Passwort ist ungültig."); // Setze eine nutzerfreundliche Fehlermeldung
         } else {
-            router.push('/dashboard');
+            router.push('/');
         }
     };
 

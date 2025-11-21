@@ -6,13 +6,11 @@ import Button from "@/components/ui/button/Button";
 import { EventCreateSchema, EventType } from "@/schemas/event.schema";
 import { saveEvent } from "@/services/event.api";
 import { toDateTimeLocalString } from "@/utils/date-time-to-locale-string";
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 export default function EventCreateForm() {
     const router = useRouter();
-
-    const pathname = usePathname();
 
     const [title, setTitle] = useState<string>("");
     const [type, setType] = useState<EventType>(EventType.TUMBLINGClASS);
@@ -67,9 +65,7 @@ export default function EventCreateForm() {
         } else {
             // navigate to detail page
             const newId = apiResponse.id!!;
-            const lastSlashIndex = pathname.lastIndexOf('/');
-            const listPath = pathname.substring(0, lastSlashIndex);
-            router.push(listPath + '/' + newId);
+            router.push('/events/' + newId);
         }
     };
 

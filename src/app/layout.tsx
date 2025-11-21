@@ -2,6 +2,7 @@ import { SidebarProvider } from '@/context/SidebarContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { Outfit } from 'next/font/google';
 import './globals.css';
+import React from "react";
 
 const outfit = Outfit({
     subsets: ["latin"],

@@ -48,14 +48,14 @@ export async function updateSession(request: NextRequest) {
         request.nextUrl.pathname.startsWith('/login')
     ) {
         const url = request.nextUrl.clone()
-        url.pathname = '/dashboard'
+        url.pathname = '/'
         return NextResponse.redirect(url)
     } else if (
         request.nextUrl.pathname.includes('users') &&
         user?.role !== 'service_role'
     ) {
         const url = request.nextUrl.clone()
-        url.pathname = '/dashboard'
+        url.pathname = '/'
         return NextResponse.redirect(url)
     }
 

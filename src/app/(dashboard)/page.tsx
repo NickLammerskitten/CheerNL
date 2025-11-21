@@ -4,8 +4,7 @@ import type { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-    title:
-        "CLE - Dashboard",
+    title: "CLE - Dashboard",
     description: "CLE Vereinsverwaltung - Dashboard",
 };
 

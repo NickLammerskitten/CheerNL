@@ -6,7 +6,7 @@ import Button from "@/components/ui/button/Button";
 import { EventDetailData, EventType, EventUpdateSchema } from "@/schemas/event.schema";
 import { saveEvent } from "@/services/event.api";
 import { toDateTimeLocalString } from "@/utils/date-time-to-locale-string";
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 interface EventEditFormProps {
@@ -15,8 +15,6 @@ interface EventEditFormProps {
 
 export default function EventEditForm({ event }: EventEditFormProps) {
     const router = useRouter();
-
-    const pathname = usePathname();
 
     const [title, setTitle] = useState(event.title);
     const [type, setType] = useState(event.type);
@@ -49,16 +47,12 @@ export default function EventEditForm({ event }: EventEditFormProps) {
 
             const newFieldErrors: Record<string, string> = {};
 
-            console.log(result.error.issues);
-
             result.error.issues.forEach((issue) => {
                 const path = issue.path.join('.');
                 newFieldErrors[path] = issue.message;
             });
 
             setFieldErrors(newFieldErrors);
-
-            console.log(fieldErrors)
 
             setError("Bitte korrigieren Sie die markierten Fehler im Formular.");
             return;
@@ -67,17 +61,16 @@ export default function EventEditForm({ event }: EventEditFormProps) {
         setLoading(true);
 
         const validatedData = result.data;
-        const apiError = await saveEvent(validatedData);
+        const apiResponse = await saveEvent(validatedData);
 
         setLoading(false);
 
-        if (apiError) {
-            setError(apiError);
+        if (!apiResponse.success) {
+            setError(apiResponse.error);
         } else {
-            // back to detail page
-            const lastSlashIndex = pathname.lastIndexOf('/');
-            const detailPath = pathname.substring(0, lastSlashIndex);
-            router.push(detailPath);
+            // navigate to detail page
+            const newId = apiResponse.id!!;
+            router.push('/events/' + newId);
         }
     };
 

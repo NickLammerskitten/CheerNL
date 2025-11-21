@@ -85,7 +85,7 @@ export async function saveEvent(newData: EventUpdateData | EventCreateData): Pro
         .select('*')
         .single()
 
-    if (status !== 204 && status !== 201) {
+    if (status !== 200 && status !== 201) {
         return {
             success: false,
             id: null,
