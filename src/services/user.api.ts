@@ -6,7 +6,7 @@ import { AuthError, createClient, SupabaseClient } from '@supabase/supabase-js'
 async function createAdminClient(): Promise<SupabaseClient> {
     return createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SECRET_KEY!,
+        process.env.NEXT_PRIVATE_SUPABASE_SERVICE_ROLE_KEY!,
         {
             auth: {
                 persistSession: false,
@@ -15,7 +15,6 @@ async function createAdminClient(): Promise<SupabaseClient> {
             },
         },
     );
-
 }
 
 export async function fetchAllUsers(): Promise<UserListData> {

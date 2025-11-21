@@ -29,11 +29,11 @@ export default async function Teams() {
                     {teams.map((team, index) => {
                         return (
                             <TableRow key={index}>
-                                <TableCell>
+                                <TableCell dataLabel={"Team"}>
                                     {team.name}
                                 </TableCell>
 
-                                <TableCell>
+                                <TableCell dataLabel={"Erstellt am"}>
                                     {team.createdAt.toLocaleDateString("de-DE")}
                                 </TableCell>
                             </TableRow>
