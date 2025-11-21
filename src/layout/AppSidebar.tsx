@@ -2,7 +2,6 @@
 import { useSidebar } from "@/context/SidebarContext";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/auth-js";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
@@ -43,7 +42,7 @@ const othersItems: NavItem[] = [
 ];
 
 const AppSidebar: React.FC = () => {
-    const { isExpanded, isMobileOpen, isHovered, setIsHovered, toggleMobileSidebar } = useSidebar();
+    const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
     const pathname = usePathname();
 
     const supabase = createClient();
@@ -73,7 +72,6 @@ const AppSidebar: React.FC = () => {
                         {nav.adminRoute && user?.role !== "service_role" ? <></> :
                             <li key={nav.name}>
                                 <Link
-                                    onClick={toggleMobileSidebar}
                                     href={nav.path}
                                     className={`menu-item group ${
                                         isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
@@ -119,56 +117,18 @@ const AppSidebar: React.FC = () => {
             onMouseEnter={() => !isExpanded && setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            <div
-                className={`py-8 flex  ${
-                    !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
-                }`}
-            >
-                <Link
-                    href="/"
-                    onClick={toggleMobileSidebar}
-                >
-                    {isExpanded || isHovered || isMobileOpen ? (
-                        <>
-                            <Image
-                                className="dark:hidden"
-                                src="/images/logo/logo.svg"
-                                alt="Logo"
-                                width={150}
-                                height={40}
-                            />
-                            <Image
-                                className="hidden dark:block"
-                                src="/images/logo/logo-dark.svg"
-                                alt="Logo"
-                                width={150}
-                                height={40}
-                            />
-                        </>
-                    ) : (
-                        <Image
-                            src="/images/logo/logo-icon.svg"
-                            alt="Logo"
-                            width={32}
-                            height={32}
-                        />
-                    )}
-                </Link>
-            </div>
             <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
                 <nav className="mb-6">
                     <div className="flex flex-col gap-4">
                         <div>
                             <h2
-                                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
+                                className={`mb-4 mt-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
                                     !isExpanded && !isHovered
                                         ? "lg:justify-center"
                                         : "justify-start"
                                 }`}
                             >
-                                {isExpanded || isHovered || isMobileOpen && (
-                                    "Menü"
-                                )}
+                                Menü
                             </h2>
                             {renderMenuItems(navItems)}
                         </div>
@@ -181,9 +141,7 @@ const AppSidebar: React.FC = () => {
                                         : "justify-start"
                                 }`}
                             >
-                                {isExpanded || isHovered || isMobileOpen && (
-                                    "Mein Verein"
-                                )}
+                                Mein Verein
                             </h2>
                             {renderMenuItems(othersItems)}
                         </div>
