@@ -43,7 +43,7 @@ const othersItems: NavItem[] = [
 ];
 
 const AppSidebar: React.FC = () => {
-    const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
+    const { isExpanded, isMobileOpen, isHovered, setIsHovered, toggleMobileSidebar } = useSidebar();
     const pathname = usePathname();
 
     const supabase = createClient();
@@ -73,6 +73,7 @@ const AppSidebar: React.FC = () => {
                         {nav.adminRoute && user?.role !== "service_role" ? <></> :
                             <li key={nav.name}>
                                 <Link
+                                    onClick={toggleMobileSidebar}
                                     href={nav.path}
                                     className={`menu-item group ${
                                         isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
@@ -123,7 +124,10 @@ const AppSidebar: React.FC = () => {
                     !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
                 }`}
             >
-                <Link href="/">
+                <Link
+                    href="/"
+                    onClick={toggleMobileSidebar}
+                >
                     {isExpanded || isHovered || isMobileOpen ? (
                         <>
                             <Image

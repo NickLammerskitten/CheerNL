@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type SidebarContextType = {
@@ -27,6 +28,8 @@ export const useSidebar = () => {
 export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
+    const pathname = usePathname();
+
     const [isExpanded, setIsExpanded] = useState(true);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
@@ -50,6 +53,10 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
             window.removeEventListener("resize", handleResize);
         };
     }, []);
+
+    useEffect(() => {
+        setIsMobileOpen(false);
+    }, [pathname]);
 
     const toggleSidebar = () => {
         setIsExpanded((prev) => !prev);
@@ -75,7 +82,7 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
                 toggleMobileSidebar,
                 setIsHovered,
                 setActiveItem,
-                toggleSubmenu,
+                toggleSubmenu
             }}
         >
             {children}
