@@ -3,29 +3,25 @@
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
-import { EventDetailData, EventType, EventUpdateSchema } from "@/schemas/event.schema";
+import { EventCreateSchema, EventType } from "@/schemas/event.schema";
 import { saveEvent } from "@/services/event.api";
 import { toDateTimeLocalString } from "@/utils/date-time-to-locale-string";
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-interface EventEditFormProps {
-    event: EventDetailData;
-}
-
-export default function EventEditForm({ event }: EventEditFormProps) {
+export default function EventCreateForm() {
     const router = useRouter();
 
     const pathname = usePathname();
 
-    const [title, setTitle] = useState(event.title);
-    const [type, setType] = useState(event.type);
-    const [description, setDescription] = useState(event.description ?? "");
-    const [regFrom, setRegFrom] = useState(toDateTimeLocalString(event.registrationFrom));
-    const [regTill, setRegTill] = useState(toDateTimeLocalString(event.registrationTill));
+    const [title, setTitle] = useState<string>("");
+    const [type, setType] = useState<EventType>(EventType.TUMBLINGClASS);
+    const [description, setDescription] = useState<string | undefined>(undefined);
+    const [regFrom, setRegFrom] = useState<string>(toDateTimeLocalString(new Date()));
+    const [regTill, setRegTill] = useState<string>(toDateTimeLocalString(new Date()));
 
     const [error, setError] = useState<string | null>(null);
-    const [fieldErrors, setFieldErrors] = useState<Record<string, string | undefined>>({});
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -34,22 +30,19 @@ export default function EventEditForm({ event }: EventEditFormProps) {
         setFieldErrors({});
 
         const rawData = {
-            id: event.id,
             title: title,
             type: type.toString(),
-            description: description === "" ? null : description,
+            description: description === "" || description === undefined ? null : description,
             registration_from: regFrom,
             registration_till: regTill,
         };
 
-        const result = EventUpdateSchema.safeParse(rawData);
+        const result = EventCreateSchema.safeParse(rawData);
 
         if (!result.success) {
             setLoading(false);
 
             const newFieldErrors: Record<string, string> = {};
-
-            console.log(result.error.issues);
 
             result.error.issues.forEach((issue) => {
                 const path = issue.path.join('.');
@@ -58,8 +51,6 @@ export default function EventEditForm({ event }: EventEditFormProps) {
 
             setFieldErrors(newFieldErrors);
 
-            console.log(fieldErrors)
-
             setError("Bitte korrigieren Sie die markierten Fehler im Formular.");
             return;
         }
@@ -67,17 +58,18 @@ export default function EventEditForm({ event }: EventEditFormProps) {
         setLoading(true);
 
         const validatedData = result.data;
-        const apiError = await saveEvent(validatedData);
+        const apiResponse = await saveEvent(validatedData);
 
         setLoading(false);
 
-        if (apiError) {
-            setError(apiError);
+        if (!apiResponse.success) {
+            setError(apiResponse.error);
         } else {
-            // back to detail page
+            // navigate to detail page
+            const newId = apiResponse.id!!;
             const lastSlashIndex = pathname.lastIndexOf('/');
-            const detailPath = pathname.substring(0, lastSlashIndex);
-            router.push(detailPath);
+            const listPath = pathname.substring(0, lastSlashIndex);
+            router.push(listPath + '/' + newId);
         }
     };
 

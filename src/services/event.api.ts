@@ -1,13 +1,17 @@
 'use server'
 
 import {
+    EventCreateData,
+    EventCreateSchema,
     EventDetailData,
     EventDetailDataSchema,
     EventListData,
     EventListDataSchema,
+    EventListItemDataSchema,
     EventUpdateData,
     EventUpdateSchema,
 } from "@/schemas/event.schema";
+import { UpsertResponseSchema } from "@/schemas/upsert-response.schema";
 import { createClient } from "@/utils/supabase/server";
 
 export type PaginatedEventListResponse = {
@@ -64,23 +68,38 @@ export async function fetchEvent(id: string): Promise<EventDetailData> {
     }
 }
 
-export async function saveEvent(updateData: EventUpdateData): Promise<string | null> {
-    const safeData = EventUpdateSchema.safeParse(updateData);
-    if (!safeData.success) {
-        return 'Die Daten konnten nicht validiert werden';
+export async function saveEvent(newData: EventUpdateData | EventCreateData): Promise<UpsertResponseSchema> {
+    const dataValid = EventUpdateSchema.safeParse(newData).success || EventCreateSchema.safeParse(newData).success;
+    if (!dataValid) {
+        return {
+            success: false,
+            id: null,
+            error: 'Die Daten konnten nicht validiert werden',
+        };
     }
 
     const supabase = await createClient();
-    const { status, statusText } = await supabase
+    const { data, status, statusText } = await supabase
         .from('event')
-        .update(safeData.data)
-        .eq('id', safeData.data.id)
+        .upsert(newData)
+        .select('*')
+        .single()
 
-    if (status !== 204) {
-        return `Beim Bearbeiten ist ein Fehler aufgetreten: ${status} - ${statusText}`;
+    if (status !== 204 && status !== 201) {
+        return {
+            success: false,
+            id: null,
+            error: `Beim Bearbeiten ist ein Fehler aufgetreten: ${status} - ${statusText}`,
+        }
     }
 
-    return null;
+    const savedData = EventListItemDataSchema.parse(data);
+
+    return {
+        success: true,
+        id: savedData.id,
+        error: null,
+    };
 }
 
 export async function deleteEvent(id: string) {

@@ -5,7 +5,7 @@ import Pagination from "@/components/tables/Pagination";
 import Button from "@/components/ui/button/Button";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { EyeIcon } from "@/icons";
-import { EventListData } from "@/schemas/event.schema";
+import { EventListData, EventType } from "@/schemas/event.schema";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
@@ -69,7 +69,7 @@ export default function EventTable({ initialEvents, totalPages }: EventTableProp
                                 {event.title}
                             </TableCell>
                             <TableCell dataLabel={"Typ"}>
-                                {event.type}
+                                {event.type === EventType.TUMBLINGClASS ? 'Tumbling Class' : event.type}
                             </TableCell>
                             <TableCell dataLabel={"Registrierung"}>
                                 {event.registrationFrom.toLocaleString()} -

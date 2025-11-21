@@ -60,6 +60,10 @@ export default function EventSlotsTable({ slots }: EventSlotsTableProps) {
 
                     </TableRow>,
                 )}
+
+                {slots.length === 0 && (
+                    <p>Keine Einträge vorhanden</p>
+                )}
             </TableBody>
         </Table>
     )
