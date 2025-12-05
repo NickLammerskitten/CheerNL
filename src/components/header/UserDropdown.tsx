@@ -81,7 +81,7 @@ export default function UserDropdown() {
                         {user?.email}
                     </span>
                     <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-                        {user?.role}
+                        Rolle: {user?.role === "service_role" ? "Admin" : "Benutzer"}
                     </span>
                 </div>
 
