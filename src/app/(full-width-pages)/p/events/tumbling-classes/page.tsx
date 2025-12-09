@@ -1,8 +1,8 @@
-import TumblingClassTable from "@/app/(full-width-pages)/p/events/tumbling-classes/tumbling-class-table";
+import TumblingClassTable from "@/app/(full-width-pages)/p/events/tumbling-classes/components/tumbling-class-table";
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadCrumb from "@/components/common/PageBreadCrumb";
-import { EventType } from "@/schemas/event.schema";
 import { fetchEventsPublic } from "@/services/event-public.api";
+import { EventType } from "@/types/event-type";
 
 export default async function TumblingClasses() {
 

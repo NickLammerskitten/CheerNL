@@ -1,5 +1,6 @@
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
-import { EventSlotListData, RecurrenceType } from "@/schemas/event-slot.schema";
+import { EventSlotListData } from "@/schemas/event-slot.schema";
+import { RecurrenceType } from "@/types/recurrence-type";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
 
 interface EventSlotsTableProps {

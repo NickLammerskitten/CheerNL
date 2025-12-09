@@ -1,4 +1,5 @@
-import { EventDetailData, EventType } from "@/schemas/event.schema";
+import { EventDetailData } from "@/schemas/event.schema";
+import { EventType } from "@/types/event-type";
 
 interface EventDetailsProps {
     event: EventDetailData

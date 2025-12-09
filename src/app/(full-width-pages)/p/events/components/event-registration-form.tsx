@@ -1,0 +1,240 @@
+"use client"
+
+import Input from "@/components/form/input/InputField";
+import Label from "@/components/form/Label";
+import Select, { Option } from "@/components/form/Select";
+import { EventPublicDetailData } from "@/schemas/event-public.schema";
+import { EventRegistrationPublicCreateSchema } from "@/schemas/event-registration-public.schema";
+import { EventSlotPublicListData } from "@/schemas/event-slot-public.schema";
+import { TeamPublicListData } from "@/schemas/team-public.schema";
+import { saveEventRegistration } from "@/services/event-registration-public.api";
+import { EventType } from "@/types/event-type";
+import { RecurrenceType } from "@/types/recurrence-type";
+import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
+import React, { useState } from "react";
+
+interface EventRegistrationFormProps {
+    event: EventPublicDetailData;
+    teams: TeamPublicListData[];
+}
+
+export default function EventRegistrationForm({ teams, event }: EventRegistrationFormProps) {
+
+    console.log(event);
+
+    const teamOptions = teams.map((team) => {
+        return {
+            value: team.id,
+            label: team.name,
+        } as Option
+    });
+
+    const slots = event.slots.map((slot) => {
+        return {
+            value: slot.id,
+            label: slotName(slot),
+        } as Option
+    })
+
+    const [team, setTeam] = useState<string | undefined>()
+    const [slot, setSlot] = useState<string | undefined>()
+
+    const [firstName, setFirstName] = useState<string | undefined>()
+    const [lastName, setLastName] = useState<string | undefined>()
+    const [email, setEmail] = useState<string | undefined>()
+    const [phone, setPhone] = useState<string | undefined>()
+
+    const [error, setError] = useState<string | null>(null);
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const [loading, setLoading] = useState(false);
+
+    const handleTeamChange = (teamId: string) => {
+        setTeam(teamId)
+    }
+
+    const handleSlotChange = (slotId: string) => {
+        setSlot(slotId)
+    }
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setError(null);
+        setFieldErrors({});
+
+        const rawData = {
+            team: team ?? "",
+            slot: slot ?? "",
+            first_name: firstName ?? "",
+            last_name: lastName ?? "",
+            email: email ?? "",
+            phone: phone ?? "",
+        };
+
+        const result = EventRegistrationPublicCreateSchema.safeParse(rawData);
+
+        if (!result.success) {
+            setLoading(false);
+
+            const newFieldErrors: Record<string, string> = {};
+
+            result.error.issues.forEach((issue) => {
+                const path = issue.path.join('.');
+                newFieldErrors[path] = issue.message;
+            })
+
+            setFieldErrors(newFieldErrors);
+
+            console.log(newFieldErrors)
+
+            setError("Bitte korrigiere die markierten Felder im Formular.")
+            return;
+        }
+
+        setLoading(true);
+
+        const validatedData = result.data;
+        const apiResponse = await saveEventRegistration(validatedData);
+
+        setLoading(false)
+
+        if (!apiResponse.success) {
+            setError(apiResponse.error);
+        } else {
+        }
+    }
+
+    return (
+        <>
+            <span>
+                Beschreibung: {event.description ?? "Keine Beschreibung"}
+            </span>
+
+            <form onSubmit={handleSubmit}>
+                <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-5">
+                    <Label>Team</Label>
+                    <div className="flex flex-col gap-1">
+                        <Select
+                            options={teamOptions}
+                            placeholder={"Wähle dein Team aus"}
+                            onChange={handleTeamChange}
+                            className={fieldErrors.team ? "border-red-500" : ""}
+                        ></Select>
+                        {fieldErrors.team && (
+                            <p className="text-xs text-red-500">{fieldErrors.team}</p>
+                        )}
+                    </div>
+
+                    <Label>{event.type === EventType.TUMBLINGClASS ? "Classes" : ""}</Label>
+                    <div>
+                        <Select
+                            options={slots}
+                            placeholder={"Wähle aus"}
+                            onChange={handleSlotChange}
+                            className={fieldErrors.slot ? "border-red-500" : ""}
+                        ></Select>
+                        {fieldErrors.slot && (
+                            <p className="text-xs text-red-500">{fieldErrors.slot}</p>
+                        )}
+                    </div>
+                    <Label
+                        htmlFor="firstName"
+                        className="dark:text-white/70"
+                    >Vorname</Label>
+                    <div className="flex flex-col gap-1">
+                        <Input
+                            id="firstName"
+                            type="text"
+                            defaultValue={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            placeholder="Vorname"
+                            className={fieldErrors.first_name ? "border-red-500" : ""}
+                        />
+                        {fieldErrors.first_name && (
+                            <p className="text-xs text-red-500">{fieldErrors.first_name}</p>
+                        )}
+                    </div>
+
+                    <Label
+                        htmlFor="lastName"
+                        className="dark:text-white/70"
+                    >Nachname</Label>
+                    <div className="flex flex-col gap-1">
+                        <Input
+                            id="lastName"
+                            type="text"
+                            defaultValue={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            placeholder="Nachname"
+                            className={fieldErrors.last_name ? "border-red-500" : ""}
+                        />
+                        {fieldErrors.last_name && (
+                            <p className="text-xs text-red-500">{fieldErrors.last_name}</p>
+                        )}
+                    </div>
+
+                    <Label
+                        htmlFor="email"
+                        className="dark:text-white/70"
+                    >E-Mail</Label>
+                    <div className="flex flex-col gap-1">
+                        <Input
+                            id="email"
+                            type="email"
+                            defaultValue={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="E-Mail"
+                            className={fieldErrors.email ? "border-red-500" : ""}
+                        />
+                        {fieldErrors.email && (
+                            <p className="text-xs text-red-500">{fieldErrors.email}</p>
+                        )}
+                    </div>
+
+                    <Label
+                        htmlFor="phone"
+                        className="dark:text-white/70"
+                    >Telefonnummer</Label>
+                    <div className="flex flex-col gap-1">
+                        <Input
+                            id="phone"
+                            type="text"
+                            defaultValue={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            placeholder="Telefonnummer"
+                            className={fieldErrors.phone ? "border-red-500" : ""}
+                        />
+                        {fieldErrors.phone && (
+                            <p className="text-xs text-red-500">{fieldErrors.phone}</p>
+                        )}
+                    </div>
+                </div>
+
+                {error && (
+                    <p className="mt-4 text-sm text-error-500">
+                        {error}
+                    </p>
+                )}
+
+                <div className="flex justify-end gap-3 mt-6">
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition w-full sm:w-auto bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 px-4 py-3 text-sm"
+                    >
+                        {loading ? "Speichern..." : "Änderungen speichern"}
+                    </button>
+                </div>
+            </form>
+        </>
+    )
+}
+
+const slotName = (slot: EventSlotPublicListData): string => {
+    const text = `${slot.title ?? "Kein Titel"}`;
+
+    return slot.recurrenceType === RecurrenceType.ONCE
+        ? text + ` (${slot.slotStart?.toLocaleString()}, ${slot.durationMinutes} Min)`
+        : slot.recurrenceType === RecurrenceType.WEEKLY
+            ? text + ` (${dayOfWeekToString(slot.dayOfWeek)}, ${slot.startTime}, ${slot.durationMinutes} Min)`
+            : text;
+}

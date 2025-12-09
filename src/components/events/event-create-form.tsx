@@ -3,8 +3,9 @@
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
-import { EventCreateSchema, EventType } from "@/schemas/event.schema";
+import { EventCreateSchema } from "@/schemas/event.schema";
 import { saveEvent } from "@/services/event.api";
+import { EventType } from "@/types/event-type";
 import { toDateTimeLocalString } from "@/utils/date-time-to-locale-string";
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';

@@ -5,7 +5,8 @@ import Pagination from "@/components/tables/Pagination";
 import Button from "@/components/ui/button/Button";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { EyeIcon } from "@/icons";
-import { EventListData, EventType } from "@/schemas/event.schema";
+import { EventListData } from "@/schemas/event.schema";
+import { EventType } from "@/types/event-type";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 

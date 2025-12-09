@@ -1,4 +1,5 @@
 import { ApiSlotListDataSchema, EventSlotListDataSchema } from "@/schemas/event-slot.schema";
+import { EventType } from "@/types/event-type";
 import { z } from "zod";
 
 /* List */
@@ -52,10 +53,6 @@ export const EventDetailDataSchema = ApiDetailDataSchema.transform((apiData) => 
 })
 
 export type EventDetailData = z.infer<typeof EventDetailDataSchema>;
-
-export enum EventType {
-    TUMBLINGClASS = 'TUMBLING_CLASS'
-}
 
 export const EventUpdateSchema = z.object({
     id: z.uuid(),

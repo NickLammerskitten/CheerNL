@@ -1,3 +1,5 @@
+import { DayOfWeek } from "@/types/day-of-week";
+import { RecurrenceType } from "@/types/recurrence-type";
 import { z } from "zod";
 
 export const ApiSlotListDataSchema = z.object({
@@ -37,21 +39,6 @@ export const EventSlotListItemDataSchema = ApiSlotListDataSchema.transform((apiD
 export const EventSlotListDataSchema = z.array(EventSlotListItemDataSchema);
 
 export type EventSlotListData = z.infer<typeof EventSlotListItemDataSchema>;
-
-export enum RecurrenceType {
-    ONCE = 'ONCE',
-    WEEKLY = 'WEEKLY'
-}
-
-export enum DayOfWeek {
-    MONDAY = 'MONDAY',
-    TUESDAY = 'TUESDAY',
-    WEDNESDAY = 'WEDNESDAY',
-    THURSDAY = 'THURSDAY',
-    FRIDAY = 'FRIDAY',
-    SATURDAY = 'SATURDAY',
-    SUNDAY = 'SUNDAY'
-}
 
 /* Create */
 export const EventSlotCreateSchema = z.object({

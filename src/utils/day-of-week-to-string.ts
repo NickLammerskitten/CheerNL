@@ -1,4 +1,4 @@
-import { DayOfWeek } from "@/schemas/event-slot.schema";
+import { DayOfWeek } from "@/types/day-of-week";
 
 export const days = [
     { enum: DayOfWeek.MONDAY, string: "Montags" },

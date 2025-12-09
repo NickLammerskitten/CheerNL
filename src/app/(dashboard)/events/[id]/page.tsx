@@ -3,8 +3,8 @@ import EditEventButton from "@/components/events/edit-event-button";
 import EventDetails from "@/components/events/event-details";
 import EventSlotsTable from "@/components/events/slots/event-slots-table";
 import CreateSlotModal from "@/components/events/slots/slot-create-modal";
-import { EventType } from "@/schemas/event.schema";
 import { fetchEvent } from "@/services/event.api";
+import { EventType } from "@/types/event-type";
 import React from "react";
 
 export default async function EventDetailPage({

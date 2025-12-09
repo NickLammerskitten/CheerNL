@@ -1,11 +1,12 @@
 "use server"
 
 import {
+    EventDetailPublicDataSchema,
+    EventPublicDetailData,
     EventPublicListData,
     EventPublicListDataSchema,
-    EventPublicListItemDataSchema,
 } from "@/schemas/event-public.schema";
-import { EventType } from "@/schemas/event.schema";
+import { EventType } from "@/types/event-type";
 import { createClient } from "@/utils/supabase/server";
 
 interface EventFilterProps {
@@ -20,12 +21,12 @@ export type PaginatedEventPublicListResponse = {
     totalCount: number;
 }
 
-export async function fetchEventPublic(id: string): Promise<EventPublicListData> {
+export async function fetchEventPublic(id: string): Promise<EventPublicDetailData> {
     const supabase = await createClient();
 
     const { data, error } = await supabase
         .from('event')
-        .select('*')
+        .select('*, event_slot(*)')
         .eq('id', id)
         .single()
 
@@ -34,7 +35,7 @@ export async function fetchEventPublic(id: string): Promise<EventPublicListData>
     }
 
     try {
-        return EventPublicListItemDataSchema.parse(data);
+        return EventDetailPublicDataSchema.parse(data);
     } catch (validationError) {
         console.error("Zod Validierungsfehler:", validationError);
         throw new Error("Ungültige Daten von der API empfangen.");
