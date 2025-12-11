@@ -35,10 +35,44 @@ create table public.event_slot
     start_time       time with time zone
 );
 
+create table public.event_registration
+(
+    id            uuid                     default gen_random_uuid() not null
+        primary key,
+    event_id      uuid                                               not null
+        references public.event
+            on update cascade on delete cascade,
+    event_slot_id uuid                                               not null
+        references public.event_slot
+            on update cascade on delete cascade,
+    first_name    text                                               not null,
+    last_name     text                                               not null,
+    email         text                                               not null,
+    phone         text                                               not null,
+    created_at    timestamp with time zone default now()             not null
+);
+
+create or replace function get_event_registration_count(event_id_input uuid)
+    returns integer
+    language plpgsql
+    security definer
+as $$
+begin
+    return (
+        select count(*)
+        from "public"."event_registration"
+        where event_id = event_id_input
+    );
+end;
+$$;
+
 ALTER TABLE public.event
     ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE public.event_slot
+    ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE public.event_registration
     ENABLE ROW LEVEL SECURITY;
 
 create policy "Event-All for authenticated"
@@ -73,6 +107,24 @@ create policy "Event_Slot-Read for all"
     as PERMISSIVE
     FOR SELECT
     to public
+    using (
+    true
+    );
+
+create policy "Event_Registration-Write for all"
+    on "public"."event_registration"
+    as PERMISSIVE
+    FOR INSERT
+    to public
+    with check (
+    true
+    );
+
+create policy "Event_Registration-All for authenticated"
+    on "public"."event_registration"
+    as PERMISSIVE
+    FOR ALL
+    to authenticated
     using (
     true
     );
