@@ -73,7 +73,7 @@ export async function fetchEventsPublic({
 
     const parsedData = EventPublicListDataSchema.safeParse(data)
 
-    if (!parsedData.error) {
+    if (parsedData.error) {
         return {
             data: [],
             totalCount: 0,
