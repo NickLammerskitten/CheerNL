@@ -3,6 +3,7 @@
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Select, { Option } from "@/components/form/Select";
+import Alert from "@/components/ui/alert/Alert";
 import { EventPublicDetailData } from "@/schemas/event-public.schema";
 import { EventRegistrationPublicCreateSchema } from "@/schemas/event-registration-public.schema";
 import { EventSlotPublicListData } from "@/schemas/event-slot-public.schema";
@@ -19,8 +20,6 @@ interface EventRegistrationFormProps {
 }
 
 export default function EventRegistrationForm({ teams, event }: EventRegistrationFormProps) {
-
-    console.log(event);
 
     const teamOptions = teams.map((team) => {
         return {
@@ -48,6 +47,8 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
 
+    const [success, setSuccess] = useState<boolean>(false)
+
     const handleTeamChange = (teamId: string) => {
         setTeam(teamId)
     }
@@ -62,8 +63,9 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
         setFieldErrors({});
 
         const rawData = {
-            team: team ?? "",
-            slot: slot ?? "",
+            event_id: event.id,
+            event_slot_id: slot ?? "",
+            team_id: team ?? "",
             first_name: firstName ?? "",
             last_name: lastName ?? "",
             email: email ?? "",
@@ -84,8 +86,6 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
 
             setFieldErrors(newFieldErrors);
 
-            console.log(newFieldErrors)
-
             setError("Bitte korrigiere die markierten Felder im Formular.")
             return;
         }
@@ -99,7 +99,12 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
 
         if (!apiResponse.success) {
             setError(apiResponse.error);
+            setSuccess(false);
         } else {
+            setError(null);
+            setSuccess(true);
+
+            // TODO: Success Page with ICal download
         }
     }
 
@@ -117,10 +122,10 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                             options={teamOptions}
                             placeholder={"Wähle dein Team aus"}
                             onChange={handleTeamChange}
-                            className={fieldErrors.team ? "border-red-500" : ""}
+                            className={fieldErrors.team_id ? "border-red-500" : ""}
                         ></Select>
-                        {fieldErrors.team && (
-                            <p className="text-xs text-red-500">{fieldErrors.team}</p>
+                        {fieldErrors.team_id && (
+                            <p className="text-xs text-red-500">{fieldErrors.team_id}</p>
                         )}
                     </div>
 
@@ -130,10 +135,10 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                             options={slots}
                             placeholder={"Wähle aus"}
                             onChange={handleSlotChange}
-                            className={fieldErrors.slot ? "border-red-500" : ""}
+                            className={fieldErrors.event_slot_id ? "border-red-500" : ""}
                         ></Select>
-                        {fieldErrors.slot && (
-                            <p className="text-xs text-red-500">{fieldErrors.slot}</p>
+                        {fieldErrors.event_slot_id && (
+                            <p className="text-xs text-red-500">{fieldErrors.event_slot_id}</p>
                         )}
                     </div>
                     <Label
@@ -209,11 +214,23 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                     </div>
                 </div>
 
-                {error && (
-                    <p className="mt-4 text-sm text-error-500">
-                        {error}
-                    </p>
-                )}
+                <div className={"mt-2"}>
+                    {error && (
+                        <Alert
+                            variant={"error"}
+                            title={"Fehler"}
+                            message={error}
+                        ></Alert>
+                    )}
+
+                    {success && (
+                        <Alert
+                            variant={"success"}
+                            title={"Erfolgreich"}
+                            message={"Du hast dich erfolgreich registriert"}
+                        />
+                    )}
+                </div>
 
                 <div className="flex justify-end gap-3 mt-6">
                     <button

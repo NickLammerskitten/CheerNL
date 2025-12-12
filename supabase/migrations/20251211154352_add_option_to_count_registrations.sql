@@ -1,6 +1,6 @@
 set check_function_bodies = off;
 
-CREATE OR REPLACE FUNCTION public.get_event_registration_count(event_id_input uuid)
+CREATE FUNCTION public.get_event_registration_count(event_id_input uuid)
  RETURNS integer
  LANGUAGE plpgsql
  SECURITY DEFINER

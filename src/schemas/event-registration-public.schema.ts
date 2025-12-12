@@ -5,8 +5,9 @@ const phoneRegex = new RegExp(
 );
 
 export const EventRegistrationPublicCreateSchema = z.object({
-    team: z.string().min(1, { message: "Das Team muss ausgewählt werden" }),
-    slot: z.string().min(1, { message: "Der Termin muss ausgewählt werden" }),
+    event_id: z.string().min(1),
+    event_slot_id: z.string().min(1, { message: "Der Termin muss ausgewählt werden" }),
+    team_id: z.string().min(1, { message: "Das Team muss ausgewählt werden" }),
     first_name: z.string().min(2, { message: "Der Vorname darf nicht leer sein" }),
     last_name: z.string().min(2, { message: "Der Nachname darf nicht leer sein" }),
     email: z.email({ message: "Die E-Mail Adresse muss valide sein."}),

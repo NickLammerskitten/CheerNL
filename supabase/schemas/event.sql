@@ -52,20 +52,6 @@ create table public.event_registration
     created_at    timestamp with time zone default now()             not null
 );
 
-create or replace function get_event_registration_count(event_id_input uuid)
-    returns integer
-    language plpgsql
-    security definer
-as $$
-begin
-    return (
-        select count(*)
-        from "public"."event_registration"
-        where event_id = event_id_input
-    );
-end;
-$$;
-
 ALTER TABLE public.event
     ENABLE ROW LEVEL SECURITY;
 
