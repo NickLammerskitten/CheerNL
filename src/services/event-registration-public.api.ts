@@ -17,11 +17,9 @@ export async function saveEventRegistration(newData: EventRegistrationPublicData
     }
 
     const supabase = await createClient();
-    const { data, status, statusText } = await supabase
+    const { status, statusText } = await supabase
         .from('event_registration')
-        .upsert(newData)
-        .select('*')
-        .single();
+        .upsert(newData);
 
     if (status !== 200 && status !== 201) {
         return {
@@ -33,7 +31,7 @@ export async function saveEventRegistration(newData: EventRegistrationPublicData
 
     return {
         success: true,
-        id: data.id,
+        id: null,
         error: null,
     };
 }
