@@ -25,6 +25,11 @@ const navItems: NavItem[] = [
         name: "Events",
         path: "/events",
     },
+    {
+        icon: null,
+        name: "Anmeldungen",
+        path: "/registrations",
+    }
 ];
 
 const othersItems: NavItem[] = [
