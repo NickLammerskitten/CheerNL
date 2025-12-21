@@ -39,6 +39,11 @@ const othersItems: NavItem[] = [
         path: "/teams",
     },
     {
+        icon: null,
+        name: "Coaches",
+        path: "/coaches",
+    },
+    {
         icon: <LockIcon />,
         name: "Benutzer",
         path: "/users",
