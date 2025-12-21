@@ -69,9 +69,7 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({ 
             return '';
         },
         setContent: (content: string) => {
-            console.log(content);
             if (quillRef.current) {
-                console.log(content)
                 quillRef.current.setText('');
 
                 quillRef.current.clipboard.dangerouslyPasteHTML(0, content);
@@ -82,6 +80,7 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({ 
     return <div
         ref={editorRef}
         style={{ height: '150px' }}
+        className={"dark:text-white/90"}
     />;
 });
 
