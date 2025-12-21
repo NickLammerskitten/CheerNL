@@ -52,7 +52,7 @@ export async function fetchEvent(id: string): Promise<EventDetailData> {
     const supabase = await createClient();
     const { data, error } = await supabase
         .from('event')
-        .select('*, event_slot(*)')
+        .select('*, event_slot(*, event_slot_coach(*, coach(name)))')
         .eq('id', id)
         .single()
 

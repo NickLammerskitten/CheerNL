@@ -31,7 +31,7 @@ export default function EventSlotsTable({ slots }: EventSlotsTableProps) {
                         </TableCell>
 
                         <TableCell isHeader>
-                            Dauer
+                            Coaches
                         </TableCell>
                     </TableRow>
                 </TableHeader>
@@ -57,8 +57,14 @@ export default function EventSlotsTable({ slots }: EventSlotsTableProps) {
 
                             <SlotTimeTableCell slot={slot} />
 
-                            <TableCell dataLabel={"Dauer"}>
-                                {slot.durationMinutes} Minuten
+                            <TableCell dataLabel={"Coaches"}>
+                                {slot.coaches.length > 0
+                                    ? slot.coaches.map((coach, index) => (
+                                        <div key={index}>
+                                            {coach.coachName}
+                                        </div>
+                                    ))
+                                    : 'Keine Coaches'}
                             </TableCell>
 
                         </TableRow>,
@@ -82,11 +88,12 @@ function SlotTimeTableCell({ slot }: SlotTimeTableCellProps) {
         <TableCell dataLabel={"Zeitpunkt"}>
             {slot.recurrenceType === RecurrenceType.ONCE ? (
                 <>
-                    {slot.slotStart?.toLocaleDateString()}
+                    {slot.slotStart?.toLocaleDateString()}, {slot.durationMinutes} Minuten
                 </>
             ) : slot.recurrenceType === RecurrenceType.WEEKLY ? (
                     <>
-                        {dayOfWeekToString(slot.dayOfWeek)} um {slot.startTime}
+                        {dayOfWeekToString(slot.dayOfWeek)} um {slot.startTime},<br />
+                        {slot.durationMinutes} Minuten
                     </>
                 )
                 : (

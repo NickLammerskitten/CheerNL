@@ -12,6 +12,7 @@ import { saveEventRegistration } from "@/services/event-registration-public.api"
 import { EventType } from "@/types/event-type";
 import { RecurrenceType } from "@/types/recurrence-type";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
+import { parseHtmlOrDefault } from "@/utils/parse-html-or-default";
 import React, { useState } from "react";
 
 import 'quill/dist/quill.snow.css';
@@ -115,7 +116,10 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
             <div className="ql-snow">
                 <div
                     className="ql-editor dark:text-white/90"
-                    dangerouslySetInnerHTML={{ __html: event.description ?? 'Keine Beschreibung' }}
+                    dangerouslySetInnerHTML={{
+                        __html: parseHtmlOrDefault(event.description as string, 'Keine' +
+                            ' Beschreibung'),
+                    }}
                 />
             </div>
 

@@ -19,5 +19,3 @@ export const CoachAssignmentListItemDataSchema = ApiCoachAssignmentListDataSchem
 })
 
 export const CoachAssignmentListDataSchema = z.array(CoachAssignmentListItemDataSchema);
-
-export type CoachAssignmentListData = z.infer<typeof CoachAssignmentListItemDataSchema>;

@@ -2,9 +2,11 @@
 
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
+import MultiSelect from "@/components/form/MultiSelect";
 import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
 import { PlusIcon } from "@/icons";
+import { CoachListData } from "@/schemas/coach.schema";
 import { EventSlotCreateSchema } from "@/schemas/event-slot.schema";
 import { saveEventSlot } from "@/services/event-slot.api";
 import { DayOfWeek } from "@/types/day-of-week";
@@ -14,10 +16,11 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 interface CreateSlotModalProps {
-    eventId: string
+    eventId: string;
+    coaches: CoachListData[] | undefined;
 }
 
-export default function CreateSlotModal({ eventId }: CreateSlotModalProps) {
+export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalProps) {
     const router = useRouter();
 
     const [createModalOpen, setCreateModalOpen] = useState<boolean>(false)
@@ -29,10 +32,21 @@ export default function CreateSlotModal({ eventId }: CreateSlotModalProps) {
     const [slotStart, setSlotStart] = useState<string | undefined>(undefined)
     const [dayOfWeek, setDayOfWeek] = useState<DayOfWeek | undefined>(undefined)
     const [startTime, setStartTime] = useState<string | undefined>(undefined)
+    const [selectedCoaches, setSelectedCoaches] = useState<string[]>([]);
 
     const [error, setError] = useState<string | null>(null);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
+
+    const parseCoachesToOptions = () => {
+        return coaches?.map((coach) => {
+            return {
+                value: coach.id,
+                text: coach.name,
+                selected: false,
+            }
+        }) ?? []
+    }
 
     const resetForm = () => {
         setTitle(undefined);
@@ -42,6 +56,7 @@ export default function CreateSlotModal({ eventId }: CreateSlotModalProps) {
         setSlotStart(undefined);
         setDayOfWeek(undefined);
         setStartTime(undefined);
+        setSelectedCoaches([]);
 
         setError(null);
         setFieldErrors({});
@@ -66,6 +81,7 @@ export default function CreateSlotModal({ eventId }: CreateSlotModalProps) {
             slot_start: slotStart ?? null,
             day_of_week: dayOfWeek ?? DayOfWeek.MONDAY,
             start_time: startTime ?? null,
+            coach_ids: selectedCoaches.length > 0 ? selectedCoaches : null,
         }
 
         const result = EventSlotCreateSchema.safeParse(rawData);
@@ -263,6 +279,25 @@ export default function CreateSlotModal({ eventId }: CreateSlotModalProps) {
                                 <p className="text-xs text-red-500">{fieldErrors.duration_minutes}</p>
                             )}
                         </div>
+
+                        {coaches && (
+                            <>
+                                <Label
+                                    htmlFor="coaches"
+                                    className="dark:text-white/70"
+                                >Coaches</Label>
+                                <div className="flex flex-col gap-1">
+                                    <MultiSelect
+                                        label={''}
+                                        options={parseCoachesToOptions()}
+                                        onChange={setSelectedCoaches}
+                                    />
+                                    {fieldErrors.coach_ids && (
+                                        <p className="text-xs text-red-500">{fieldErrors.coach_ids}</p>
+                                    )}
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     {error && (

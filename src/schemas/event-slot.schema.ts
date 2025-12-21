@@ -1,3 +1,4 @@
+import { ApiSlotCoachListDataSchema, EventSlotCoachListDataSchema } from "@/schemas/event-slot-coach.schema";
 import { DayOfWeek } from "@/types/day-of-week";
 import { RecurrenceType } from "@/types/recurrence-type";
 import { z } from "zod";
@@ -18,6 +19,7 @@ export const ApiSlotListDataSchema = z.object({
 
         return zeit.split('+')[0]
     }),
+    event_slot_coach: z.array(ApiSlotCoachListDataSchema).nullable(),
     created_at: z.coerce.date(),
 });
 
@@ -32,6 +34,7 @@ export const EventSlotListItemDataSchema = ApiSlotListDataSchema.transform((apiD
         slotStart: apiData.slot_start,
         dayOfWeek: apiData.day_of_week as DayOfWeek,
         startTime: apiData.start_time,
+        coaches: EventSlotCoachListDataSchema.parse(apiData.event_slot_coach),
         createdAt: apiData.created_at,
     };
 })
@@ -50,6 +53,7 @@ export const EventSlotCreateSchema = z.object({
     slot_start: z.string().nullable(),
     day_of_week: z.string().nullable(),
     start_time: z.string().nullable(),
+    coach_ids: z.array(z.string()).nullable(),
 })
     .refine((data) => {
         const recurrenceType = data.recurrence_type as RecurrenceType;

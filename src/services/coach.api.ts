@@ -18,7 +18,6 @@ export async function fetchCoachList(): Promise<CoachListData[]> {
     }
 
     try {
-        console.log(rawData)
         return CoachListDataSchema.parse(rawData);
     } catch (validationError) {
         console.error("Zod Validierungsfehler:", validationError);

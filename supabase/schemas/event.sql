@@ -25,14 +25,25 @@ create table public.event_slot
     event_id         uuid                                               not null
         references public.event
             on update cascade on delete cascade,
-    created_at       timestamp with time zone default now()             not null,
     title            text,
     location         text,
     duration_minutes smallint                                           not null,
     recurrence_type  recurrence_type                                    not null,
     slot_start       timestamp with time zone,
     day_of_week      public.day_of_week,
-    start_time       time with time zone
+    start_time       time with time zone,
+    created_at       timestamp with time zone default now()             not null
+);
+
+create table public.event_slot_coach
+(
+    id         uuid                     default gen_random_uuid() not null
+        primary key,
+    slot_id    uuid                                               not null
+        references public.event_slot
+            on update cascade on delete cascade,
+    coach_id   uuid                                               references public.coach on update cascade on delete set null,
+    created_at timestamp with time zone default now()             not null
 );
 
 create table public.event_registration
@@ -49,6 +60,7 @@ create table public.event_registration
     last_name     text                                               not null,
     email         text                                               not null,
     phone         text                                               not null,
+    note          text,
     created_at    timestamp with time zone default now()             not null
 );
 
@@ -56,6 +68,9 @@ ALTER TABLE public.event
     ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE public.event_slot
+    ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE public.event_slot_coach
     ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE public.event_registration
@@ -90,6 +105,24 @@ create policy "Event_Slot-All for authenticated"
 
 create policy "Event_Slot-Read for all"
     on "public"."event_slot"
+    as PERMISSIVE
+    FOR SELECT
+    to public
+    using (
+    true
+    );
+
+create policy "Event_Slot_Coach-All for authenticated"
+    on "public"."event_slot_coach"
+    as PERMISSIVE
+    FOR ALL
+    to authenticated
+    using (
+    true
+    );
+
+create policy "Event_Slot_Coach-Read for all"
+    on "public"."event_slot_coach"
     as PERMISSIVE
     FOR SELECT
     to public

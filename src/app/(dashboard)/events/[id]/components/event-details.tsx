@@ -1,5 +1,6 @@
 import { EventDetailData } from "@/schemas/event.schema";
 import { EventType } from "@/types/event-type";
+import { parseHtmlOrDefault } from "@/utils/parse-html-or-default";
 import React from "react";
 
 import 'quill/dist/quill.snow.css';
@@ -21,7 +22,9 @@ export default function EventDetails({ event }: EventDetailsProps) {
             <div className="ql-snow">
                 <div
                     className="ql-editor dark:text-white/90"
-                    dangerouslySetInnerHTML={{ __html: event.description ?? 'Keine Beschreibung' }}
+                    dangerouslySetInnerHTML={{
+                        __html: parseHtmlOrDefault(event.description as string, 'Keine Beschreibung'),
+                    }}
                 />
             </div>
 
