@@ -1,6 +1,6 @@
 "use client"
 
-import DeleteEventModal from "@/components/events/delete-event-modal";
+import DeleteEventModal from "@/app/(dashboard)/events/components/delete-event-modal";
 import Pagination from "@/components/tables/Pagination";
 import Button from "@/components/ui/button/Button";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";

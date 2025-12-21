@@ -37,7 +37,7 @@ export default function CreateSlotModal({ eventId }: CreateSlotModalProps) {
     const resetForm = () => {
         setTitle(undefined);
         setLocation(undefined);
-        setDurationMinutes(60);
+        setDurationMinutes(90);
         setRecurrenceType(RecurrenceType.WEEKLY);
         setSlotStart(undefined);
         setDayOfWeek(undefined);

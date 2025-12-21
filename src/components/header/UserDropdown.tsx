@@ -30,10 +30,10 @@ export default function UserDropdown() {
 
     useEffect(() => {
         setCurrentUser()
-    });
+    }, []);
 
     async function setCurrentUser() {
-        const user = await supabase.auth.getUser()
+        const user = await supabase.auth.getUser();
 
         if (user.data.user == null) {
             router.push("/login")
