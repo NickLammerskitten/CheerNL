@@ -45,6 +45,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
     const [lastName, setLastName] = useState<string | undefined>()
     const [email, setEmail] = useState<string | undefined>()
     const [phone, setPhone] = useState<string | undefined>()
+    const [note, setNote] = useState<string | undefined>()
 
     const [error, setError] = useState<string | null>(null);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -73,6 +74,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
             last_name: lastName ?? "",
             email: email ?? "",
             phone: phone ?? "",
+            note: note ?? null,
         };
 
         const result = EventRegistrationPublicCreateSchema.safeParse(rawData);
@@ -221,6 +223,28 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                             <p className="text-xs text-red-500">{fieldErrors.phone}</p>
                         )}
                     </div>
+
+                    <Label
+                        htmlFor="note"
+                        className="dark:text-white/70"
+                    >
+                        {event.type === EventType.TUMBLINGClASS
+                            ? "Lernziel"
+                            : "Notiz"}
+                    </Label>
+                    <div className="flex flex-col gap-1">
+                        <Input
+                            id="note"
+                            type="text"
+                            defaultValue={note}
+                            onChange={(e) => setNote(e.target.value)}
+                            placeholder="Notiz"
+                            className={fieldErrors.note ? "border-red-500" : ""}
+                        />
+                        {fieldErrors.note && (
+                            <p className="text-xs text-red-500">{fieldErrors.note}</p>
+                        )}
+                    </div>
                 </div>
 
                 <div className={"mt-2"}>
@@ -258,9 +282,13 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
 const slotName = (slot: EventSlotPublicListData): string => {
     const text = `${slot.title ?? "Kein Titel"}`;
 
-    return slot.recurrenceType === RecurrenceType.ONCE
+    const textWithTime = slot.recurrenceType === RecurrenceType.ONCE
         ? text + ` (${slot.slotStart?.toLocaleString()}, ${slot.durationMinutes} Min)`
         : slot.recurrenceType === RecurrenceType.WEEKLY
             ? text + ` (${dayOfWeekToString(slot.dayOfWeek)}, ${slot.startTime}, ${slot.durationMinutes} Min)`
             : text;
+
+    return slot.coaches.length > 0
+        ? textWithTime + ` (Coaches: ${slot.coaches.map((coach) => coach.coachName).join(", ")})`
+        : textWithTime;
 }

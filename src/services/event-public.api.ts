@@ -26,7 +26,7 @@ export async function fetchEventPublic(id: string): Promise<EventPublicDetailDat
 
     const { data, error } = await supabase
         .from('event')
-        .select('*, event_slot(*)')
+        .select('*, event_slot(*, event_slot_coach(*, coach(name)))')
         .eq('id', id)
         .single()
 

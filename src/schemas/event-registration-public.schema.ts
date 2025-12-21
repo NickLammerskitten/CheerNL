@@ -12,6 +12,7 @@ export const EventRegistrationPublicCreateSchema = z.object({
     last_name: z.string().min(2, { message: "Der Nachname darf nicht leer sein" }),
     email: z.email({ message: "Die E-Mail Adresse muss valide sein."}),
     phone: z.string().regex(phoneRegex, "Die Telefonnummer muss valide sein"),
+    note: z.string().nullable(),
 })
 
 export type EventRegistrationPublicData = z.infer<typeof EventRegistrationPublicCreateSchema>;
