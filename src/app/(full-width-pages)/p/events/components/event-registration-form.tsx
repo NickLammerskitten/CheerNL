@@ -152,27 +152,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                             <p className="text-xs text-red-500">{fieldErrors.event_slot_id}</p>
                         )}
                     </div>
-
-                    {slot && (
-                        <>
-                            <div></div>
-                            <div>
-                                {
-                                    "Titel: " + slotTitle(event.slots.find((slotEntry) => slotEntry.id === slot)!)
-                                }<br />
-
-                                {
-                                    "Zeit: " + (slotTime(event.slots.find((slotEntry) => slotEntry.id === slot)!)
-                                        ?? "Keine Zeit")
-                                }<br />
-
-                                {
-                                    "Coaches: " + (slotCoaches(event.slots.find((slotEntry) => slotEntry.id === slot)!)
-                                        ?? "Keine Coaches")
-                                }
-                            </div>
-                        </>
-                    )}
+                    <SlotDetails slot={event.slots.find(s => s.id === slot)} />
 
                     <Label
                         htmlFor="firstName"
@@ -297,6 +277,23 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                     </button>
                 </div>
             </form>
+        </>
+    )
+}
+
+const SlotDetails = ({ slot }: { slot?: EventSlotPublicListData }) => {
+    if (!slot) {
+        return null;
+    }
+
+    return (
+        <>
+            <div></div>
+            <div>
+                {"Titel: " + slotTitle(slot)}<br />
+                {"Zeit: " + (slotTime(slot) ?? "Keine Zeit")}<br />
+                {"Coaches: " + (slotCoaches(slot) ?? "Keine Coaches")}
+            </div>
         </>
     )
 }
