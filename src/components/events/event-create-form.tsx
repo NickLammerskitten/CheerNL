@@ -2,20 +2,21 @@
 
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
+import RichTextEditor, { RichTextEditorHandle } from "@/components/form/richt-text-editor";
 import Button from "@/components/ui/button/Button";
 import { EventCreateSchema } from "@/schemas/event.schema";
 import { saveEvent } from "@/services/event.api";
 import { EventType } from "@/types/event-type";
 import { toDateTimeLocalString } from "@/utils/date-time-to-locale-string";
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 export default function EventCreateForm() {
     const router = useRouter();
+    const editorRef = useRef<RichTextEditorHandle>(null);
 
     const [title, setTitle] = useState<string>("");
     const [type, setType] = useState<EventType>(EventType.TUMBLINGClASS);
-    const [description, setDescription] = useState<string | undefined>(undefined);
     const [regFrom, setRegFrom] = useState<string>(toDateTimeLocalString(new Date()));
     const [regTill, setRegTill] = useState<string>(toDateTimeLocalString(new Date()));
 
@@ -23,15 +24,21 @@ export default function EventCreateForm() {
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
 
+    const handleGetDescription = () => {
+        return editorRef.current?.getContent();
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
         setFieldErrors({});
 
+        const description = handleGetDescription();
+
         const rawData = {
             title: title,
             type: type.toString(),
-            description: description === "" || description === undefined ? null : description,
+            description: description ?? "",
             registration_from: regFrom,
             registration_till: regTill,
         };
@@ -117,13 +124,7 @@ export default function EventCreateForm() {
                     className="self-start pt-3 dark:text-white/70"
                 >Beschreibung</Label>
                 <div className="flex flex-col gap-1">
-                    <Input
-                        id="description"
-                        defaultValue={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Keine Beschreibung"
-                        className={fieldErrors.description ? "border-red-500" : ""}
-                    />
+                    <RichTextEditor ref={editorRef} />
                     {fieldErrors.description && (
                         <p className="text-xs text-red-500">{fieldErrors.description}</p>
                     )}

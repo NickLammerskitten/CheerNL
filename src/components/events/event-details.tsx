@@ -1,5 +1,8 @@
 import { EventDetailData } from "@/schemas/event.schema";
 import { EventType } from "@/types/event-type";
+import React from "react";
+
+import 'quill/dist/quill.snow.css';
 
 interface EventDetailsProps {
     event: EventDetailData
@@ -15,8 +18,11 @@ export default function EventDetails({ event }: EventDetailsProps) {
             </div>
 
             <div className="font-medium dark:text-white/70">Beschreibung</div>
-            <div className="dark:text-white/90">
-                {event.description ?? 'Keine Beschreibung'}
+            <div className="ql-snow">
+                <div
+                    className="ql-editor dark:text-white/90"
+                    dangerouslySetInnerHTML={{ __html: event.description ?? 'Keine Beschreibung' }}
+                />
             </div>
 
             <div className="font-medium dark:text-white/70">Registrierung</div>

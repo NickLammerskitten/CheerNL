@@ -12,7 +12,7 @@ export default function PublicPage() {
             title={"Willkommen bei CLE"}
         >
             <div className={"flex flex-col gap-3"}>
-                <p>
+                <p className={"dark:text-white/90"}>
                     Hier kannst du deine Anmeldungen zu den Tumbling Classes verwalten.
                 </p>
 

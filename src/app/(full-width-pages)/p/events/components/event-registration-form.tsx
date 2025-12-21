@@ -14,6 +14,8 @@ import { RecurrenceType } from "@/types/recurrence-type";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
 import React, { useState } from "react";
 
+import 'quill/dist/quill.snow.css';
+
 interface EventRegistrationFormProps {
     event: EventPublicDetailData;
     teams: TeamPublicListData[];
@@ -110,9 +112,12 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
 
     return (
         <>
-            <span>
-                Beschreibung: {event.description ?? "Keine Beschreibung"}
-            </span>
+            <div className="ql-snow">
+                <div
+                    className="ql-editor dark:text-white/90"
+                    dangerouslySetInnerHTML={{ __html: event.description ?? 'Keine Beschreibung' }}
+                />
+            </div>
 
             <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-5">

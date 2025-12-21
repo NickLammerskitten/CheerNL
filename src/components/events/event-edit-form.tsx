@@ -2,13 +2,14 @@
 
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
+import RichTextEditor, { RichTextEditorHandle } from "@/components/form/richt-text-editor";
 import Button from "@/components/ui/button/Button";
 import { EventDetailData, EventUpdateSchema } from "@/schemas/event.schema";
 import { saveEvent } from "@/services/event.api";
 import { EventType } from "@/types/event-type";
 import { toDateTimeLocalString } from "@/utils/date-time-to-locale-string";
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 interface EventEditFormProps {
     event: EventDetailData;
@@ -16,10 +17,10 @@ interface EventEditFormProps {
 
 export default function EventEditForm({ event }: EventEditFormProps) {
     const router = useRouter();
+    const editorRef = useRef<RichTextEditorHandle>(null);
 
     const [title, setTitle] = useState(event.title);
     const [type, setType] = useState(event.type);
-    const [description, setDescription] = useState(event.description ?? "");
     const [regFrom, setRegFrom] = useState(toDateTimeLocalString(event.registrationFrom));
     const [regTill, setRegTill] = useState(toDateTimeLocalString(event.registrationTill));
 
@@ -27,16 +28,22 @@ export default function EventEditForm({ event }: EventEditFormProps) {
     const [fieldErrors, setFieldErrors] = useState<Record<string, string | undefined>>({});
     const [loading, setLoading] = useState(false);
 
+    const handleGetDescription = () => {
+        return editorRef.current?.getContent();
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
         setFieldErrors({});
 
+        const description = handleGetDescription();
+
         const rawData = {
             id: event.id,
             title: title,
             type: type.toString(),
-            description: description === "" ? null : description,
+            description: description ?? "",
             registration_from: regFrom,
             registration_till: regTill,
         };
@@ -122,12 +129,9 @@ export default function EventEditForm({ event }: EventEditFormProps) {
                     className="self-start pt-3 dark:text-white/70"
                 >Beschreibung</Label>
                 <div className="flex flex-col gap-1">
-                    <Input
-                        id="description"
-                        defaultValue={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Keine Beschreibung"
-                        className={fieldErrors.description ? "border-red-500" : ""}
+                    <RichTextEditor
+                        ref={editorRef}
+                        defaultValue={event.description ?? undefined}
                     />
                     {fieldErrors.description && (
                         <p className="text-xs text-red-500">{fieldErrors.description}</p>
