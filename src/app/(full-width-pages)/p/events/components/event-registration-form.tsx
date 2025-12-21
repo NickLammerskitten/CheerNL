@@ -152,6 +152,28 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                             <p className="text-xs text-red-500">{fieldErrors.event_slot_id}</p>
                         )}
                     </div>
+
+                    {slot && (
+                        <>
+                            <div></div>
+                            <div>
+                                {
+                                    "Titel: " + slotTitle(event.slots.find((slotEntry) => slotEntry.id === slot)!)
+                                }<br />
+
+                                {
+                                    "Zeit: " + (slotTime(event.slots.find((slotEntry) => slotEntry.id === slot)!)
+                                        ?? "Keine Zeit")
+                                }<br />
+
+                                {
+                                    "Coaches: " + (slotCoaches(event.slots.find((slotEntry) => slotEntry.id === slot)!)
+                                        ?? "Keine Coaches")
+                                }
+                            </div>
+                        </>
+                    )}
+
                     <Label
                         htmlFor="firstName"
                         className="dark:text-white/70"
@@ -280,15 +302,31 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
 }
 
 const slotName = (slot: EventSlotPublicListData): string => {
-    const text = `${slot.title ?? "Kein Titel"}`;
+    const title = slotTitle(slot);
+    const time = slotTime(slot);
+    const coaches = slotCoaches(slot);
 
-    const textWithTime = slot.recurrenceType === RecurrenceType.ONCE
-        ? text + ` (${slot.slotStart?.toLocaleString()}, ${slot.durationMinutes} Min)`
+    const textWithTime = time ? title + ` (${time})` : title;
+
+    return coaches ? textWithTime + ` (Coaches: ${coaches})` : textWithTime;
+}
+
+const slotTitle = (slot: EventSlotPublicListData) => {
+    return `${slot.title ?? "Kein Titel"}`
+}
+
+const slotTime = (slot: EventSlotPublicListData) => {
+    return slot.recurrenceType === RecurrenceType.ONCE
+        ? `${slot.slotStart?.toLocaleString()}, ${slot.durationMinutes} Min`
         : slot.recurrenceType === RecurrenceType.WEEKLY
-            ? text + ` (${dayOfWeekToString(slot.dayOfWeek)}, ${slot.startTime}, ${slot.durationMinutes} Min)`
-            : text;
+            ? `${dayOfWeekToString(slot.dayOfWeek)}, ${slot.startTime}, ${slot.durationMinutes} Min`
+            : null;
+}
 
-    return slot.coaches.length > 0
-        ? textWithTime + ` (Coaches: ${slot.coaches.map((coach) => coach.coachName).join(", ")})`
-        : textWithTime;
+const slotCoaches = (slot: EventSlotPublicListData) => {
+    if (slot.coaches.length <= 0) {
+        return null
+    }
+
+    return slot.coaches.map((coach) => coach.coachName).join(", ")
 }
