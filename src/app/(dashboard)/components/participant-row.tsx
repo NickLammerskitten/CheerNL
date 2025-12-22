@@ -20,6 +20,16 @@ export const ParticipantRow: React.FC<ParticipantRowProps> = ({ participant: par
                     {participant.email && (
                         <p className="text-xs text-gray-400 truncate">{participant.email}</p>
                     )}
+                    <div className="block sm:hidden">
+                        {participant.phone && (
+                            <a
+                                href={`tel:${participant.phone}`}
+                                className="text-xs text-gray-400 hover:text-brand-600 flex"
+                            >
+                                {participant.phone}
+                            </a>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -38,7 +48,10 @@ export const ParticipantRow: React.FC<ParticipantRowProps> = ({ participant: par
             {/* Telefon Button */}
             <div className="shrink-0 text-right hidden sm:block">
                 {participant.phone && (
-                    <a href={`tel:${participant.phone}`} className="text-xs text-gray-400 hover:text-brand-600 flex items-center gap-1 justify-end">
+                    <a
+                        href={`tel:${participant.phone}`}
+                        className="text-xs text-gray-400 hover:text-brand-600 flex items-center gap-1 justify-end"
+                    >
                         📞 {participant.phone}
                     </a>
                 )}
