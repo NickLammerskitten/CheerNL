@@ -5,7 +5,7 @@ import { User } from "@supabase/auth-js";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
-import { CalenderIcon, GridIcon, GroupIcon, ListIcon, LockIcon, ShootingStarIcon } from "../icons";
+import { CalenderIcon, GridIcon, GroupIcon, LockIcon, ShootingStarIcon } from "../icons";
 
 type NavItem = {
     name: string;
@@ -24,11 +24,6 @@ const navItems: NavItem[] = [
         icon: <CalenderIcon />,
         name: "Events",
         path: "/events",
-    },
-    {
-        icon: <ListIcon />,
-        name: "Anmeldungen",
-        path: "/registrations",
     },
 ];
 
