@@ -93,7 +93,15 @@ export function mapSlotsToOccurrences(
         }
     }
 
-    return occurrences.sort((a, b) => a.date.getTime() - b.date.getTime());
+    return occurrences.sort((a, b) => {
+        const dateDiff = a.date.getTime() - b.date.getTime();
+
+        if (dateDiff !== 0) {
+            return dateDiff;
+        }
+
+        return a.startTime.localeCompare(b.startTime);
+    });
 }
 
 function calculateEndTime(startTime: string | null, durationMinutes: number): string {
