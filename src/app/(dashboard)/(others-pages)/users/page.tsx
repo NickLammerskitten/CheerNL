@@ -8,7 +8,7 @@ export default async function UsersPage() {
     const users = await fetchAllUsers();
 
     return (
-        <ComponentCard title={"Teams"}>
+        <ComponentCard title={"Benutzer"}>
             <AddUserModal/>
 
             <UsersTable users={users}/>
