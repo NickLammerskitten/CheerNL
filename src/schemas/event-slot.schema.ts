@@ -1,4 +1,8 @@
 import { ApiSlotCoachListDataSchema, EventSlotCoachListDataSchema } from "@/schemas/event-slot-coach.schema";
+import {
+    ApiSlotRegistrationListDataSchema,
+    EventSlotRegistrationListDataSchema,
+} from "@/schemas/event-slot-registration.schema";
 import { DayOfWeek } from "@/types/day-of-week";
 import { RecurrenceType } from "@/types/recurrence-type";
 import { z } from "zod";
@@ -25,6 +29,34 @@ export const ApiSlotListDataSchema = z.object({
 });
 
 export const EventSlotListItemDataSchema = ApiSlotListDataSchema.transform((apiData) => {
+    return mapBaseSlotData(apiData);
+})
+
+export const EventSlotListDataSchema = z.array(EventSlotListItemDataSchema);
+
+export type EventSlotListData = z.infer<typeof EventSlotListItemDataSchema>;
+
+// --- DETAIL VIEW ---
+export const ApiSlotDetailDataSchema = ApiSlotListDataSchema.extend({
+    event_registration: z.array(ApiSlotRegistrationListDataSchema).nullable(),
+});
+
+export const EventSlotDetailDataSchema = ApiSlotDetailDataSchema.transform((apiData) => {
+    const baseData = mapBaseSlotData(apiData);
+
+    return {
+        ...baseData,
+        registrations: apiData.event_registration
+            ? EventSlotRegistrationListDataSchema.parse(apiData.event_registration)
+            : [],
+    };
+});
+
+export const EventSlotDetailDataSchemaList = z.array(EventSlotDetailDataSchema);
+
+export type EventSlotDetailData = z.infer<typeof EventSlotDetailDataSchema>;
+
+const mapBaseSlotData = (apiData: z.infer<typeof ApiSlotListDataSchema>) => {
     return {
         id: apiData.id,
         eventId: apiData.event_id,
@@ -36,14 +68,10 @@ export const EventSlotListItemDataSchema = ApiSlotListDataSchema.transform((apiD
         slotEnd: apiData.slot_end,
         dayOfWeek: apiData.day_of_week as DayOfWeek,
         startTime: apiData.start_time,
-        coaches: EventSlotCoachListDataSchema.parse(apiData.event_slot_coach),
+        coaches: EventSlotCoachListDataSchema.parse(apiData.event_slot_coach ?? []),
         createdAt: apiData.created_at,
     };
-})
-
-export const EventSlotListDataSchema = z.array(EventSlotListItemDataSchema);
-
-export type EventSlotListData = z.infer<typeof EventSlotListItemDataSchema>;
+};
 
 /* Create */
 export const EventSlotCreateSchema = z.object({

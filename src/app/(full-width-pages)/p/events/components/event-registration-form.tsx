@@ -5,7 +5,7 @@ import Label from "@/components/form/Label";
 import Select, { Option } from "@/components/form/Select";
 import Alert from "@/components/ui/alert/Alert";
 import { EventPublicDetailData } from "@/schemas/event-public.schema";
-import { EventRegistrationPublicCreateSchema } from "@/schemas/event-registration-public.schema";
+import { EventSlotRegistrationPublicCreateSchema } from "@/schemas/event-slot-registration-public.schema";
 import { EventSlotPublicListData } from "@/schemas/event-slot-public.schema";
 import { TeamPublicListData } from "@/schemas/team-public.schema";
 import { saveEventRegistration } from "@/services/event-registration-public.api";
@@ -77,7 +77,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
             note: note ?? null,
         };
 
-        const result = EventRegistrationPublicCreateSchema.safeParse(rawData);
+        const result = EventSlotRegistrationPublicCreateSchema.safeParse(rawData);
 
         if (!result.success) {
             setLoading(false);

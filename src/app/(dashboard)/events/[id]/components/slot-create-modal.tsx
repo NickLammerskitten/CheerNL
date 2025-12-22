@@ -27,7 +27,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
 
     const [title, setTitle] = useState<string | undefined>()
     const [location, setLocation] = useState<string | undefined>()
-    const [durationMinutes, setDurationMinutes] = useState<number>(60)
+    const [durationMinutes, setDurationMinutes] = useState<number>(90)
     const [recurrenceType, setRecurrenceType] = useState<RecurrenceType>(RecurrenceType.WEEKLY)
     const [slotStart, setSlotStart] = useState<string | undefined>(undefined)
     const [slotEnd, setSlotEnd] = useState<string | undefined>(undefined)

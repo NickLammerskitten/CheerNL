@@ -1,12 +1,12 @@
+import { EventSlotOccurrence } from "@/schemas/event-slot-occurence.schema";
 import { format, isToday } from "date-fns";
 import { de } from "date-fns/locale";
 import React from "react";
 import { EventCard } from "./event-card";
-import { DashboardEventInstance } from "./types";
 
 interface EventListProps {
     selectedDate: Date;
-    events: DashboardEventInstance[];
+    events: EventSlotOccurrence[];
     isLoading: boolean;
 }
 

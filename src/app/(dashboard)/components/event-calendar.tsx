@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import { EventSlotOccurrence } from "@/schemas/event-slot-occurence.schema";
 import {
     addMonths,
     eachDayOfInterval,
@@ -12,12 +12,12 @@ import {
     startOfWeek,
     subMonths,
 } from "date-fns";
-import { DashboardEventInstance } from "./types";
-import { MiniCalendar } from "./mini-calendar";
+import React, { useMemo, useState } from "react";
 import { EventList } from "./event-list";
+import { MiniCalendar } from "./mini-calendar";
 
 interface TrainerDashboardProps {
-    events: DashboardEventInstance[];
+    events: EventSlotOccurrence[];
     currentDate: Date;
     onDateChange: (date: Date) => void;
     isLoading?: boolean;

@@ -1,14 +1,14 @@
 "use server";
 
 import {
-    EventRegistrationPublicCreateSchema,
+    EventSlotRegistrationPublicCreateSchema,
     EventRegistrationPublicData,
-} from "@/schemas/event-registration-public.schema";
+} from "@/schemas/event-slot-registration-public.schema";
 import { UpsertResponseSchema } from "@/schemas/upsert-response.schema";
 import { createClient } from "@/utils/supabase/server";
 
 export async function saveEventRegistration(newData: EventRegistrationPublicData): Promise<UpsertResponseSchema> {
-    if (!EventRegistrationPublicCreateSchema.safeParse(newData).success) {
+    if (!EventSlotRegistrationPublicCreateSchema.safeParse(newData).success) {
         return {
             success: false,
             id: null,

@@ -4,7 +4,7 @@ const phoneRegex = new RegExp(
     /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/,
 );
 
-export const EventRegistrationPublicCreateSchema = z.object({
+export const EventSlotRegistrationPublicCreateSchema = z.object({
     event_id: z.string().min(1),
     event_slot_id: z.string().min(1, { message: "Der Termin muss ausgewählt werden" }),
     team_id: z.string().min(1, { message: "Das Team muss ausgewählt werden" }),
@@ -15,4 +15,4 @@ export const EventRegistrationPublicCreateSchema = z.object({
     note: z.string().nullable(),
 })
 
-export type EventRegistrationPublicData = z.infer<typeof EventRegistrationPublicCreateSchema>;
+export type EventRegistrationPublicData = z.infer<typeof EventSlotRegistrationPublicCreateSchema>;

@@ -1,9 +1,9 @@
 import { ParticipantRow } from "@/app/(dashboard)/components/participant-row";
+import { EventSlotOccurrence } from "@/schemas/event-slot-occurence.schema";
 import React from "react";
-import { DashboardEventInstance } from "./types";
 
 interface EventCardProps {
-    event: DashboardEventInstance;
+    event: EventSlotOccurrence;
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event }) => {
@@ -17,17 +17,18 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
                             EVENT
                         </span>
                         <span className="text-sm text-gray-500 flex items-center gap-1">
-                            🕒 {event.startTime} Uhr ({event.durationMinutes} Min)
+                            🕒 {event.startTime} bis {event.endTime} Uhr
                         </span>
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                         {event.title}
-                        {event.subTitle && <span className="text-gray-400 font-normal"> - {event.subTitle}</span>}
                     </h3>
                     <p className="text-sm text-gray-500 mt-1">
-                        📍 {event.location}
-                        {event.coaches.length > 0 && (
-                            <span className="ml-3 text-gray-400">👤 {event.coaches.join(", ")}</span>
+                        📍 {event.location ?? "Kein Ort angegeben"}
+                        {event.coaches?.length > 0 && (
+                            <span className="ml-3 text-gray-400">
+                                👤 {event.coaches.map((coach) => coach.coachName).join(", ")}
+                            </span>
                         )}
                     </p>
                 </div>
@@ -35,7 +36,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
                 {/* Stats Counter */}
                 <div className="text-center bg-gray-50 dark:bg-gray-800 rounded-lg p-3 min-w-[80px]">
                     <span className="block text-xl font-bold text-gray-800 dark:text-white">
-                        {event.participants.length}
+                        {event.registrations.length}
                     </span>
                     <span className="text-[10px] text-gray-400 uppercase font-medium">Teilnehmer</span>
                 </div>
@@ -47,10 +48,13 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
                     <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Teilnehmerliste</h4>
                 </div>
 
-                {event.participants.length > 0 ? (
+                {event.registrations.length > 0 ? (
                     <ul className="divide-y divide-gray-100 dark:divide-gray-800">
-                        {event.participants.map((p) => (
-                            <ParticipantRow key={p.id} participant={p} />
+                        {event.registrations.map((participant) => (
+                            <ParticipantRow
+                                key={participant.id}
+                                participant={participant}
+                            />
                         ))}
                     </ul>
                 ) : (
