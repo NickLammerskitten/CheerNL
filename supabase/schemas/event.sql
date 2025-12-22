@@ -30,6 +30,7 @@ create table public.event_slot
     duration_minutes smallint                                           not null,
     recurrence_type  recurrence_type                                    not null,
     slot_start       timestamp with time zone,
+    slot_end         timestamp with time zone,
     day_of_week      public.day_of_week,
     start_time       time with time zone,
     created_at       timestamp with time zone default now()             not null

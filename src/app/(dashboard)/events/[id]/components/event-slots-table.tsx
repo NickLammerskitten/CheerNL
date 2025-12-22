@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components
 import { EventSlotListData } from "@/schemas/event-slot.schema";
 import { RecurrenceType } from "@/types/recurrence-type";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
+import { format } from "date-fns";
 
 interface EventSlotsTableProps {
     slots: EventSlotListData[]
@@ -88,10 +89,13 @@ function SlotTimeTableCell({ slot }: SlotTimeTableCellProps) {
         <TableCell dataLabel={"Zeitpunkt"}>
             {slot.recurrenceType === RecurrenceType.ONCE ? (
                 <>
-                    {slot.slotStart?.toLocaleDateString()}, {slot.durationMinutes} Minuten
+                    {format(slot.slotStart!, "dd.MM.yyyy HH:mm")} Uhr, {slot.durationMinutes} Minuten
                 </>
             ) : slot.recurrenceType === RecurrenceType.WEEKLY ? (
                     <>
+                        {slot.slotStart ? format(slot.slotStart, "dd.MM.yyyy") : ""}
+                        {" - "}
+                        {slot.slotEnd ? format(slot.slotEnd, "dd.MM.yyyy") : ""},<br />
                         {dayOfWeekToString(slot.dayOfWeek)} um {slot.startTime},<br />
                         {slot.durationMinutes} Minuten
                     </>

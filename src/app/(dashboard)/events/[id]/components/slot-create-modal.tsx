@@ -30,6 +30,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
     const [durationMinutes, setDurationMinutes] = useState<number>(60)
     const [recurrenceType, setRecurrenceType] = useState<RecurrenceType>(RecurrenceType.WEEKLY)
     const [slotStart, setSlotStart] = useState<string | undefined>(undefined)
+    const [slotEnd, setSlotEnd] = useState<string | undefined>(undefined)
     const [dayOfWeek, setDayOfWeek] = useState<DayOfWeek | undefined>(undefined)
     const [startTime, setStartTime] = useState<string | undefined>(undefined)
     const [selectedCoaches, setSelectedCoaches] = useState<string[]>([]);
@@ -54,6 +55,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
         setDurationMinutes(90);
         setRecurrenceType(RecurrenceType.WEEKLY);
         setSlotStart(undefined);
+        setSlotEnd(undefined);
         setDayOfWeek(undefined);
         setStartTime(undefined);
         setSelectedCoaches([]);
@@ -79,6 +81,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
             duration_minutes: durationMinutes,
             recurrence_type: recurrenceType,
             slot_start: slotStart ?? null,
+            slot_end: slotEnd ?? null,
             day_of_week: dayOfWeek ?? DayOfWeek.MONDAY,
             start_time: startTime ?? null,
             coach_ids: selectedCoaches.length > 0 ? selectedCoaches : null,
@@ -199,6 +202,40 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
 
                         {recurrenceType === RecurrenceType.WEEKLY ? (
                             <>
+                                <Label
+                                    htmlFor="slotStart"
+                                    className="dark:text-white/70"
+                                >Von</Label>
+                                <div className="flex flex-col gap-1">
+                                    <Input
+                                        id="slotStart"
+                                        type="date"
+                                        defaultValue={slotStart}
+                                        onChange={(e) => setSlotStart(e.target.value)}
+                                        className={fieldErrors.slot_start ? "border-red-500" : ""}
+                                    />
+                                    {fieldErrors.slot_start && (
+                                        <p className="text-xs text-red-500">{fieldErrors.slot_start}</p>
+                                    )}
+                                </div>
+
+                                <Label
+                                    htmlFor="slotEnd"
+                                    className="dark:text-white/70"
+                                >Bis</Label>
+                                <div className="flex flex-col gap-1">
+                                    <Input
+                                        id="slotEnd"
+                                        type="date"
+                                        defaultValue={slotEnd}
+                                        onChange={(e) => setSlotEnd(e.target.value)}
+                                        className={fieldErrors.slot_end ? "border-red-500" : ""}
+                                    />
+                                    {fieldErrors.slot_end && (
+                                        <p className="text-xs text-red-500">{fieldErrors.slot_end}</p>
+                                    )}
+                                </div>
+
                                 <Label
                                     htmlFor="dayOfWeek"
                                     className="dark:text-white/70"

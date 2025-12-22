@@ -11,6 +11,7 @@ export const ApiSlotListDataSchema = z.object({
     duration_minutes: z.int(),
     recurrence_type: z.string(),
     slot_start: z.coerce.date().nullable(),
+    slot_end: z.coerce.date().nullable(),
     day_of_week: z.string().nullable(),
     start_time: z.string().nullable().transform((zeit) => {
         if (!zeit) {
@@ -32,6 +33,7 @@ export const EventSlotListItemDataSchema = ApiSlotListDataSchema.transform((apiD
         durationMinutes: apiData.duration_minutes,
         recurrenceType: apiData.recurrence_type as RecurrenceType,
         slotStart: apiData.slot_start,
+        slotEnd: apiData.slot_end,
         dayOfWeek: apiData.day_of_week as DayOfWeek,
         startTime: apiData.start_time,
         coaches: EventSlotCoachListDataSchema.parse(apiData.event_slot_coach),
@@ -51,6 +53,7 @@ export const EventSlotCreateSchema = z.object({
     duration_minutes: z.int().min(1, { message: "Die Dauer muss größer als 0 sein" }),
     recurrence_type: z.string(),
     slot_start: z.string().nullable(),
+    slot_end: z.string().nullable(),
     day_of_week: z.string().nullable(),
     start_time: z.string().nullable(),
     coach_ids: z.array(z.string()).nullable(),
@@ -59,12 +62,26 @@ export const EventSlotCreateSchema = z.object({
         const recurrenceType = data.recurrence_type as RecurrenceType;
 
         if (recurrenceType === RecurrenceType.WEEKLY) {
-            data.slot_start = null;
+            const hasRequiredFields =
+                data.slot_start !== null &&
+                data.slot_end !== null &&
+                data.day_of_week !== null &&
+                data.start_time !== null;
 
-            const dayOfWeekValid = data.day_of_week !== null
-            const startTimeValid = data.start_time !== null
-            return dayOfWeekValid && startTimeValid
+            if (!hasRequiredFields) {
+                return false;
+            }
+
+            const start = new Date(data.slot_start!);
+            const end = new Date(data.slot_end!);
+
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                return false;
+            }
+
+            return start < end;
         } else if (recurrenceType === RecurrenceType.ONCE) {
+            data.slot_end = null;
             data.day_of_week = null;
             data.start_time = null;
 
