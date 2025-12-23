@@ -147,7 +147,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
 
             <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-5">
-                    <Label>Team</Label>
+                    <Label>Team*</Label>
                     <div className="flex flex-col gap-1">
                         <Select
                             options={teamOptions}
@@ -160,7 +160,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                         )}
                     </div>
 
-                    <Label>{event.type === EventType.TUMBLINGClASS ? "Classes" : ""}</Label>
+                    <Label>{event.type === EventType.TUMBLINGClASS ? "Classes*" : ""}</Label>
                     <div>
                         <Select
                             options={slots}
@@ -177,7 +177,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                     <Label
                         htmlFor="firstName"
                         className="dark:text-white/70"
-                    >Vorname</Label>
+                    >Vorname*</Label>
                     <div className="flex flex-col gap-1">
                         <Input
                             id="firstName"
@@ -195,7 +195,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                     <Label
                         htmlFor="lastName"
                         className="dark:text-white/70"
-                    >Nachname</Label>
+                    >Nachname*</Label>
                     <div className="flex flex-col gap-1">
                         <Input
                             id="lastName"
@@ -213,7 +213,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                     <Label
                         htmlFor="email"
                         className="dark:text-white/70"
-                    >E-Mail</Label>
+                    >E-Mail*</Label>
                     <div className="flex flex-col gap-1">
                         <Input
                             id="email"
@@ -231,7 +231,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                     <Label
                         htmlFor="phone"
                         className="dark:text-white/70"
-                    >Telefonnummer</Label>
+                    >Telefonnummer*</Label>
                     <div className="flex flex-col gap-1">
                         <Input
                             id="phone"
@@ -279,13 +279,21 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                     )}
                 </div>
 
+                <p className={"mt-0.5 text-gray-600 dark:text-white/70"}>
+                    Wichtig: Mit Klick auf "Verbindlich anmelden" bestätige ich folgendes zur Kenntnis genommen zu haben:<br />
+                    - Bei einer zu geringen Teilnehmerzahl findet die jeweilige Tumbling Class nicht statt. In dem Fall
+                    einer kurzfristigen Absage, durch Krankheit der Trainer werdet ihr per Whatsapp informiert.<br />
+                    - Wenn ich krankheitsbedingt nicht teilnehmen kann, dann melde ich mich spätestens 24 Stunden vorher
+                    ab.
+                </p>
+
                 <div className="flex justify-end gap-3 mt-6">
                     <button
                         type="submit"
                         disabled={loading}
                         className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition w-full sm:w-auto bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 px-4 py-3 text-sm"
                     >
-                        {loading ? "Speichern..." : "Anmelden"}
+                        {loading ? "Speichern..." : "Verbindlich anmelden"}
                     </button>
                 </div>
             </form>
