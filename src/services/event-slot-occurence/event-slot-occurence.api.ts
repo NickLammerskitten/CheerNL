@@ -1,28 +1,26 @@
 "use server"
 
 import { EventSlotOccurrence } from "@/schemas/event-slot-occurence.schema";
-import { EventSlotDetailDataSchemaList } from "@/schemas/event-slot.schema";
-import { EventListDataSchema } from "@/schemas/event.schema";
-import { mapSlotsToOccurrences } from "@/services/event-slot-occurence/occurence-mapper";
+import { EventSlotDetailData, EventSlotDetailDataSchemaList } from "@/schemas/event-slot.schema";
+import { EventListData, EventListDataSchema } from "@/schemas/event.schema";
+import { mapSlotsToOccurrences, SlotWithEvent } from "@/services/event-slot-occurence/occurrence-mapper";
 import { createClient } from "@/utils/supabase/server";
 
-export type PaginatedEventSlotOccurenceListResponse = {
+export type EventSlotOccurrenceResponse = {
     data: EventSlotOccurrence[];
     totalCount: number;
 }
 
-export async function fetchEventSlotOccurences(from: Date, to: Date): Promise<PaginatedEventSlotOccurenceListResponse> {
+export async function fetchEventSlotOccurrences(from: Date, to: Date): Promise<EventSlotOccurrenceResponse> {
     const supabase = await createClient();
 
     const fromFilter = from.toISOString();
     const toFilter = to.toISOString();
 
-    console.log("fetchEventSlotOccurences", from, to, fromFilter, toFilter);
-
     const onceCondition = `and(recurrence_type.eq.ONCE,slot_start.gte.${fromFilter},slot_start.lte.${toFilter})`;
     const weeklyCondition = `and(recurrence_type.eq.WEEKLY,slot_start.lte.${toFilter},slot_end.gte.${fromFilter})`;
 
-    const { data: slotsRawData, count } = await supabase
+    const { data: slotsRawData, count, error: eventSlotError } = await supabase
         .from("event_slot")
         .select(`
             *,
@@ -30,6 +28,10 @@ export async function fetchEventSlotOccurences(from: Date, to: Date): Promise<Pa
             event_registration(*, team(name))
         `, { count: 'exact' })
         .or(`${onceCondition},${weeklyCondition}`);
+
+    if (eventSlotError) {
+        return emptyResponse();
+    }
 
     const slotData = EventSlotDetailDataSchemaList.parse(slotsRawData);
 
@@ -40,16 +42,31 @@ export async function fetchEventSlotOccurences(from: Date, to: Date): Promise<Pa
         .select('*')
         .filter('id', 'in', '(' + eventIds + ')');
 
-    console.log("eventsRawData", eventsRawData, eventsError);
-
     if (eventsError) {
+        return emptyResponse();
     }
-    const eventData = EventListDataSchema.parse(eventsRawData);
 
-    const occurrences = mapSlotsToOccurrences(eventData, slotData, from, to);
+    const eventData = EventListDataSchema.parse(eventsRawData);
+    const slotsWithEvents = matchEventToSlot(eventData, slotData);
+
+    const occurrences = mapSlotsToOccurrences(slotsWithEvents, from, to);
 
     return {
         data: occurrences,
         totalCount: count,
-    } as PaginatedEventSlotOccurenceListResponse;
+    } as EventSlotOccurrenceResponse;
+}
+
+function emptyResponse() {
+    return {
+        data: [],
+        totalCount: 0,
+    } as EventSlotOccurrenceResponse;
+}
+
+function matchEventToSlot(events: EventListData[], slots: EventSlotDetailData[]): SlotWithEvent[] {
+    return slots.map((slot) => {
+        const parentEvent = events.find((e) => e.id === slot.eventId);
+        return parentEvent ? { slot, event: parentEvent } : null;
+    }).filter((item): item is { slot: EventSlotDetailData; event: EventListData } => item !== null);
 }

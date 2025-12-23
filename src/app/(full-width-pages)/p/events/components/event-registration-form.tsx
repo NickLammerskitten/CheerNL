@@ -277,14 +277,6 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                             message={error}
                         ></Alert>
                     )}
-
-                    {success && (
-                        <Alert
-                            variant={"success"}
-                            title={"Erfolgreich"}
-                            message={"Du hast dich erfolgreich registriert"}
-                        />
-                    )}
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6">
@@ -293,7 +285,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                         disabled={loading}
                         className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition w-full sm:w-auto bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 px-4 py-3 text-sm"
                     >
-                        {loading ? "Speichern..." : "Änderungen speichern"}
+                        {loading ? "Speichern..." : "Anmelden"}
                     </button>
                 </div>
             </form>

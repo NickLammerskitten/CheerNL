@@ -4,6 +4,7 @@ import Button from "@/components/ui/button/Button";
 import { EventPublicDetailData } from "@/schemas/event-public.schema";
 import { generateIcsData } from "@/services/event-slot-occurence/slot-to-ics-mapper";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
+import { calculateEndTime } from "@/utils/end-time-calculator";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import React from "react";
@@ -87,7 +88,7 @@ export const RegistrationSuccess: React.FC<RegistrationSuccessProps> = ({
                         )}
                     </p>
                     <p className="text-sm text-gray-600">
-                        {slot.startTime?.slice(0, 5)} Uhr ({slot.durationMinutes} Minuten)
+                        {slot.startTime?.slice(0, 5)} - {calculateEndTime(slot.startTime, slot.durationMinutes)} Uhr
                     </p>
                 </div>
                 <div className="mb-3">
