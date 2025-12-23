@@ -87,6 +87,7 @@ export const EventSlotCreateSchema = z.object({
     day_of_week: z.string().nullable(),
     start_time: z.string().nullable(),
     coach_ids: z.array(z.string()).nullable(),
+    max_registrations: z.int().min(1, { message: "Die Maximale Teilnehmeranzahl muss größer als 0 sein" }).nullable(),
 })
     .refine((data) => {
         const recurrenceType = data.recurrence_type as RecurrenceType;

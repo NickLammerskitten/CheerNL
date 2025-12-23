@@ -34,6 +34,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
     const [dayOfWeek, setDayOfWeek] = useState<DayOfWeek | undefined>(undefined)
     const [startTime, setStartTime] = useState<string | undefined>(undefined)
     const [selectedCoaches, setSelectedCoaches] = useState<string[]>([]);
+    const [maxRegistrations, setMaxRegistrations] = useState<number | undefined>(undefined);
 
     const [error, setError] = useState<string | null>(null);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -59,6 +60,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
         setDayOfWeek(undefined);
         setStartTime(undefined);
         setSelectedCoaches([]);
+        setMaxRegistrations(undefined);
 
         setError(null);
         setFieldErrors({});
@@ -74,6 +76,8 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
         setError(null);
         setFieldErrors({});
 
+        console.log(maxRegistrations)
+
         const rawData = {
             event_id: eventId,
             title: title ?? null,
@@ -85,6 +89,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
             day_of_week: dayOfWeek ?? DayOfWeek.MONDAY,
             start_time: startTime ?? null,
             coach_ids: selectedCoaches.length > 0 ? selectedCoaches : null,
+            max_registrations: maxRegistrations ?? null,
         }
 
         const result = EventSlotCreateSchema.safeParse(rawData);
@@ -176,7 +181,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
                         <Label
                             htmlFor="type"
                             className="dark:text-white/70"
-                        >Typ</Label>
+                        >Typ*</Label>
                         <div className="flex flex-col gap-1">
                             <select
                                 id="type"
@@ -205,7 +210,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
                                 <Label
                                     htmlFor="slotStart"
                                     className="dark:text-white/70"
-                                >Von</Label>
+                                >Von*</Label>
                                 <div className="flex flex-col gap-1">
                                     <Input
                                         id="slotStart"
@@ -222,7 +227,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
                                 <Label
                                     htmlFor="slotEnd"
                                     className="dark:text-white/70"
-                                >Bis</Label>
+                                >Bis*</Label>
                                 <div className="flex flex-col gap-1">
                                     <Input
                                         id="slotEnd"
@@ -239,7 +244,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
                                 <Label
                                     htmlFor="dayOfWeek"
                                     className="dark:text-white/70"
-                                >Wochentag</Label>
+                                >Wochentag*</Label>
                                 <div className="flex flex-col gap-1">
                                     <select
                                         id="type"
@@ -264,7 +269,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
                                 <Label
                                     htmlFor="startTime"
                                     className="dark:text-white/70"
-                                >Startzeit</Label>
+                                >Startzeit*</Label>
                                 <div className="flex flex-col gap-1">
                                     <Input
                                         id="startTime"
@@ -283,7 +288,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
                                 <Label
                                     htmlFor="slotStart"
                                     className="dark:text-white/70"
-                                >Ereignis Start</Label>
+                                >Ereignis Start*</Label>
                                 <div className="flex flex-col gap-1">
                                     <Input
                                         id="slotStart"
@@ -302,13 +307,13 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
                         <Label
                             htmlFor="duration"
                             className="dark:text-white/70"
-                        >Dauer (in Minuten)</Label>
+                        >Dauer (in Minuten)*</Label>
                         <div className="flex flex-col gap-1">
                             <Input
                                 id="duration"
                                 type="number"
                                 defaultValue={durationMinutes}
-                                onChange={(e) => setDurationMinutes(parseInt(e.target.value))}
+                                onChange={(e) => setDurationMinutes(parseInt(e.target.value) || 0)}
                                 placeholder="0"
                                 className={fieldErrors.duration_minutes ? "border-red-500" : ""}
                             />
@@ -335,6 +340,24 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
                                 </div>
                             </>
                         )}
+
+                        <Label
+                            htmlFor="maxRegistrations"
+                            className="dark:text-white/70"
+                        >Maximale Teilnehmer</Label>
+                        <div className="flex flex-col gap-1">
+                            <Input
+                                id="maxRegistrations"
+                                type="number"
+                                defaultValue={maxRegistrations}
+                                onChange={(e) => setMaxRegistrations(parseInt(e.target.value) || undefined)}
+                                placeholder="0"
+                                className={fieldErrors.max_registrations ? "border-red-500" : ""}
+                            />
+                            {fieldErrors.max_registrations && (
+                                <p className="text-xs text-red-500">{fieldErrors.max_registrations}</p>
+                            )}
+                        </div>
                     </div>
 
                     {error && (

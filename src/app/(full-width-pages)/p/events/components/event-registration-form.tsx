@@ -1,6 +1,7 @@
 "use client"
 
 import { RegistrationSuccess } from "@/app/(full-width-pages)/p/events/components/event-registration-success";
+import EventSlotRegistrationsLabel from "@/app/(full-width-pages)/p/events/components/event-slot-registrations-label";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Select, { Option } from "@/components/form/Select";
@@ -20,6 +21,7 @@ import 'quill/dist/quill.snow.css';
 
 interface EventRegistrationFormProps {
     event: EventPublicDetailData;
+    registrationCount: number;
     teams: TeamPublicListData[];
 }
 
@@ -280,7 +282,8 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                 </div>
 
                 <p className={"mt-0.5 text-gray-600 dark:text-white/70"}>
-                    Wichtig: Mit Klick auf "Verbindlich anmelden" bestätige ich folgendes zur Kenntnis genommen zu haben:<br />
+                    Wichtig: Mit Klick auf "Verbindlich anmelden" bestätige ich folgendes zur Kenntnis genommen zu
+                    haben:<br />
                     - Bei einer zu geringen Teilnehmerzahl findet die jeweilige Tumbling Class nicht statt. In dem Fall
                     einer kurzfristigen Absage, durch Krankheit der Trainer werdet ihr per Whatsapp informiert.<br />
                     - Wenn ich krankheitsbedingt nicht teilnehmen kann, dann melde ich mich spätestens 24 Stunden vorher
@@ -312,7 +315,11 @@ const SlotDetails = ({ slot }: { slot?: EventSlotPublicListData }) => {
             <div>
                 {"Titel: " + slotTitle(slot)}<br />
                 {"Zeit: " + (slotTime(slot) ?? "Keine Zeit")}<br />
-                {"Coaches: " + (slotCoaches(slot) ?? "Keine Coaches")}
+                {"Coaches: " + (slotCoaches(slot) ?? "Keine Coaches")}<br/>
+                <EventSlotRegistrationsLabel
+                    eventSlotId={slot.id}
+                    maxRegistrations={slot.maxRegistrations}
+                />
             </div>
         </>
     )

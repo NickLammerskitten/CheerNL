@@ -34,6 +34,10 @@ export default function EventSlotsTable({ slots }: EventSlotsTableProps) {
                         <TableCell isHeader>
                             Coaches
                         </TableCell>
+
+                        <TableCell isHeader>
+                            Max Teilnehmer
+                        </TableCell>
                     </TableRow>
                 </TableHeader>
 
@@ -66,6 +70,10 @@ export default function EventSlotsTable({ slots }: EventSlotsTableProps) {
                                         </div>
                                     ))
                                     : 'Keine Coaches'}
+                            </TableCell>
+
+                            <TableCell dataLabel={"Max Teilnehmer"}>
+                                {slot.maxRegistrations ?? "Keine"}
                             </TableCell>
 
                         </TableRow>,
