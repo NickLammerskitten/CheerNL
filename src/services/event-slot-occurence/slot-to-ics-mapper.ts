@@ -46,7 +46,7 @@ export function generateIcsData(slot: EventSlotDetailData | EventSlotPublicListD
     const description = `Trainer: ${(slot.coaches ?? []).map(c => c.coachName).join(", ")}`;
     const uid = `${slot.id}-${format(startDateTime, 'yyyyMMdd')}`;
 
-    let icsContent = [
+    const icsContent = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
         "PRODID:-//Cheer App//DE",
