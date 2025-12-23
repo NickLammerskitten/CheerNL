@@ -20,20 +20,21 @@ create table public.event
 
 create table public.event_slot
 (
-    id               uuid                     default gen_random_uuid() not null
+    id                uuid                     default gen_random_uuid() not null
         primary key,
-    event_id         uuid                                               not null
+    event_id          uuid                                               not null
         references public.event
             on update cascade on delete cascade,
-    title            text,
-    location         text,
-    duration_minutes smallint                                           not null,
-    recurrence_type  recurrence_type                                    not null,
-    slot_start       timestamp with time zone,
-    slot_end         timestamp with time zone,
-    day_of_week      public.day_of_week,
-    start_time       time with time zone,
-    created_at       timestamp with time zone default now()             not null
+    title             text,
+    location          text,
+    duration_minutes  smallint                                           not null,
+    recurrence_type   recurrence_type                                    not null,
+    slot_start        timestamp with time zone,
+    slot_end          timestamp with time zone,
+    day_of_week       public.day_of_week,
+    max_registrations int,
+    start_time        time with time zone,
+    created_at        timestamp with time zone default now()             not null
 );
 
 create table public.event_slot_coach

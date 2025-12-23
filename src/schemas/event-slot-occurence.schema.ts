@@ -15,6 +15,7 @@ export const EventSlotOccurrenceSchema = z.object({
     title: z.string(),
     location: z.string().nullable(),
 
+    maxRegistrations: z.int().nullable(),
     registrations: EventSlotRegistrationListDataSchema,
 
     coaches: EventSlotCoachListDataSchema,

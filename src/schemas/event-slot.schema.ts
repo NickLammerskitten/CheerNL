@@ -25,6 +25,7 @@ export const ApiSlotListDataSchema = z.object({
         return zeit.split('+')[0]
     }),
     event_slot_coach: z.array(ApiSlotCoachListDataSchema).nullable(),
+    max_registrations: z.int().nullable(),
     created_at: z.coerce.date(),
 });
 
@@ -69,6 +70,7 @@ const mapBaseSlotData = (apiData: z.infer<typeof ApiSlotListDataSchema>) => {
         dayOfWeek: apiData.day_of_week as DayOfWeek,
         startTime: apiData.start_time,
         coaches: EventSlotCoachListDataSchema.parse(apiData.event_slot_coach ?? []),
+        maxRegistrations: apiData.max_registrations,
         createdAt: apiData.created_at,
     };
 };

@@ -36,7 +36,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
                 {/* Stats Counter */}
                 <div className="text-center bg-gray-50 dark:bg-gray-800 rounded-lg p-3 min-w-[80px]">
                     <span className="block text-xl font-bold text-gray-800 dark:text-white">
-                        {event.registrations.length}
+                        {event.registrations.length} {event.maxRegistrations && ` von ${event.maxRegistrations}`}
                     </span>
                     <span className="text-[10px] text-gray-400 uppercase font-medium">Teilnehmer</span>
                 </div>

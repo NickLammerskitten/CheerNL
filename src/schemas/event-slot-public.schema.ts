@@ -23,6 +23,7 @@ export const ApiSlotPublicListDataSchema = z.object({
 
         return zeit.split('+')[0]
     }),
+    max_registrations: z.int().nullable(),
     event_slot_coach: z.array(ApiSlotCoachPublicListDataSchema).nullable(),
 });
 
@@ -38,6 +39,7 @@ export const EventSlotPublicListItemDataSchema = ApiSlotPublicListDataSchema.tra
         slotEnd: apiData.slot_end,
         dayOfWeek: apiData.day_of_week as DayOfWeek,
         startTime: apiData.start_time,
+        maxRegistrations: apiData.max_registrations,
         coaches: EventSlotCoachPublicListDataSchema.parse(apiData.event_slot_coach),
     };
 })

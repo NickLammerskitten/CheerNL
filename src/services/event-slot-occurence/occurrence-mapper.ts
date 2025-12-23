@@ -62,11 +62,15 @@ function singleOccurrence(slot: EventSlotDetailData, event: EventListData) {
     return {
         id: slot.id,
         slotId: slot.id,
+
         date: slot.slotStart,
         startTime: slot.startTime?.slice(0, 5) ?? "00:00",
         endTime: calculateEndTime(slot.startTime, slot.durationMinutes),
         title: slot.title ?? event.title,
+
+        maxRegistrations: slot.maxRegistrations,
         registrations: slot.registrations,
+
         coaches: slot.coaches,
         type: event.type,
         location: slot.location,
@@ -83,7 +87,10 @@ function multiOccurrence(slot: EventSlotDetailData, event: EventListData, date: 
         endTime: calculateEndTime(slot.startTime, slot.durationMinutes),
 
         title: slot.title ?? event.title,
+
+        maxRegistrations: slot.maxRegistrations,
         registrations: slot.registrations,
+
         coaches: slot.coaches,
         type: event.type,
         location: slot.location,
