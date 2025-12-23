@@ -14,6 +14,7 @@ export const ApiSlotPublicListDataSchema = z.object({
     duration_minutes: z.int(),
     recurrence_type: z.string(),
     slot_start: z.coerce.date().nullable(),
+    slot_end: z.coerce.date().nullable(),
     day_of_week: z.string().nullable(),
     start_time: z.string().nullable().transform((zeit) => {
         if (!zeit) {
@@ -34,6 +35,7 @@ export const EventSlotPublicListItemDataSchema = ApiSlotPublicListDataSchema.tra
         durationMinutes: apiData.duration_minutes,
         recurrenceType: apiData.recurrence_type as RecurrenceType,
         slotStart: apiData.slot_start,
+        slotEnd: apiData.slot_end,
         dayOfWeek: apiData.day_of_week as DayOfWeek,
         startTime: apiData.start_time,
         coaches: EventSlotCoachPublicListDataSchema.parse(apiData.event_slot_coach),

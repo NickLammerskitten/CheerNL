@@ -1,12 +1,13 @@
 "use client"
 
+import { RegistrationSuccess } from "@/app/(full-width-pages)/p/events/components/event-registration-success";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Select, { Option } from "@/components/form/Select";
 import Alert from "@/components/ui/alert/Alert";
 import { EventPublicDetailData } from "@/schemas/event-public.schema";
-import { EventSlotRegistrationPublicCreateSchema } from "@/schemas/event-slot-registration-public.schema";
 import { EventSlotPublicListData } from "@/schemas/event-slot-public.schema";
+import { EventSlotRegistrationPublicCreateSchema } from "@/schemas/event-slot-registration-public.schema";
 import { TeamPublicListData } from "@/schemas/team-public.schema";
 import { saveEventRegistration } from "@/services/event-registration-public.api";
 import { EventType } from "@/types/event-type";
@@ -108,9 +109,28 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
         } else {
             setError(null);
             setSuccess(true);
-
-            // TODO: Success Page with ICal download
         }
+    }
+
+    const handleReset = () => {
+        setSuccess(false);
+        setTeam(undefined);
+        setSlot(undefined);
+        setFirstName(undefined);
+        setLastName(undefined);
+        setEmail(undefined);
+        setPhone(undefined);
+        setNote(undefined);
+    };
+
+    if (success && slot) {
+        return (
+            <RegistrationSuccess
+                event={event}
+                selectedSlotId={slot}
+                onReset={handleReset}
+            />
+        );
     }
 
     return (
