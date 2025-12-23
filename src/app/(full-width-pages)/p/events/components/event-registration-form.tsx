@@ -14,6 +14,7 @@ import { saveEventRegistration } from "@/services/event-registration-public.api"
 import { EventType } from "@/types/event-type";
 import { RecurrenceType } from "@/types/recurrence-type";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
+import { calculateEndTimeOnce, calculateEndTimeRecurrent } from "@/utils/event-time-calculator";
 import { parseHtmlOrDefault } from "@/utils/parse-html-or-default";
 import React, { useState } from "react";
 
@@ -281,7 +282,8 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                 </div>
 
                 <p className={"mt-0.5 text-gray-600 dark:text-white/70"}>
-                    Wichtig: Mit Klick auf &quot;Verbindlich anmelden&quot; bestätige ich folgendes zur Kenntnis genommen zu
+                    Wichtig: Mit Klick auf &quot;Verbindlich anmelden&quot; bestätige ich folgendes zur Kenntnis
+                    genommen zu
                     haben:<br />
                     - Bei einer zu geringen Teilnehmerzahl findet die jeweilige Tumbling Class nicht statt. In dem Fall
                     einer kurzfristigen Absage, durch Krankheit der Trainer werdet ihr per Whatsapp informiert.<br />
@@ -314,7 +316,7 @@ const SlotDetails = ({ slot }: { slot?: EventSlotPublicListData }) => {
             <div>
                 {"Titel: " + slotTitle(slot)}<br />
                 {"Zeit: " + (slotTime(slot) ?? "Keine Zeit")}<br />
-                {"Coaches: " + (slotCoaches(slot) ?? "Keine Coaches")}<br/>
+                {"Coaches: " + (slotCoaches(slot) ?? "Keine Coaches")}<br />
                 <EventSlotRegistrationsLabel
                     eventSlotId={slot.id}
                     maxRegistrations={slot.maxRegistrations}
@@ -340,9 +342,11 @@ const slotTitle = (slot: EventSlotPublicListData) => {
 
 const slotTime = (slot: EventSlotPublicListData) => {
     return slot.recurrenceType === RecurrenceType.ONCE
-        ? `${slot.slotStart?.toLocaleString()}, ${slot.durationMinutes} Min`
+        ? `${slot.slotStart?.toLocaleDateString()}, 
+            ${slot.slotStart?.toLocaleTimeString().slice(0, 5)} - 
+            ${calculateEndTimeOnce(slot.slotStart, slot.durationMinutes)} Uhr`
         : slot.recurrenceType === RecurrenceType.WEEKLY
-            ? `${dayOfWeekToString(slot.dayOfWeek)}, ${slot.startTime}, ${slot.durationMinutes} Min`
+            ? `${dayOfWeekToString(slot.dayOfWeek)}, ${slot.startTime?.slice(0, 5)} - ${calculateEndTimeRecurrent(slot.startTime, slot.durationMinutes)} Uhr`
             : null;
 }
 

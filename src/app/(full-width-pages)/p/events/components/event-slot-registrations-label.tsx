@@ -19,6 +19,8 @@ export default function EventSlotRegistrationsLabel({
     useEffect(() => {
         const loadRegistrationCount = async () => {
             setLoading(true);
+            setRegistrationCount(0);
+
             const count = await fetchEventRegistrationCount(eventSlotId);
             setRegistrationCount(count)
             setLoading(false);
@@ -29,7 +31,7 @@ export default function EventSlotRegistrationsLabel({
 
     return (
         <span>
-            Teilnehmer: {loading ? '?' : registrationCount} {maxRegistrations && ` von ${maxRegistrations}`}
+            Teilnehmer: {loading ? 'lädt...' : registrationCount} {maxRegistrations && ` von ${maxRegistrations}`}
 
             {registrationCount && maxRegistrations && registrationCount >= maxRegistrations ? (
                 <>
@@ -39,7 +41,7 @@ export default function EventSlotRegistrationsLabel({
                 <>
                     {` (${maxRegistrations - registrationCount} frei)`}
                 </>
-            ) : ''}
+            ) : ' (frei)'}
         </span>
     )
 }

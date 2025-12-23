@@ -3,7 +3,7 @@ import { EventSlotDetailData } from "@/schemas/event-slot.schema";
 import { EventListData } from "@/schemas/event.schema";
 import { DayMap, DayOfWeek } from "@/types/day-of-week";
 import { RecurrenceType } from "@/types/recurrence-type";
-import { calculateEndTime } from "@/utils/end-time-calculator";
+import { calculateEndTimeOnce, calculateEndTimeRecurrent, calculateStartTimeOnce } from "@/utils/event-time-calculator";
 import { addDays, getDay, isAfter, isBefore, isWithinInterval, startOfDay } from "date-fns";
 
 export type SlotWithEvent = {
@@ -31,7 +31,7 @@ export function mapSlotsToOccurrences(
 
         if (slot.recurrenceType === RecurrenceType.ONCE && slot.slotStart) {
             if (isWithinInterval(slot.slotStart, { start: viewStart, end: viewEnd })) {
-                occurrences.push(singleOccurrence(slot, event));
+                occurrences.push(onceOccurrence(slot, event));
             }
         } else if (slot.recurrenceType === RecurrenceType.WEEKLY && slot.slotStart) {
             let currentCursor = isBefore(viewStart, slot.slotStart)
@@ -47,7 +47,7 @@ export function mapSlotsToOccurrences(
                 }
 
                 if (isSameWeekDay(currentCursor, slot.dayOfWeek)) {
-                    occurrences.push(multiOccurrence(slot, event, currentCursor));
+                    occurrences.push(reccurentOccurrence(slot, event, currentCursor));
                 }
 
                 currentCursor = addDays(currentCursor, 1);
@@ -58,33 +58,42 @@ export function mapSlotsToOccurrences(
     return sortOccurrences(occurrences);
 }
 
-function singleOccurrence(slot: EventSlotDetailData, event: EventListData) {
+function onceOccurrence(slot: EventSlotDetailData, event: EventListData) {
+    console.log(slot.slotStart)
+
     return {
         id: slot.id,
         slotId: slot.id,
 
         date: slot.slotStart,
-        startTime: slot.startTime?.slice(0, 5) ?? "00:00",
-        endTime: calculateEndTime(slot.startTime, slot.durationMinutes),
-        title: slot.title ?? event.title,
+        startTime: calculateStartTimeOnce(slot.slotStart),
+        endTime:
+            calculateEndTimeOnce(slot.slotStart, slot.durationMinutes),
+        title:
+            slot.title ?? event.title,
 
-        maxRegistrations: slot.maxRegistrations,
-        registrations: slot.registrations,
+        maxRegistrations:
+        slot.maxRegistrations,
+        registrations:
+        slot.registrations,
 
-        coaches: slot.coaches,
-        type: event.type,
-        location: slot.location,
+        coaches:
+        slot.coaches,
+        type:
+        event.type,
+        location:
+        slot.location,
     } as EventSlotOccurrence
 }
 
-function multiOccurrence(slot: EventSlotDetailData, event: EventListData, date: Date) {
+function reccurentOccurrence(slot: EventSlotDetailData, event: EventListData, date: Date) {
     return {
         id: `${slot.id}-${date.toISOString()}`,
         slotId: slot.id,
 
         date: new Date(date),
         startTime: slot.startTime?.slice(0, 5) ?? "00:00",
-        endTime: calculateEndTime(slot.startTime, slot.durationMinutes),
+        endTime: calculateEndTimeRecurrent(slot.startTime, slot.durationMinutes),
 
         title: slot.title ?? event.title,
 

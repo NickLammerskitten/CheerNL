@@ -3,8 +3,9 @@
 import Button from "@/components/ui/button/Button";
 import { EventPublicDetailData } from "@/schemas/event-public.schema";
 import { generateIcsData } from "@/services/event-slot-occurence/slot-to-ics-mapper";
+import { RecurrenceType } from "@/types/recurrence-type";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
-import { calculateEndTime } from "@/utils/end-time-calculator";
+import { calculateEndTimeOnce, calculateEndTimeRecurrent, calculateStartTimeOnce } from "@/utils/event-time-calculator";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import React from "react";
@@ -73,23 +74,31 @@ export const RegistrationSuccess: React.FC<RegistrationSuccessProps> = ({
                     <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Wann?</span>
                     <p className="font-medium text-gray-800">
                         {slot.slotStart ? (
-                            slot.recurrenceType === "WEEKLY" && slot.slotEnd ? (
+                            slot.recurrenceType === RecurrenceType.WEEKLY && slot.slotEnd ? (
                                 <span>
                                     {format(slot.slotStart, "d. MMMM yyyy", { locale: de })} - {format(slot.slotEnd, "d. MMMM yyyy", { locale: de })}
                                     <span className="block font-normal text-sm text-gray-600 mt-0.5">
                                         {dayOfWeekToString(slot.dayOfWeek)}
                                     </span>
+
+                                    <p className="text-sm text-gray-600">
+                                        {slot.startTime?.slice(0, 5)} - {calculateEndTimeRecurrent(slot.startTime, slot.durationMinutes)} Uhr
+                                    </p>
                                 </span>
                             ) : (
-                                format(slot.slotStart, "EEEE, d. MMMM yyyy", { locale: de })
+                                <span>
+                                    {format(slot.slotStart, "EEEE, d. MMMM yyyy", { locale: de })}
+
+                                    <p className="text-sm text-gray-600">
+                                        {calculateStartTimeOnce(slot.slotStart)} - {calculateEndTimeOnce(slot.slotStart, slot.durationMinutes)} Uhr
+                                    </p>
+                                </span>
                             )
                         ) : (
                             "Datum unbekannt"
                         )}
                     </p>
-                    <p className="text-sm text-gray-600">
-                        {slot.startTime?.slice(0, 5)} - {calculateEndTime(slot.startTime, slot.durationMinutes)} Uhr
-                    </p>
+
                 </div>
                 <div className="mb-3">
                     <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Wo?</span>
