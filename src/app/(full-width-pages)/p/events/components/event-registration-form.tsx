@@ -21,7 +21,6 @@ import 'quill/dist/quill.snow.css';
 
 interface EventRegistrationFormProps {
     event: EventPublicDetailData;
-    registrationCount: number;
     teams: TeamPublicListData[];
 }
 
