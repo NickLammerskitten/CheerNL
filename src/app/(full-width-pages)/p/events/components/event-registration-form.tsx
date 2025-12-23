@@ -281,7 +281,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                 </div>
 
                 <p className={"mt-0.5 text-gray-600 dark:text-white/70"}>
-                    Wichtig: Mit Klick auf "Verbindlich anmelden" bestätige ich folgendes zur Kenntnis genommen zu
+                    Wichtig: Mit Klick auf &quot;Verbindlich anmelden&quot; bestätige ich folgendes zur Kenntnis genommen zu
                     haben:<br />
                     - Bei einer zu geringen Teilnehmerzahl findet die jeweilige Tumbling Class nicht statt. In dem Fall
                     einer kurzfristigen Absage, durch Krankheit der Trainer werdet ihr per Whatsapp informiert.<br />
