@@ -3,7 +3,7 @@ import { z } from "zod";
 export const ApiSlotCoachListDataSchema = z.object({
     id: z.uuid(),
     slot_id: z.uuid(),
-    coach_id: z.uuid(),
+    coach_id: z.uuid().nullable(),
     coach: z.object({
         name: z.string(),
     }).nullable(),

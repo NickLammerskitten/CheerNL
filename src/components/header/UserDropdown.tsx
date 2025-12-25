@@ -29,19 +29,19 @@ export default function UserDropdown() {
     }
 
     useEffect(() => {
-        setCurrentUser()
-    }, []);
+        async function setCurrentUser() {
+            const user = await supabase.auth.getUser();
 
-    async function setCurrentUser() {
-        const user = await supabase.auth.getUser();
+            if (user.data.user == null) {
+                router.push("/login")
+                return
+            }
 
-        if (user.data.user == null) {
-            router.push("/login")
-            return
+            setUser(user.data.user)
         }
 
-        setUser(user.data.user)
-    }
+        setCurrentUser().then(_ => {})
+    }, []);
 
     return (
         <div className="relative">
@@ -84,6 +84,13 @@ export default function UserDropdown() {
                         Rolle: {user?.role === "service_role" ? "Admin" : "Benutzer"}
                     </span>
                 </div>
+
+                <button
+                    onClick={() => router.push("/profile")}
+                    className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                >
+                    Profil
+                </button>
 
                 <button
                     onClick={logout}

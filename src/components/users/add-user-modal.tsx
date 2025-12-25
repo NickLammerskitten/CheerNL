@@ -5,7 +5,7 @@ import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
 import { EyeCloseIcon, EyeIcon } from "@/icons";
-import { createUser } from "@/services/user.api";
+import { createUser } from "@/services/user-admin.api";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 

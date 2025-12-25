@@ -17,6 +17,7 @@ async function createAdminClient(): Promise<SupabaseClient> {
     );
 }
 
+//@Role Admin
 export async function fetchAllUsers(): Promise<UserListData> {
     const supabase = await createAdminClient()
     const { data: users, error } = await supabase.auth.admin.listUsers()
@@ -33,6 +34,7 @@ export async function fetchAllUsers(): Promise<UserListData> {
     }
 }
 
+//@Role Admin
 export async function createUser(
     email: string,
     password: string,
@@ -54,6 +56,7 @@ export async function createUser(
     return null
 }
 
+//@Role Admin
 export async function deleteUser(id: string): Promise<AuthError | null> {
     const supabase = await createAdminClient()
 
