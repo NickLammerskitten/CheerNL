@@ -43,7 +43,9 @@ export function generateIcsData(slot: EventSlotDetailData | EventSlotPublicListD
     const dtEnd = formatDateToICS(endDateTime);
     const summary = slot.title;
     const location = slot.location ?? "";
-    const description = `Trainer: ${(slot.coaches ?? []).map(c => c.coachName).join(", ")}`;
+    const description = `Trainer: ${(slot.coaches ?? []).map(c => c.coachName)
+        .filter((name) => name)
+        .join(", ")}`;
     const uid = `${slot.id}-${format(startDateTime, 'yyyyMMdd')}`;
 
     const icsContent = [

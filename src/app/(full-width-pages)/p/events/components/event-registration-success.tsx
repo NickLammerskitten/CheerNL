@@ -108,7 +108,10 @@ export const RegistrationSuccess: React.FC<RegistrationSuccessProps> = ({
                 <div>
                     <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Deine Coaches</span>
                     <p className="font-medium text-gray-800">
-                        {slot.coaches.map((coach) => coach.coachName).join(', ') ?? "Nicht angegeben"}
+                        {
+                            slot.coaches.map((coach) => coach.coachName)
+                                .filter((name) => name)
+                                .join(', ') ?? "Nicht angegeben"}
                     </p>
                 </div>
             </div>

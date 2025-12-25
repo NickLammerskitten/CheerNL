@@ -1,5 +1,6 @@
 "use client";
 
+import Button from "@/components/ui/button/Button";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -39,10 +40,25 @@ export default function LoginForm() {
         <div className="flex flex-col flex-1 w-full">
             <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
                 <div>
+                    <div className="mb-5 sm:mb-8 flex flex-col">
+                        <Button
+                            variant={"outline"}
+                            onClick={() => router.push("/p")}
+                        >
+                            Ich bin Athlet
+                        </Button>
+                    </div>
+
                     <div className="mb-5 sm:mb-8">
                         <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-                            Anmelden
+                            Admin Login
                         </h1>
+
+                        <p className={"text-gray-800 dark:text-white/90"}>
+                            Du hast noch keinen Account und bist Coach?<br />
+                            Oder du hast dein Passwort vergessen?<br />
+                            Dann melde dich bei der sportlichen Leitung.
+                        </p>
                     </div>
 
                     <form onSubmit={handleLogin}>
@@ -80,7 +96,6 @@ export default function LoginForm() {
                                 </div>
                             </div>
 
-                            {/* Fehlermeldung anzeigen, falls vorhanden */}
                             {error && (
                                 <p className="text-sm text-error-500">
                                     {error}

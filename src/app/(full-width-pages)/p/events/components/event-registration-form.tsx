@@ -313,7 +313,9 @@ const SlotDetails = ({ slot }: { slot?: EventSlotPublicListData }) => {
     return (
         <>
             <div></div>
-            <div>
+            <div
+                className={"text-gray-800 dark:text-white/90"}
+            >
                 {"Titel: " + slotTitle(slot)}<br />
                 {"Zeit: " + (slotTime(slot) ?? "Keine Zeit")}<br />
                 {"Coaches: " + (slotCoaches(slot) ?? "Keine Coaches")}<br />
@@ -355,5 +357,7 @@ const slotCoaches = (slot: EventSlotPublicListData) => {
         return null
     }
 
-    return slot.coaches.map((coach) => coach.coachName).join(", ")
+    return slot.coaches.map((coach) => coach.coachName)
+        .filter((name) => name)
+        .join(", ")
 }

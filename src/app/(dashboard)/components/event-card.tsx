@@ -25,9 +25,11 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
                     </h3>
                     <p className="text-sm text-gray-500 mt-1">
                         📍 {event.location ?? "Kein Ort angegeben"}
-                        {event.coaches?.length > 0 && (
+                        {event.coaches.filter((coach) => coach.coachName)?.length > 0 && (
                             <span className="ml-3 text-gray-400">
-                                👤 {event.coaches.map((coach) => coach.coachName).join(", ")}
+                                👤 {event.coaches.map((coach) => coach.coachName)
+                                .filter((name) => name)
+                                .join(", ")}
                             </span>
                         )}
                     </p>

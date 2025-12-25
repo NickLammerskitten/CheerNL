@@ -54,7 +54,7 @@ export default function PublicPageLayout({
                         href={'/login'}
                         className="underline text-gray-500 hover:text-gray-600"
                     >
-                        Zum Admin-Portal
+                        Zum Admin Login
                     </Link>
                 </div>
             </div>
