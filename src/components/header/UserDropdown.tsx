@@ -28,6 +28,11 @@ export default function UserDropdown() {
         router.push('/login');
     }
 
+    async function navigateTo(url: string) {
+        router.push(url);
+        closeDropdown();
+    }
+
     useEffect(() => {
         async function setCurrentUser() {
             const user = await supabase.auth.getUser();
@@ -90,7 +95,7 @@ export default function UserDropdown() {
                 </div>
 
                 <button
-                    onClick={() => router.push("/profile")}
+                    onClick={() => navigateTo('/profile')}
                     className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                 >
                     Profil
