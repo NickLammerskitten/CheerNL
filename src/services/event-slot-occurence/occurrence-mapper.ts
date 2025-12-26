@@ -59,8 +59,6 @@ export function mapSlotsToOccurrences(
 }
 
 function onceOccurrence(slot: EventSlotDetailData, event: EventListData) {
-    console.log(slot.slotStart)
-
     return {
         id: slot.id,
         slotId: slot.id,

@@ -15,8 +15,6 @@ export function calculateEndTimeRecurrent(startTime: string | null, durationMinu
 }
 
 export function calculateStartTimeOnce(slotStart: Date | null) {
-    console.log(slotStart)
-
     if (!slotStart) {
         return "00:00";
     }

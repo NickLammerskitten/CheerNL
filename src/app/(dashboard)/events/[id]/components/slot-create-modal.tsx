@@ -76,8 +76,6 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
         setError(null);
         setFieldErrors({});
 
-        console.log(maxRegistrations)
-
         const rawData = {
             event_id: eventId,
             title: title ?? null,

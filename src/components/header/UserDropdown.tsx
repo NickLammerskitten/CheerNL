@@ -40,7 +40,7 @@ export default function UserDropdown() {
             setUser(user.data.user)
         }
 
-        setCurrentUser().then(_ => {})
+        setCurrentUser();
     }, []);
 
     return (
