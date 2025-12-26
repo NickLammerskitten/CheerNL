@@ -14,7 +14,7 @@ export async function saveEventSlot(newData: EventSlotCreateData): Promise<Upser
         };
     }
 
-    const {coach_ids, ...slotData } = newData;
+    const { coach_ids, ...slotData } = newData;
 
     const supabase = await createClient();
     const { data, status, statusText } = await supabase

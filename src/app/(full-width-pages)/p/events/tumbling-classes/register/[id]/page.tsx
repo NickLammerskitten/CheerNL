@@ -24,7 +24,10 @@ export default async function RegisterToTumblingClass({
             />
 
             <ComponentCard title={`Anmelden bei ${event.title}`}>
-                <EventRegistrationForm event={event} teams={teams} />
+                <EventRegistrationForm
+                    event={event}
+                    teams={teams}
+                />
             </ComponentCard>
         </>
     )

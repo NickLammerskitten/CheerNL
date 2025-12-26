@@ -1,6 +1,6 @@
-import React from "react";
 import { format, isSameDay, isSameMonth, isToday } from "date-fns";
 import { de } from "date-fns/locale";
+import React from "react";
 
 interface MiniCalendarProps {
     currentDate: Date;
@@ -25,7 +25,11 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
 }) => {
     return (
         <div className="w-full lg:w-80 shrink-0 flex flex-col gap-4">
-            <div className={`bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-4 relative ${isLoading ? 'opacity-70 pointer-events-none' : ''}`}>
+            <div
+                className={`bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-4 relative ${isLoading
+                    ? 'opacity-70 pointer-events-none'
+                    : ''}`}
+            >
 
                 {/* Loading Overlay */}
                 {isLoading && (
@@ -36,11 +40,21 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
 
                 {/* Header Navigation */}
                 <div className="flex items-center justify-between mb-4">
-                    <button onClick={onPrevMonth} className="p-1 hover:bg-gray-100 rounded text-gray-500" disabled={isLoading}>←</button>
+                    <button
+                        onClick={onPrevMonth}
+                        className="p-1 hover:bg-gray-100 rounded text-gray-500"
+                        disabled={isLoading}
+                    >←
+                    </button>
                     <span className="font-semibold text-gray-800 dark:text-gray-200">
                         {format(currentDate, "MMMM yyyy", { locale: de })}
                     </span>
-                    <button onClick={onNextMonth} className="p-1 hover:bg-gray-100 rounded text-gray-500" disabled={isLoading}>→</button>
+                    <button
+                        onClick={onNextMonth}
+                        className="p-1 hover:bg-gray-100 rounded text-gray-500"
+                        disabled={isLoading}
+                    >→
+                    </button>
                 </div>
 
                 {/* Weekday Names */}
@@ -62,8 +76,12 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
                                 onClick={() => onSelectDate(day)}
                                 className={`
                                     h-9 w-9 rounded-full flex items-center justify-center text-sm relative transition-all mx-auto
-                                    ${!isCurrent ? "text-gray-300 dark:text-gray-700" : "text-gray-700 dark:text-gray-300"}
-                                    ${isSelected ? "bg-brand-600 text-white font-bold shadow-md" : "hover:bg-gray-100 dark:hover:bg-gray-800"}
+                                    ${!isCurrent
+                                    ? "text-gray-300 dark:text-gray-700"
+                                    : "text-gray-700 dark:text-gray-300"}
+                                    ${isSelected
+                                    ? "bg-brand-600 text-white font-bold shadow-md"
+                                    : "hover:bg-gray-100 dark:hover:bg-gray-800"}
                                     ${isTodayDate && !isSelected ? "border border-brand-500 text-brand-600" : ""}
                                 `}
                             >

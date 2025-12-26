@@ -18,8 +18,11 @@ export default function AuthLayout({
                             {/* <!-- ===== Common Grid Shape Start ===== --> */}
                             <GridShape />
                             <div className="flex flex-col items-center max-w-xs">
+                                <h1 className="font-bold text-center text-gray-400 dark:text-white/60">
+                                    Cheer Next Level
+                                </h1>
                                 <p className="text-center text-gray-400 dark:text-white/60">
-                                    CLE - Vereinsverwaltung
+                                    Vereinsverwaltung
                                 </p>
                             </div>
                         </div>

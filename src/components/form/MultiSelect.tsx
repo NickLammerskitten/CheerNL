@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface Option {
     value: string;
@@ -29,10 +29,14 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const toggleDropdown = (e?: React.MouseEvent) => {
-        if (disabled) return;
+        if (disabled) {
+            return;
+        }
         // Verhindert, dass Klicks innerhalb des Dropdowns dieses wieder schließen,
         // falls sie nicht explizit behandelt werden.
-        if (e) e.stopPropagation();
+        if (e) {
+            e.stopPropagation();
+        }
         setIsOpen((prev) => !prev);
     };
 
@@ -80,7 +84,10 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     );
 
     return (
-        <div className="w-full" ref={dropdownRef}>
+        <div
+            className="w-full"
+            ref={dropdownRef}
+        >
             <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                 {label}
             </label>
@@ -148,7 +155,9 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                                     className="w-5 h-5 text-gray-700 outline-hidden cursor-pointer focus:outline-hidden dark:text-gray-400"
                                 >
                                     <svg
-                                        className={`stroke-current transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                                        className={`stroke-current transition-transform duration-200 ${isOpen
+                                            ? "rotate-180"
+                                            : ""}`}
                                         width="20"
                                         height="20"
                                         viewBox="0 0 20 20"

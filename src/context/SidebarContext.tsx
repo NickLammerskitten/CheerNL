@@ -82,7 +82,7 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
                 toggleMobileSidebar,
                 setIsHovered,
                 setActiveItem,
-                toggleSubmenu
+                toggleSubmenu,
             }}
         >
             {children}

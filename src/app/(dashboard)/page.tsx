@@ -6,7 +6,7 @@ export default async function Dashboard() {
 
     return (
         <>
-            <PageBreadCrumb pageTitle={"Dashboard"}/>
+            <PageBreadCrumb pageTitle={"Dashboard"} />
             <CalendarWrapper />
         </>
     );

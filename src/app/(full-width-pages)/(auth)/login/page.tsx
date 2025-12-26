@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import LoginForm from "../../../../components/auth/LoginForm";
 
 export const metadata: Metadata = {
-    title: "CLE Login | CheerNL",
+    title: "Cheer Next Level Login",
     description: "Das ist die Login Seite für die software CheerNL",
 };
 

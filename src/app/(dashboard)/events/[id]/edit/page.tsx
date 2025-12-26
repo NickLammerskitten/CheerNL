@@ -1,5 +1,5 @@
-import ComponentCard from "@/components/common/ComponentCard";
 import EventEditForm from "@/app/(dashboard)/events/[id]/edit/components/event-edit-form";
+import ComponentCard from "@/components/common/ComponentCard";
 import { fetchEvent } from "@/services/event.api";
 
 export default async function EditEventPage({

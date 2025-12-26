@@ -1,5 +1,5 @@
-import ComponentCard from "@/components/common/ComponentCard";
 import EventTable from "@/app/(dashboard)/events/components/event-table";
+import ComponentCard from "@/components/common/ComponentCard";
 import { fetchEventList } from "@/services/event.api";
 
 const PAGE_SIZE = 20;

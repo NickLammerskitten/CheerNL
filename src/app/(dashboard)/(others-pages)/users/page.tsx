@@ -9,9 +9,9 @@ export default async function UsersPage() {
 
     return (
         <ComponentCard title={"Benutzer"}>
-            <AddUserModal/>
+            <AddUserModal />
 
-            <UsersTable users={users}/>
+            <UsersTable users={users} />
         </ComponentCard>
     )
 }

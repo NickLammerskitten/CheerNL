@@ -20,7 +20,6 @@ export const EventSlotCoachListItemDataSchema = ApiSlotCoachListDataSchema.trans
 
 export const EventSlotCoachListDataSchema = z.array(EventSlotCoachListItemDataSchema);
 
-
 export const EventSlotCoachCreateSchema = z.object({
     slot_id: z.string(),
     coach_id: z.string(),
