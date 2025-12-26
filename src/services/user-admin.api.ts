@@ -22,6 +22,8 @@ export async function fetchAllUsers(): Promise<UserListData> {
     const supabase = await createAdminClient()
     const { data: users, error } = await supabase.auth.admin.listUsers()
 
+    console.log(users)
+
     if (error) {
         throw new Error(`Supabase-Fehler: ${error.message}`);
     }

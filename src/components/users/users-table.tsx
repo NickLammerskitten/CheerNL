@@ -11,10 +11,16 @@ interface UsersTableProps {
 
 export default function UsersTable({ users }: UsersTableProps) {
 
+    console.log(users);
+
     return (
         <Table>
             <TableHeader>
                 <TableRow>
+                    <TableCell isHeader>
+                        Name
+                    </TableCell>
+
                     <TableCell isHeader>
                         E-Mail
                     </TableCell>
@@ -39,9 +45,15 @@ export default function UsersTable({ users }: UsersTableProps) {
 
                         <TableRow key={index}>
                             <TableCell
+                                dataLabel={"Name"}
+                            >
+                                {user.displayName ?? 'Unbekannt'}
+                            </TableCell>
+
+                            <TableCell
                                 dataLabel={"E-Mail"}
                             >
-                                <span>{user.email}</span>
+                                <span>{user.email} {!user.emailVerified && '(Nicht verifiziert)'}</span>
                             </TableCell>
 
                             <TableCell
