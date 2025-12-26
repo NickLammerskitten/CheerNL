@@ -18,6 +18,7 @@ const AppHeader: React.FC = () => {
     };
 
     const toggleApplicationMenu = () => {
+        console.log('toggle')
         setApplicationMenuOpen(!isApplicationMenuOpen);
     };
     const inputRef = useRef<HTMLInputElement>(null);
@@ -36,6 +37,12 @@ const AppHeader: React.FC = () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
     }, []);
+
+    useEffect(() => {
+        if (isMobileOpen) {
+            setApplicationMenuOpen(false);
+        }
+    }, [isMobileOpen]);
 
     return (
         <header className="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900 lg:border-b">
