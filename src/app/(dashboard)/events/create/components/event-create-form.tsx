@@ -39,8 +39,8 @@ export default function EventCreateForm() {
             title: title,
             type: type.toString(),
             description: description ?? "",
-            registration_from: regFrom,
-            registration_till: regTill,
+            registration_from: new Date(regFrom).toISOString(),
+            registration_till: new Date(regTill).toISOString()
         };
 
         const result = EventCreateSchema.safeParse(rawData);

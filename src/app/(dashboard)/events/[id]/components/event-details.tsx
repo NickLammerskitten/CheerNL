@@ -1,6 +1,7 @@
 import { EventDetailData } from "@/schemas/event.schema";
 import { EventType } from "@/types/event-type";
 import { parseHtmlOrDefault } from "@/utils/parse-html-or-default";
+import { format } from "date-fns";
 import React from "react";
 
 import 'quill/dist/quill.snow.css';
@@ -30,8 +31,8 @@ export default function EventDetails({ event }: EventDetailsProps) {
 
             <div className="font-medium dark:text-white/70">Registrierung</div>
             <div className="dark:text-white/90">
-                von {event.registrationFrom.toLocaleString('de-DE')}
-                <br /> bis {event.registrationTill.toLocaleString('de-DE')}
+                von {format(event.registrationFrom, "dd.MM.yyyy HH:mm")}
+                <br /> bis {format(event.registrationTill, "dd.MM.yyyy HH:mm")}
             </div>
         </div>
     )
