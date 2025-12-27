@@ -23,7 +23,10 @@ export default function UserDropdown() {
         setIsOpen(false);
     }
 
-    async function logout() {
+    async function logout(e: React.MouseEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+
         await supabase.auth.signOut()
         router.push('/login');
     }
