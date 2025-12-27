@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components
 import { EyeIcon } from "@/icons";
 import { EventListData } from "@/schemas/event.schema";
 import { EventType } from "@/types/event-type";
+import { format } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
@@ -73,12 +74,12 @@ export default function EventTable({ initialEvents, totalPages }: EventTableProp
                                 {event.type === EventType.TUMBLINGClASS ? 'Tumbling Class' : event.type}
                             </TableCell>
                             <TableCell dataLabel={"Registrierung"}>
-                                {event.registrationFrom.toLocaleString()} -
+                                {format(event.registrationFrom, "dd.MM.yyyy HH:mm")} -
                                 <br />
-                                {event.registrationTill.toLocaleString()}
+                                {format(event.registrationTill, "dd.MM.yyyy HH:mm")}
                             </TableCell>
                             <TableCell dataLabel={"Erstellt am"}>
-                                {event.createdAt.toLocaleString()}
+                                {format(event.createdAt, "dd.MM.yyyy HH:mm")}
                             </TableCell>
                             <TableCell dataLabel={""}>
                                 <div className={"flex gap-1"}>
