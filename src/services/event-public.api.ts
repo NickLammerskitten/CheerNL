@@ -62,7 +62,9 @@ export async function fetchEventsPublic({
     }
 
     if (registrationOpen) {
-        query = query.gt('registration_till', new Date().toISOString());
+        query = query
+            .gt('registration_till', new Date().toISOString())
+            .lte('registration_from', new Date().toISOString());
     } else {
         query = query.lte('registration_till', new Date().toISOString());
     }

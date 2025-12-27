@@ -6,6 +6,7 @@ import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Select, { Option } from "@/components/form/Select";
 import Alert from "@/components/ui/alert/Alert";
+import Button from "@/components/ui/button/Button";
 import { EventPublicDetailData } from "@/schemas/event-public.schema";
 import { EventSlotPublicListData } from "@/schemas/event-slot-public.schema";
 import { EventSlotRegistrationPublicCreateSchema } from "@/schemas/event-slot-registration-public.schema";
@@ -16,6 +17,7 @@ import { RecurrenceType } from "@/types/recurrence-type";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
 import { calculateEndTimeOnce, calculateEndTimeRecurrent } from "@/utils/event-time-calculator";
 import { parseHtmlOrDefault } from "@/utils/parse-html-or-default";
+import { isAfter, isBefore } from "date-fns";
 import React, { useState } from "react";
 
 import 'quill/dist/quill.snow.css';
@@ -137,6 +139,11 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
 
     return (
         <>
+            <div className="dark:text-white/90">
+                Registrierungszeitraum:<br/>
+                {event.registrationFrom.toLocaleString('de-DE')} - {event.registrationTill.toLocaleString('de-DE')}
+            </div>
+
             <div className="ql-snow">
                 <div
                     className="ql-editor dark:text-white/90"
@@ -292,13 +299,30 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                 </p>
 
                 <div className="flex justify-end gap-3 mt-6">
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition w-full sm:w-auto bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 px-4 py-3 text-sm"
-                    >
-                        {loading ? "Speichern..." : "Verbindlich anmelden"}
-                    </button>
+                    {
+                        isBefore(new Date(), event.registrationFrom)
+                            ? <Button
+                                variant={"outline"}
+                                disabled={true}
+                            >
+                                Der Anmeldezeitraum ist noch nicht eröffnet
+                            </Button>
+                            : isAfter(new Date(), event.registrationTill)
+                                ? <Button
+                                    variant={"outline"}
+                                    disabled={true}
+                                >
+                                    Der Anmeldezeitraum ist abgelaufen
+                                </Button>
+                                : <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition w-full sm:w-auto bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 px-4 py-3 text-sm"
+                                >
+                                    {loading ? "Speichern..." : "Verbindlich anmelden"}
+                                </button>
+
+                    }
                 </div>
             </form>
         </>
