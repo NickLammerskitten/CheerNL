@@ -1,6 +1,8 @@
 "use server"
 
+import { CoachCreateData } from "@/schemas/coach.schema";
 import { UserListData, UserListDataSchema } from "@/schemas/user.schema";
+import { saveCoach } from "@/services/coach.api";
 import { AuthError, createClient, SupabaseClient } from '@supabase/supabase-js'
 
 async function createAdminClient(): Promise<SupabaseClient> {
@@ -41,10 +43,11 @@ export async function createUser(
     email: string,
     password: string,
     displayName: string,
-): Promise<AuthError | null> {
+    isCoach: boolean,
+): Promise<string | null> {
     const supabase = await createAdminClient()
 
-    const { error } = await supabase.auth.admin.createUser({
+    const { data, error } = await supabase.auth.admin.createUser({
         email_confirm: true,
         email: email,
         password: password,
@@ -52,7 +55,20 @@ export async function createUser(
     })
 
     if (error) {
-        return error
+        return error.message;
+    }
+
+    if (isCoach && data.user) {
+        const coachData = {
+            user_id: data.user.id,
+            name: displayName,
+        } as CoachCreateData;
+
+        const response = await saveCoach(coachData);
+
+        if (!response.success) {
+            return response.error;
+        }
     }
 
     return null

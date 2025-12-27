@@ -41,9 +41,11 @@ export default async function Coaches() {
 
                                 <TableCell dataLabel={"Teams"}>
                                     {
-                                        coach.teams
-                                            .map((team) => team.teamName)
-                                            .join(', ')
+                                        coach.teams.length > 0
+                                            ? coach.teams
+                                                .map((team) => team.teamName)
+                                                .join(', ')
+                                            : 'Keine'
                                     }
                                 </TableCell>
 

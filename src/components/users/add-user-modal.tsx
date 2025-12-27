@@ -1,5 +1,6 @@
 "use client"
 
+import Checkbox from "@/components/form/input/Checkbox";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
@@ -17,6 +18,7 @@ export function AddUserModal() {
     const [displayName, setDisplayName] = useState<string>("")
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [isCoach, setIsCoach] = useState<boolean>(false);
 
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -30,11 +32,11 @@ export function AddUserModal() {
         e.preventDefault();
         setError(null);
 
-        const error = await createUser(email, password, displayName)
+        const error = await createUser(email, password, displayName, isCoach);
 
         if (error) {
             console.error(error);
-            setError("Es gab einen Fehler bei der Registrierung des Benutzers")
+            setError("Es gab einen Fehler bei der Registrierung des Benutzers. " + error);
         } else {
             setIsOpen(false);
 
@@ -98,12 +100,20 @@ export function AddUserModal() {
                                             onClick={() => setShowPassword(!showPassword)}
                                             className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                                         >
-                                        {showPassword ? (
-                                            <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
-                                        ) : (
-                                            <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
-                                        )}
-                                    </span>
+                                            {showPassword ? (
+                                                <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
+                                            ) : (
+                                                <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
+                                            )}
+                                        </span>
+                                    </div>
+
+                                    <div className={"mt-5"}>
+                                        <Checkbox
+                                            label={"Ist Coach"}
+                                            checked={isCoach}
+                                            onChange={setIsCoach}
+                                        />
                                     </div>
                                 </div>
 

@@ -22,3 +22,11 @@ export const CoachListItemDataSchema = ApiDataSchema.transform((apiData) => {
 export const CoachListDataSchema = z.array(CoachListItemDataSchema);
 
 export type CoachListData = z.infer<typeof CoachListItemDataSchema>;
+
+
+export const CoachCreateSchema = z.object({
+    user_id: z.string(),
+    name: z.string()
+})
+
+export type CoachCreateData = z.infer<typeof CoachCreateSchema>;
