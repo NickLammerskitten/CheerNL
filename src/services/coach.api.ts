@@ -1,3 +1,5 @@
+"use server"
+
 import {
     CoachCreateData,
     CoachCreateSchema,
@@ -30,6 +32,42 @@ export async function fetchCoachList(): Promise<CoachListData[]> {
     } catch (validationError) {
         console.error("Zod Validierungsfehler:", validationError);
         throw new Error("Ungültige Daten von der API empfangen.");
+    }
+}
+
+export async function fetchMyCoachObject(): Promise<CoachListData | null> {
+    const supabase = await createClient();
+
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+
+    console.log(userData);
+
+    if (userError || !userData.user) {
+        console.error("Current User not found. ", userError);
+        return null;
+    }
+
+    const { data: rawData, error } = await supabase
+        .from('coach')
+        .select(`
+            *,
+            coach_assignment(
+                *,
+                team(name)
+            )
+        `)
+        .eq('user_id', userData.user?.id)
+        .single();
+
+    if (error) {
+        return null;
+    }
+
+    try {
+        return CoachListItemDataSchema.parse(rawData);
+    } catch (validationError) {
+        console.error("Zod Validierungsfehler:", validationError);
+        return null;
     }
 }
 

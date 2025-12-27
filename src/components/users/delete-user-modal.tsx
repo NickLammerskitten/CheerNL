@@ -24,6 +24,8 @@ export default function DeleteUserModal({ userId }: DeleteUserModelProps) {
 
         if (error) {
             console.error(error);
+            setDeleteModalOpen(false);
+            router.refresh();
         } else {
             setDeleteModalOpen(false);
             router.refresh();

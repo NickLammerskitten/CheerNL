@@ -11,7 +11,11 @@ export type EventSlotOccurrenceResponse = {
     totalCount: number;
 }
 
-export async function fetchEventSlotOccurrences(from: Date, to: Date): Promise<EventSlotOccurrenceResponse> {
+export async function fetchEventSlotOccurrences(
+    from: Date,
+    to: Date,
+    filterCoachIds?: string[],
+): Promise<EventSlotOccurrenceResponse> {
     const supabase = await createClient();
 
     const fromFilter = from.toISOString();
@@ -20,14 +24,26 @@ export async function fetchEventSlotOccurrences(from: Date, to: Date): Promise<E
     const onceCondition = `and(recurrence_type.eq.ONCE,slot_start.gte.${fromFilter},slot_start.lte.${toFilter})`;
     const weeklyCondition = `and(recurrence_type.eq.WEEKLY,slot_start.lte.${toFilter},slot_end.gte.${fromFilter})`;
 
-    const { data: slotsRawData, count, error: eventSlotError } = await supabase
+    const coachRelation = (filterCoachIds && filterCoachIds.length > 0)
+        ? "event_slot_coach!inner(*, coach(name))"
+        : "event_slot_coach(*, coach(name))";
+
+    let query = supabase
         .from("event_slot")
         .select(`
             *,
-            event_slot_coach(*, coach(name)),
+            ${coachRelation},
             event_registration(*, team(name))
         `, { count: 'exact' })
         .or(`${onceCondition},${weeklyCondition}`);
+
+    // Dynamischer Filter
+    if (filterCoachIds && filterCoachIds.length > 0) {
+        // Filtert auf die Tabelle event_slot_coach Spalte coach_id
+        query = query.in("event_slot_coach.coach_id", filterCoachIds);
+    }
+
+    const { data: slotsRawData, count, error: eventSlotError } = await query;
 
     if (eventSlotError) {
         return emptyResponse();
