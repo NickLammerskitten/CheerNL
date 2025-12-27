@@ -17,7 +17,7 @@ import { RecurrenceType } from "@/types/recurrence-type";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
 import { calculateEndTimeOnce, calculateEndTimeRecurrent } from "@/utils/event-time-calculator";
 import { parseHtmlOrDefault } from "@/utils/parse-html-or-default";
-import { isAfter, isBefore } from "date-fns";
+import { format, isAfter, isBefore } from "date-fns";
 import React, { useState } from "react";
 
 import 'quill/dist/quill.snow.css';
@@ -140,8 +140,8 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
     return (
         <>
             <div className="dark:text-white/90">
-                Registrierungszeitraum:<br/>
-                {event.registrationFrom.toLocaleString('de-DE')} - {event.registrationTill.toLocaleString('de-DE')}
+                Registrierungszeitraum:<br />
+                {format(event.registrationFrom, "dd.MM.yyyy HH:mm")} - {format(event.registrationTill, "dd.MM.yyyy HH:mm")}
             </div>
 
             <div className="ql-snow">
