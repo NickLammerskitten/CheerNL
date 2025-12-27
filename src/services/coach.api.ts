@@ -25,7 +25,8 @@ export async function fetchCoachList(): Promise<CoachListData[]> {
     }
 
     try {
-        return CoachListDataSchema.parse(rawData);
+        return CoachListDataSchema.parse(rawData)
+            .sort((a, b) => a.name > b.name ? 1 : -1);
     } catch (validationError) {
         console.error("Zod Validierungsfehler:", validationError);
         throw new Error("Ungültige Daten von der API empfangen.");
