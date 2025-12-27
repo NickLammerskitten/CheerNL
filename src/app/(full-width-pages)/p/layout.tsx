@@ -19,7 +19,7 @@ export default function PublicPageLayout({
                 <div className="py-2 text-center md:text-left md:py-0">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                         &copy; {new Date().getFullYear()} - CheerNL<br />
-                        im Auftrag von SV Hembergen 1970 e.V.
+                        im Auftrag vom SV Hembergen 1970 e.V.
                     </p>
                 </div>
 

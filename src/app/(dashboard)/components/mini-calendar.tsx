@@ -1,6 +1,6 @@
 import { format, isSameDay, isSameMonth, isToday } from "date-fns";
 import { de } from "date-fns/locale";
-import React from "react";
+import React, { useState, TouchEvent } from "react";
 
 interface MiniCalendarProps {
     currentDate: Date;
@@ -23,12 +23,48 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
     hasEvents,
     isLoading,
 }) => {
+    const [touchStart, setTouchStart] = useState<number | null>(null);
+    const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+    // Mindestdistanz in Pixeln, damit es als Swipe zählt
+    const minSwipeDistance = 50;
+
+    const onTouchStart = (e: TouchEvent) => {
+        setTouchEnd(null); // Reset
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe) {
+            // Finger bewegt sich nach links -> Inhalt kommt von rechts -> Nächster Monat
+            onNextMonth();
+        }
+        if (isRightSwipe) {
+            // Finger bewegt sich nach rechts -> Inhalt kommt von links -> Vorheriger Monat
+            onPrevMonth();
+        }
+    };
+
     return (
         <div className="w-full lg:w-80 shrink-0 flex flex-col gap-4">
             <div
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
                 className={`bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-4 relative ${isLoading
                     ? 'opacity-70 pointer-events-none'
-                    : ''}`}
+                    : ''} 
+                `}
             >
 
                 {/* Loading Overlay */}
@@ -46,7 +82,7 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
                         disabled={isLoading}
                     >←
                     </button>
-                    <span className="font-semibold text-gray-800 dark:text-gray-200">
+                    <span className="font-semibold text-gray-800 dark:text-gray-200 select-none">
                         {format(currentDate, "MMMM yyyy", { locale: de })}
                     </span>
                     <button
@@ -58,7 +94,7 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
                 </div>
 
                 {/* Weekday Names */}
-                <div className="grid grid-cols-7 mb-2 text-xs text-center text-gray-400 font-medium">
+                <div className="grid grid-cols-7 mb-2 text-xs text-center text-gray-400 font-medium select-none">
                     {["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"].map(d => <div key={d}>{d}</div>)}
                 </div>
 
@@ -75,7 +111,7 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
                                 key={idx}
                                 onClick={() => onSelectDate(day)}
                                 className={`
-                                    h-9 w-9 rounded-full flex items-center justify-center text-sm relative transition-all mx-auto
+                                    h-9 w-9 rounded-full flex items-center justify-center text-sm relative transition-all mx-auto select-none
                                     ${!isCurrent
                                     ? "text-gray-300 dark:text-gray-700"
                                     : "text-gray-700 dark:text-gray-300"}
