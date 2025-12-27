@@ -31,7 +31,7 @@ export default async function TumblingClasses() {
                             tumblingClasses={openTumblingClasses.data}
                             anmeldungMoeglich={true}
                         />
-                        : <span>Keine offenen Anmeldungen.</span>}
+                        : <span className={"dark:text-white/70"}>Keine offenen Anmeldungen.</span>}
 
                 </ComponentCard>
 
@@ -41,7 +41,7 @@ export default async function TumblingClasses() {
                             tumblingClasses={closedTumblingClasses.data}
                             anmeldungMoeglich={false}
                         />
-                        : <span>Keine geschlossenen Anmeldungen.</span>}
+                        : <span className={"dark:text-white/70"}>Keine geschlossenen Anmeldungen.</span>}
                 </ComponentCard>
             </div>
         </>
