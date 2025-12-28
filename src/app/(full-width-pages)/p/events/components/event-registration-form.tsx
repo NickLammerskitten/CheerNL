@@ -9,9 +9,7 @@ import Alert from "@/components/ui/alert/Alert";
 import Button from "@/components/ui/button/Button";
 import { EventPublicDetailData } from "@/schemas/event-public.schema";
 import { EventSlotPublicListData } from "@/schemas/event-slot-public.schema";
-import {
-    createEventSlotRegistrationSchema,
-} from "@/schemas/event-slot-registration-public.schema";
+import { createEventSlotRegistrationSchema } from "@/schemas/event-slot-registration-public.schema";
 import { TeamPublicListData } from "@/schemas/team-public.schema";
 import { saveEventRegistration } from "@/services/event-registration-public.api";
 import { EventType } from "@/types/event-type";

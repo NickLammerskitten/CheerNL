@@ -2,7 +2,7 @@
 
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
-import RichTextEditor, { RichTextEditorHandle } from "@/components/form/richt-text-editor";
+import RichTextEditor, { RichTextEditorHandle } from "@/components/form/RichTextEditor";
 import Button from "@/components/ui/button/Button";
 import { EventCreateSchema } from "@/schemas/event.schema";
 import { saveEvent } from "@/services/event.api";
