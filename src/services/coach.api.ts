@@ -40,8 +40,6 @@ export async function fetchMyCoachObject(): Promise<CoachListData | null> {
 
     const { data: userData, error: userError } = await supabase.auth.getUser();
 
-    console.log(userData);
-
     if (userError || !userData.user) {
         console.error("Current User not found. ", userError);
         return null;
