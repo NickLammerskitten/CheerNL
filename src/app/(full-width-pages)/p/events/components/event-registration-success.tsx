@@ -63,7 +63,7 @@ export const RegistrationSuccess: React.FC<RegistrationSuccessProps> = ({
                 </svg>
             </div>
 
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Anmeldung erfolgreich!</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2 dark:text-white/90">Anmeldung erfolgreich!</h2>
             <p className="text-gray-500 max-w-md mb-8">
                 Du bist erfolgreich für <strong>{event.title} {slot.title && ' - ' + slot.title}</strong> angemeldet.
             </p>
@@ -111,7 +111,8 @@ export const RegistrationSuccess: React.FC<RegistrationSuccessProps> = ({
                         {
                             slot.coaches.map((coach) => coach.coachName)
                                 .filter((name) => name)
-                                .join(', ') ?? "Nicht angegeben"}
+                                .join(', ') ?? "Nicht angegeben"
+                        }
                     </p>
                 </div>
             </div>

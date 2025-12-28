@@ -9,7 +9,9 @@ import Alert from "@/components/ui/alert/Alert";
 import Button from "@/components/ui/button/Button";
 import { EventPublicDetailData } from "@/schemas/event-public.schema";
 import { EventSlotPublicListData } from "@/schemas/event-slot-public.schema";
-import { EventSlotRegistrationPublicCreateSchema } from "@/schemas/event-slot-registration-public.schema";
+import {
+    createEventSlotRegistrationSchema,
+} from "@/schemas/event-slot-registration-public.schema";
 import { TeamPublicListData } from "@/schemas/team-public.schema";
 import { saveEventRegistration } from "@/services/event-registration-public.api";
 import { EventType } from "@/types/event-type";
@@ -82,7 +84,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
             note: note ?? null,
         };
 
-        const result = EventSlotRegistrationPublicCreateSchema.safeParse(rawData);
+        const result = createEventSlotRegistrationSchema(event.type).safeParse(rawData);
 
         if (!result.success) {
             setLoading(false);
@@ -260,7 +262,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                         className="dark:text-white/70"
                     >
                         {event.type === EventType.TUMBLINGClASS
-                            ? "Lernziel"
+                            ? "Lernziel*"
                             : "Notiz"}
                     </Label>
                     <div className="flex flex-col gap-1">

@@ -1,8 +1,8 @@
 "use server";
 
 import {
+    createEventSlotRegistrationSchema,
     EventRegistrationPublicData,
-    EventSlotRegistrationPublicCreateSchema,
 } from "@/schemas/event-slot-registration-public.schema";
 import { UpsertResponseSchema } from "@/schemas/upsert-response.schema";
 import { fetchEventPublic } from "@/services/event-public.api";
@@ -21,15 +21,6 @@ export async function fetchEventRegistrationCount(eventSlotId: string): Promise<
 }
 
 export async function saveEventRegistration(newData: EventRegistrationPublicData): Promise<UpsertResponseSchema> {
-    if (!EventSlotRegistrationPublicCreateSchema.safeParse(newData).success) {
-        return {
-            success: false,
-            id: null,
-            error: 'Die Daten konnten nicht validiert werden',
-        };
-    }
-
-    const supabase = await createClient();
     const event = await fetchEventPublic(newData.event_id);
     const eventSlot = event.slots.find(s => s.id === newData.event_slot_id);
     if (!eventSlot) {
@@ -38,6 +29,14 @@ export async function saveEventRegistration(newData: EventRegistrationPublicData
             id: null,
             error: "Das Event konnte nicht gefunden werden",
         }
+    }
+
+    if (!createEventSlotRegistrationSchema(event.type).safeParse(newData).success) {
+        return {
+            success: false,
+            id: null,
+            error: 'Die Daten konnten nicht validiert werden',
+        };
     }
 
     const maxRegistrationsExceeded = await checkMaxRegistrationsExceeded(eventSlot.id, eventSlot.maxRegistrations)
@@ -49,6 +48,7 @@ export async function saveEventRegistration(newData: EventRegistrationPublicData
         }
     }
 
+    const supabase = await createClient();
     const { status, statusText } = await supabase
         .from('event_registration')
         .upsert(newData);
