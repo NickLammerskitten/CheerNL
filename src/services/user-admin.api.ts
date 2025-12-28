@@ -3,7 +3,8 @@
 import { CoachCreateData } from "@/schemas/coach.schema";
 import { UserListData, UserListDataSchema } from "@/schemas/user.schema";
 import { saveCoach } from "@/services/coach.api";
-import { AuthError, createClient, SupabaseClient } from '@supabase/supabase-js'
+import { isPasswordStrong } from "@/utils/password-checker";
+import { AdminUserAttributes, AuthError, createClient, SupabaseClient } from '@supabase/supabase-js'
 
 async function createAdminClient(): Promise<SupabaseClient> {
     return createClient(
@@ -40,17 +41,30 @@ export async function fetchAllUsers(): Promise<UserListData> {
 export async function createUser(
     email: string,
     password: string,
-    displayName: string,
+    displayName: string | undefined,
     isCoach: boolean,
 ): Promise<string | null> {
+    const passwordValid = isPasswordStrong(password);
+    if (!passwordValid) {
+        return "Das Passwort erfüllt nicht die Kriterien.";
+    }
+
     const supabase = await createAdminClient()
 
-    const { data, error } = await supabase.auth.admin.createUser({
+    let createData = {
         email_confirm: true,
         email: email,
         password: password,
-        user_metadata: { display_name: displayName },
-    })
+    } as AdminUserAttributes
+
+    if (displayName && displayName.length > 0) {
+        createData = {
+            ...createData,
+            user_metadata: { display_name: displayName },
+        }
+    }
+
+    const { data, error } = await supabase.auth.admin.createUser(createData)
 
     if (error) {
         return error.message;
@@ -80,6 +94,24 @@ export async function deleteUser(id: string): Promise<AuthError | null> {
 
     if (error) {
         return error
+    }
+
+    return null
+}
+
+//@Role Admin
+export async function resetPasswort(id: string, newPassword: string): Promise<string | null> {
+    const passwordValid = isPasswordStrong(newPassword);
+    if (!passwordValid) {
+        return "Das Passwort erfüllt nicht die Kriterien.";
+    }
+
+    const supabase = await createAdminClient()
+
+    const { error } = await supabase.auth.admin.updateUserById(id, { password: newPassword })
+
+    if (error) {
+        return error.message;
     }
 
     return null

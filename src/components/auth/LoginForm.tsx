@@ -80,7 +80,7 @@ export default function LoginForm() {
                                 <div className="relative">
                                     <Input
                                         type={showPassword ? "text" : "password"}
-                                        placeholder="Enter your password"
+                                        placeholder="Dein Passwort"
                                         onChange={(e) => setPassword(e.target.value)} // State bei Änderung aktualisieren
                                     />
                                     <span

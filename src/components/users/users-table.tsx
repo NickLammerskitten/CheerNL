@@ -2,6 +2,7 @@
 
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import DeleteUserModal from "@/components/users/delete-user-modal";
+import ResetUserPasswordModal from "@/components/users/reset-user-password-modal";
 import { UserListData } from "@/schemas/user.schema";
 import React from "react";
 
@@ -11,6 +12,7 @@ interface UsersTableProps {
 
 export default function UsersTable({ users }: UsersTableProps) {
 
+    console.log(users);
     return (
         <Table>
             <TableHeader>
@@ -45,7 +47,7 @@ export default function UsersTable({ users }: UsersTableProps) {
                             <TableCell
                                 dataLabel={"Name"}
                             >
-                                {user.displayName ?? 'Unbekannt'}
+                                {user.displayName ?? "Unbekannt"}
                             </TableCell>
 
                             <TableCell
@@ -70,6 +72,7 @@ export default function UsersTable({ users }: UsersTableProps) {
 
                             <TableCell className="px-5 py-4 sm:px-6 text-start">
                                 <DeleteUserModal userId={user.id} />
+                                <ResetUserPasswordModal userId={user.id} />
                             </TableCell>
                         </TableRow>
                     )

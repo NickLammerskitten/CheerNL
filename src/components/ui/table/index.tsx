@@ -94,7 +94,7 @@ const TableCell: React.FC<TableCellProps> = ({
                     {dataLabel}
                 </span>
             )}
-            <div className={"text-sm text-right md:text-left md:text-base"}>
+            <div className={"text-sm md:text-left md:text-base"}>
                 {children}
             </div>
         </CellTag>
