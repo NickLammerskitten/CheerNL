@@ -2,5 +2,7 @@
 /node_modules
 /.idea/
 
+/service_accounts
+
 .env
 .env.local
