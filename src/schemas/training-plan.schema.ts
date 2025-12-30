@@ -1,6 +1,6 @@
+import { GOOGLE_DRIVE_ID_REGEX } from "@/utils/google/google-drive-folder-id-validation";
 import { z } from "zod";
 
-const GOOGLE_DRIVE_ID_REGEX = /^[a-zA-Z0-9_-]+$/;
 
 const ApiDataSchema = z.object({
     id: z.uuid(),
@@ -23,7 +23,7 @@ export const TrainingPlanListDataSchema = z.array(TrainingPlanListItemDataSchema
 
 export type TrainingPlanListData = z.infer<typeof TrainingPlanListDataSchema>;
 
-export type TrainingPlanDetailData = z.infer<typeof TrainingPlanListItemDataSchema>;
+export type TrainingPlanListItemData = z.infer<typeof TrainingPlanListItemDataSchema>;
 
 /* Create */
 export const TrainingPlanCreateSchema = z.object({

@@ -27,8 +27,8 @@ const navItems: NavItem[] = [
     },
     {
         icon: <WeightliftingIcon />,
-        name: "Krafttraining",
-        path: "/weightlifting"
+        name: "Kraft-/Ausdauertraining",
+        path: "/training-plan"
     }
 ];
 

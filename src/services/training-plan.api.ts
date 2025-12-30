@@ -2,7 +2,7 @@
 
 import {
     TrainingPlanCreateData,
-    TrainingPlanCreateSchema, TrainingPlanDetailData,
+    TrainingPlanCreateSchema, TrainingPlanListItemData,
     TrainingPlanListData,
     TrainingPlanListDataSchema,
     TrainingPlanListItemDataSchema,
@@ -33,7 +33,7 @@ export async function fetchTrainingPlanList(): Promise<TrainingPlanListData> {
     }
 }
 
-export async function fetchTrainingPlan(id: string): Promise<TrainingPlanDetailData> {
+export async function fetchTrainingPlan(id: string): Promise<TrainingPlanListItemData> {
     const supabase = await createClient();
     const { data, error } = await supabase
         .from('training_plan')
