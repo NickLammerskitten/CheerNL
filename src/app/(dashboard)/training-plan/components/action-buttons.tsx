@@ -21,7 +21,7 @@ export default function WeightliftingActionButtons() {
 
             <Button
                 variant={"outline"}
-                onClick={() => router.push("weightlifting/plans")}
+                onClick={() => router.push("/training-plan/plans")}
             >
                 Trainingspläne
             </Button>
