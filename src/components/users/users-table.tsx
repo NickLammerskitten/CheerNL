@@ -12,7 +12,6 @@ interface UsersTableProps {
 
 export default function UsersTable({ users }: UsersTableProps) {
 
-    console.log(users);
     return (
         <Table>
             <TableHeader>

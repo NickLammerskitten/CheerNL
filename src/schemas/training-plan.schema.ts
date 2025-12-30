@@ -21,7 +21,9 @@ export const TrainingPlanListItemDataSchema = ApiDataSchema.transform((apiData) 
 
 export const TrainingPlanListDataSchema = z.array(TrainingPlanListItemDataSchema);
 
-export type TrainingPlanListData = z.infer<typeof TrainingPlanListItemDataSchema>;
+export type TrainingPlanListData = z.infer<typeof TrainingPlanListDataSchema>;
+
+export type TrainingPlanDetailData = z.infer<typeof TrainingPlanListItemDataSchema>;
 
 /* Create */
 export const TrainingPlanCreateSchema = z.object({

@@ -2,7 +2,7 @@
 
 import {
     TrainingPlanCreateData,
-    TrainingPlanCreateSchema,
+    TrainingPlanCreateSchema, TrainingPlanDetailData,
     TrainingPlanListData,
     TrainingPlanListDataSchema,
     TrainingPlanListItemDataSchema,
@@ -13,7 +13,7 @@ import { UpsertResponseSchema } from "@/schemas/upsert-response.schema";
 import { getFile } from "@/services/google-drive/google-drive-files.api";
 import { createClient } from "@/utils/supabase/server";
 
-export async function fetchTrainingPlanList(): Promise<TrainingPlanListData[]> {
+export async function fetchTrainingPlanList(): Promise<TrainingPlanListData> {
     const supabase = await createClient();
 
     const { data: rawData, error } = await supabase
@@ -33,7 +33,7 @@ export async function fetchTrainingPlanList(): Promise<TrainingPlanListData[]> {
     }
 }
 
-export async function fetchTrainingPlan(id: string): Promise<TrainingPlanListData> {
+export async function fetchTrainingPlan(id: string): Promise<TrainingPlanDetailData> {
     const supabase = await createClient();
     const { data, error } = await supabase
         .from('training_plan')

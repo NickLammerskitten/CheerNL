@@ -51,6 +51,7 @@ import TrashBinIcon from "./trash.svg";
 import UserCircleIcon from "./user-circle.svg";
 import UserIcon from "./user-line.svg";
 import VideoIcon from "./videos.svg";
+import WeightliftingIcon from "./weightlifting.svg";
 
 export {
     DownloadIcon,
@@ -106,4 +107,5 @@ export {
     HorizontaLDots,
     ChevronUpIcon,
     ChatIcon,
+    WeightliftingIcon,
 };
