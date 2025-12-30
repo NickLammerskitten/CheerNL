@@ -79,7 +79,8 @@ export async function saveTrainingPlanAthlete(newData: TrainingPlanAthleteUpdate
     if (!savedData.googleDriveFolderId) {
         try {
             createdFolderId = await handleExternalAthleteCreation(savedData, trainingPlan);
-        } catch (driveError: any) {
+            // @ts-expect-error: No specific error type due to missing docs
+        } catch (driveError: Error) {
             await supabase
                 .from('training_plan_athlete')
                 .delete()
@@ -131,7 +132,8 @@ export async function deleteTrainingPlanAthlete(id: string) {
 
     try {
         await handleExternalAthleteDeletion(athlete);
-    } catch (driveError: any) {
+        // @ts-expect-error: No specific error type due to missing docs
+    } catch (driveError: Error) {
         console.log("Fehler beim Löschen eines Google Drive Ordners ", driveError.message);
     }
 
