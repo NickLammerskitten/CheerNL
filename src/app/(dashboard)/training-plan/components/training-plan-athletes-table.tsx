@@ -1,8 +1,11 @@
 "use client";
 
+import Button from "@/components/ui/button/Button";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import { EyeIcon } from "@/icons";
 import { TrainingPlanAthleteListData } from "@/schemas/training-plan-athlete.schema";
 import { format } from "date-fns";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 interface TrainingPlanAthletesTableProps {
@@ -10,6 +13,12 @@ interface TrainingPlanAthletesTableProps {
 }
 
 export default function TrainingPlanAthletesTable({ athletes }: TrainingPlanAthletesTableProps) {
+    const router = useRouter();
+
+    const openDetailPage = (id: string) => {
+        router.push(`/training-plan/${id}`);
+    }
+
     return (
         <>
             <Table>
@@ -49,6 +58,21 @@ export default function TrainingPlanAthletesTable({ athletes }: TrainingPlanAthl
                                     dataLabel={"Erstellt am"}
                                 >
                                     {format(athlete.createdAt, "dd.MM.yyyy HH:mm")}
+                                </TableCell>
+
+                                <TableCell
+                                    dataLabel={""}
+                                >
+                                    <div className={"flex gap-1"}>
+
+                                        <Button
+                                            variant={"outline"}
+                                            size={"sm"}
+                                            onClick={() => openDetailPage(athlete.id)}
+                                        >
+                                            <EyeIcon />
+                                        </Button>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         )

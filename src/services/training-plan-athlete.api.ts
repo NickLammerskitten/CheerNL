@@ -36,6 +36,27 @@ export async function fetchTrainingPlanAthleteList(): Promise<TrainingPlanAthlet
     }
 }
 
+export async function fetchTrainingPlanAthlete(id: string): Promise<TrainingPlanAthleteListItemData> {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+        .from('training_plan_athlete')
+        .select('*, training_plan(name)')
+        .eq('id', id)
+        .single();
+
+    if (error) {
+        throw new Error(`Supabase-Fehler: ${error.message}`);
+    }
+
+    try {
+        return TrainingPlanAthleteListItemDataSchema.parse(data);
+    } catch (validationError) {
+        console.error("Zod Validierungsfehler:", validationError);
+        throw new Error("Ungültige Daten von der API empfangen.");
+    }
+}
+
 export async function saveTrainingPlanAthlete(newData: TrainingPlanAthleteUpdateData | TrainingPlanAthleteCreateData): Promise<UpsertResponseSchema> {
     const dataValid = TrainingPlanAthleteUpdateSchema.safeParse(newData).success || TrainingPlanAthleteCreateSchema.safeParse(newData).success;
 

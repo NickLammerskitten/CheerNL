@@ -26,6 +26,36 @@ export const getFile = async (fileId: string): Promise<GaxiosResponseWithHTTP2<d
     });
 }
 
+export interface FilePermission {
+    id?: string;
+    name?: string;
+    emailAddress?: string;
+    role?: string;
+    photoLink?: string;
+}
+
+export const getFilePermissions = async (fileId: string): Promise<FilePermission[]> => {
+    const drive = await createGoogleDriveClient();
+
+    const response = await drive.files.get({
+        fileId: fileId,
+        supportsAllDrives: true,
+        fields: 'permissions(id,displayName,emailAddress,role,photoLink)',
+    });
+
+    const permissions = response.data.permissions;
+
+    return permissions?.map((permission) => {
+        return {
+            id: permission.id ?? undefined,
+            name: permission.displayName ?? undefined,
+            emailAddress: permission.emailAddress ?? undefined,
+            role: permission.role ?? undefined,
+            photoLink: permission.photoLink ?? undefined,
+        }
+    }) ?? []
+}
+
 export const createAthleteFolder = async (name: string, athleteEmail: string): Promise<string> => {
     const drive = await createGoogleDriveClient();
 
