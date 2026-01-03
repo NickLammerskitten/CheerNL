@@ -76,11 +76,11 @@ async function performImport(trainingPlanAthleteId: string, importFrom: Date | n
     }
 
     let nextPageToken = null;
-    let data: CreateTrainingPlanAthleteActivity[] = [];
+    const data: CreateTrainingPlanAthleteActivity[] = [];
 
     try {
         do {
-            let activitiesResponse = await listDriveActivities(googleDriveFolderId, trainingPlanAthleteId, importFrom);
+            const activitiesResponse = await listDriveActivities(googleDriveFolderId, trainingPlanAthleteId, importFrom);
 
             data.push(...activitiesResponse.data);
             nextPageToken = activitiesResponse.nextPageToken;
