@@ -1,3 +1,4 @@
+import { ActivityDashboard } from "@/app/(dashboard)/training-plan/[id]/components/activity-dashboard";
 import TrainingPlanAthleteActivities
     from "@/app/(dashboard)/training-plan/[id]/components/training-plan-athlete-activities";
 import TrainingPlanAthleteDetails from "@/app/(dashboard)/training-plan/[id]/components/training-plan-athlete-details";
@@ -28,6 +29,8 @@ export default async function TrainingPlanAthletePage({
                 trainingPlanAthlete={trainingPlanAthlete}
                 folderPermissions={permissions}
             />
+
+            <ActivityDashboard data={activities} />
 
             <TrainingPlanAthleteActivities activities={activities} />
         </ComponentCard>
