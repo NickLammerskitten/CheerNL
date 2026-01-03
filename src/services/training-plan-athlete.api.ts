@@ -155,7 +155,7 @@ export async function deleteTrainingPlanAthlete(id: string) {
         await handleExternalAthleteDeletion(athlete);
         // @ts-expect-error: No specific error type due to missing docs
     } catch (driveError: Error) {
-        console.log("Fehler beim Löschen eines Google Drive Ordners ", driveError.message);
+        console.error("Fehler beim Löschen eines Google Drive Ordners ", driveError.message);
     }
 
     const { status, statusText } = await supabase

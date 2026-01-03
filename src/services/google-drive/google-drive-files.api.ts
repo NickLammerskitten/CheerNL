@@ -77,7 +77,7 @@ export const createAthleteFolder = async (name: string, athleteEmail: string): P
 
         await shareRessource(file.data.id, athleteEmail, 'writer');
 
-        console.log('Ordner erstellt, ID:', file.data.id);
+        console.error('Ordner erstellt, ID:', file.data.id);
         return file.data.id;
     } catch (error) {
         console.error('Fehler beim Erstellen des Ordners:', error);
