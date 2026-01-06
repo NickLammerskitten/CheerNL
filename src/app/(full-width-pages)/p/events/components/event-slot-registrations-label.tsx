@@ -1,47 +1,49 @@
 "use client";
 
-import { fetchEventRegistrationCount } from "@/services/event-registration-public.api";
-import { useEffect, useState } from "react";
-
 interface EventSlotRegistrationLabelProps {
-    eventSlotId: string;
     maxRegistrations: number | null;
+    registrationCount: number;
 }
 
 export default function EventSlotRegistrationsLabel({
-    eventSlotId,
     maxRegistrations,
+    registrationCount,
 }: EventSlotRegistrationLabelProps) {
+    if (!maxRegistrations) {
+        return (
+            <span>
+                Teilnehmer: Unbegrenzt
+            </span>
+        )
+    }
 
-    const [registrationCount, setRegistrationCount] = useState<number | null>();
-    const [loading, setLoading] = useState(false)
+    const currentCount = registrationCount || 0;
 
-    useEffect(() => {
-        const loadRegistrationCount = async () => {
-            setLoading(true);
-            setRegistrationCount(0);
+    const displayCount = currentCount > maxRegistrations
+        ? maxRegistrations
+        : currentCount;
 
-            const count = await fetchEventRegistrationCount(eventSlotId);
-            setRegistrationCount(count)
-            setLoading(false);
-        }
+    const waitingListCount = currentCount > maxRegistrations
+        ? currentCount - maxRegistrations
+        : 0;
 
-        loadRegistrationCount()
-    }, [eventSlotId]);
+    const isFull = currentCount >= maxRegistrations;
 
     return (
         <span>
-            Teilnehmer: {loading ? 'lädt...' : registrationCount} {maxRegistrations && ` von ${maxRegistrations}`}
+            Teilnehmer: {displayCount} von {maxRegistrations}
 
-            {registrationCount && maxRegistrations && registrationCount >= maxRegistrations ? (
+            {isFull ? (
                 <>
-                    {' (Ausgebucht)'}
+                    {' (Ausgebucht'}
+                    {waitingListCount > 0 && `, ${waitingListCount} auf Warteliste`}
+                    {')'}
                 </>
-            ) : registrationCount && maxRegistrations ? (
+            ) : (
                 <>
-                    {` (${maxRegistrations - registrationCount} frei)`}
+                    {` (${maxRegistrations - currentCount} frei)`}
                 </>
-            ) : ' (frei)'}
+            )}
         </span>
     )
 }

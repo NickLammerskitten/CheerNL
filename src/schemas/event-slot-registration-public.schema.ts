@@ -14,6 +14,7 @@ const EventSlotRegistrationPublicCreateSchema = z.object({
     email: z.email({ message: "Die E-Mail Adresse muss valide sein." }),
     phone: z.string().regex(phoneRegex, "Die Telefonnummer muss valide sein"),
     note: z.string().nullable(),
+    waitlist: z.boolean().default(false),
 });
 
 export const createEventSlotRegistrationSchema = (eventType: EventType) => {

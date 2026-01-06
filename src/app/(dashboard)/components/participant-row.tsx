@@ -9,7 +9,7 @@ export const ParticipantRow: React.FC<ParticipantRowProps> = ({ participant: par
     return (
         <li className="group p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex flex-col sm:flex-row gap-4 items-start sm:items-center">
             {/* Avatar & Name */}
-            <div className="flex items-center gap-3 w-full sm:w-1/3 min-w-0">
+            <div className="flex items-center gap-3 w-full sm:w-1/2 min-w-0">
                 <div className="h-10 w-10 rounded-full bg-brand-100 text-brand-600 dark:bg-brand-900 dark:text-brand-300 flex items-center justify-center font-bold text-sm shrink-0 uppercase">
                     {participant.firstName.charAt(0)}{participant.lastName.charAt(0)}
                 </div>
@@ -20,7 +20,7 @@ export const ParticipantRow: React.FC<ParticipantRowProps> = ({ participant: par
                     {participant.email && (
                         <p className="text-xs text-gray-400 truncate">{participant.email}</p>
                     )}
-                    <div className="block sm:hidden">
+                    <div>
                         {participant.phone && (
                             <a
                                 href={`tel:${participant.phone}`}
@@ -34,7 +34,7 @@ export const ParticipantRow: React.FC<ParticipantRowProps> = ({ participant: par
             </div>
 
             {/* Notizen */}
-            <div className="w-full sm:flex-1">
+            <div className="shrink-0 text-right">
                 {participant.note ? (
                     <div className="bg-yellow-50 border border-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-900/30 dark:text-yellow-200 text-xs p-2 rounded-lg inline-block max-w-full break-words">
                         <span className="font-semibold mr-1">Hinweis:</span>
@@ -42,18 +42,6 @@ export const ParticipantRow: React.FC<ParticipantRowProps> = ({ participant: par
                     </div>
                 ) : (
                     <span className="text-xs text-gray-300 italic group-hover:text-gray-400">- Keine Notiz -</span>
-                )}
-            </div>
-
-            {/* Telefon Button */}
-            <div className="shrink-0 text-right hidden sm:block">
-                {participant.phone && (
-                    <a
-                        href={`tel:${participant.phone}`}
-                        className="text-xs text-gray-400 hover:text-brand-600 flex items-center gap-1 justify-end"
-                    >
-                        📞 {participant.phone}
-                    </a>
                 )}
             </div>
         </li>

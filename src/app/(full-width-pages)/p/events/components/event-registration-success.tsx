@@ -12,12 +12,14 @@ import React from "react";
 
 interface RegistrationSuccessProps {
     event: EventPublicDetailData;
+    registeredOnWaitlist: boolean;
     selectedSlotId: string;
     onReset: () => void;
 }
 
 export const RegistrationSuccess: React.FC<RegistrationSuccessProps> = ({
     event,
+    registeredOnWaitlist,
     selectedSlotId,
     onReset,
 }) => {
@@ -46,10 +48,9 @@ export const RegistrationSuccess: React.FC<RegistrationSuccessProps> = ({
 
     return (
         <div className="flex flex-col items-center justify-center py-10 text-center animate-in fade-in zoom-in duration-300">
-            {/* Großes Grünes Häkchen */}
             <div className="h-20 w-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
                 <svg
-                    className="w-10 h-10 text-green-600"
+                    className="w-10 h-10 text-yellow-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -63,10 +64,23 @@ export const RegistrationSuccess: React.FC<RegistrationSuccessProps> = ({
                 </svg>
             </div>
 
-            <h2 className="text-2xl font-bold text-gray-900 mb-2 dark:text-white/90">Anmeldung erfolgreich!</h2>
-            <p className="text-gray-500 max-w-md mb-8">
-                Du bist erfolgreich für <strong>{event.title} {slot.title && ' - ' + slot.title}</strong> angemeldet.
-            </p>
+            {registeredOnWaitlist
+                ? <>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2 dark:text-white/90">Warteliste
+                        beigetreten!</h2>
+                    <p className="text-gray-500 max-w-md mb-8">
+                        Du bist erfolgreich für <strong>{event.title} {slot.title && ' - ' + slot.title}</strong> der
+                        Warteliste beigetreten. Solltest du einen Platz bekommen, wirst du informiert.
+                    </p>
+                </>
+                : <>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2 dark:text-white/90">Anmeldung erfolgreich!</h2>
+                    <p className="text-gray-500 max-w-md mb-8">
+                        Du bist erfolgreich
+                        für <strong>{event.title} {slot.title && ' - ' + slot.title}</strong> angemeldet.
+                    </p>
+                </>
+            }
 
             {/* Event Details Zusammenfassung */}
             <div className="bg-gray-50 rounded-xl p-6 mb-8 w-full max-w-sm border border-gray-100 text-left">

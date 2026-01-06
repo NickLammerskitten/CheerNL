@@ -13,6 +13,7 @@ export const ApiSlotRegistrationListDataSchema = z.object({
     email: z.string(),
     phone: z.string(),
     note: z.string().nullable(),
+    waitlist: z.boolean(),
 });
 
 export const EventSlotRegistrationListItemDataSchema = ApiSlotRegistrationListDataSchema.transform((apiData) => {
@@ -27,6 +28,7 @@ export const EventSlotRegistrationListItemDataSchema = ApiSlotRegistrationListDa
         email: apiData.email,
         phone: apiData.phone,
         note: apiData.note,
+        waitlist: apiData.waitlist,
     }
 })
 

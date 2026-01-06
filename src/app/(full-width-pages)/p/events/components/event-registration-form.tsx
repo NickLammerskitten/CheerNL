@@ -11,14 +11,14 @@ import { EventPublicDetailData } from "@/schemas/event-public.schema";
 import { EventSlotPublicListData } from "@/schemas/event-slot-public.schema";
 import { createEventSlotRegistrationSchema } from "@/schemas/event-slot-registration-public.schema";
 import { TeamPublicListData } from "@/schemas/team-public.schema";
-import { saveEventRegistration } from "@/services/event-registration-public.api";
+import { fetchEventRegistrationCount, saveEventRegistration } from "@/services/event-registration-public.api";
 import { EventType } from "@/types/event-type";
 import { RecurrenceType } from "@/types/recurrence-type";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
 import { calculateEndTimeOnce, calculateEndTimeRecurrent } from "@/utils/event-time-calculator";
 import { parseHtmlOrDefault } from "@/utils/parse-html-or-default";
 import { format, isAfter, isBefore } from "date-fns";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import 'quill/dist/quill.snow.css';
 
@@ -43,8 +43,9 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
         } as Option
     })
 
-    const [team, setTeam] = useState<string | undefined>()
-    const [slot, setSlot] = useState<string | undefined>()
+    const [team, setTeam] = useState<string | undefined>();
+    const [slot, setSlot] = useState<string | undefined>();
+    const [slotRegistrationCount, setSlotRegistrationCount] = useState<number | undefined>();
 
     const [firstName, setFirstName] = useState<string | undefined>()
     const [lastName, setLastName] = useState<string | undefined>()
@@ -56,7 +57,8 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
 
-    const [success, setSuccess] = useState<boolean>(false)
+    const [success, setSuccess] = useState<boolean>(false);
+    const [registeredOnWaitlist, setRegisteredOnWaitlist] = useState<boolean>(false);
 
     const handleTeamChange = (teamId: string) => {
         setTeam(teamId)
@@ -65,6 +67,39 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
     const handleSlotChange = (slotId: string) => {
         setSlot(slotId)
     }
+
+    const slotFullyBooked = () => {
+        const selectedSlot = event.slots.find(slotElement => slotElement.id === slot);
+
+        // nothing selected or no limit
+        if (!selectedSlot || !selectedSlot.maxRegistrations) {
+            return false;
+        }
+
+        const maxRegistrations = selectedSlot.maxRegistrations;
+        // not loaded
+        if (!slotRegistrationCount) {
+            return false;
+        }
+
+        return slotRegistrationCount >= maxRegistrations;
+    }
+
+    useEffect(() => {
+        const loadRegistrationCount = async () => {
+            setLoading(true);
+            setSlotRegistrationCount(undefined);
+
+            if (slot) {
+                const count = await fetchEventRegistrationCount(slot);
+                setSlotRegistrationCount(count)
+            }
+
+            setLoading(false);
+        }
+
+        loadRegistrationCount()
+    }, [slot]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -113,6 +148,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
         } else {
             setError(null);
             setSuccess(true);
+            setRegisteredOnWaitlist(apiResponse.warteliste ?? false);
         }
     }
 
@@ -133,6 +169,7 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                 event={event}
                 selectedSlotId={slot}
                 onReset={handleReset}
+                registeredOnWaitlist={registeredOnWaitlist}
             />
         );
     }
@@ -181,7 +218,10 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                             <p className="text-xs text-red-500">{fieldErrors.event_slot_id}</p>
                         )}
                     </div>
-                    <SlotDetails slot={event.slots.find(s => s.id === slot)} />
+                    <SlotDetails
+                        slot={event.slots.find(s => s.id === slot)}
+                        registrationCount={slotRegistrationCount}
+                    />
 
                     <Label
                         htmlFor="firstName"
@@ -319,7 +359,11 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
                                     disabled={loading}
                                     className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition w-full sm:w-auto bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 px-4 py-3 text-sm"
                                 >
-                                    {loading ? "Speichern..." : "Verbindlich anmelden"}
+                                    {loading ? "Speichern..."
+                                        : slotFullyBooked()
+                                            ? "Warteliste beitreten"
+                                            : "Verbindlich anmelden"
+                                    }
                                 </button>
 
                     }
@@ -329,8 +373,11 @@ export default function EventRegistrationForm({ teams, event }: EventRegistratio
     )
 }
 
-const SlotDetails = ({ slot }: { slot?: EventSlotPublicListData }) => {
-    if (!slot) {
+const SlotDetails = ({ slot, registrationCount }: {
+    slot?: EventSlotPublicListData,
+    registrationCount: number | undefined
+}) => {
+    if (!slot || !registrationCount) {
         return null;
     }
 
@@ -344,8 +391,8 @@ const SlotDetails = ({ slot }: { slot?: EventSlotPublicListData }) => {
                 {"Zeit: " + (slotTime(slot) ?? "Keine Zeit")}<br />
                 {"Coaches: " + (slotCoaches(slot) ?? "Keine Coaches")}<br />
                 <EventSlotRegistrationsLabel
-                    eventSlotId={slot.id}
                     maxRegistrations={slot.maxRegistrations}
+                    registrationCount={registrationCount}
                 />
             </div>
         </>
@@ -383,5 +430,5 @@ const slotCoaches = (slot: EventSlotPublicListData) => {
 
     return slot.coaches.map((coach) => coach.coachName)
         .filter((name) => name)
-        .join(", ")
+        .join(", ");
 }

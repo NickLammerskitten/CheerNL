@@ -63,6 +63,7 @@ create table public.event_registration
     email         text                                               not null,
     phone         text                                               not null,
     note          text,
+    waitlist      boolean                  default false             not null,
     created_at    timestamp with time zone default now()             not null
 );
 

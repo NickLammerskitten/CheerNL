@@ -20,7 +20,11 @@ export async function fetchEventRegistrationCount(eventSlotId: string): Promise<
     return data as number;
 }
 
-export async function saveEventRegistration(newData: EventRegistrationPublicData): Promise<UpsertResponseSchema> {
+interface EventRegistrationUpsertResponseSchema extends UpsertResponseSchema {
+    warteliste: boolean | null;
+}
+
+export async function saveEventRegistration(newData: EventRegistrationPublicData): Promise<EventRegistrationUpsertResponseSchema> {
     const event = await fetchEventPublic(newData.event_id);
     const eventSlot = event.slots.find(s => s.id === newData.event_slot_id);
     if (!eventSlot) {
@@ -28,6 +32,7 @@ export async function saveEventRegistration(newData: EventRegistrationPublicData
             success: false,
             id: null,
             error: "Das Event konnte nicht gefunden werden",
+            warteliste: null,
         }
     }
 
@@ -36,16 +41,13 @@ export async function saveEventRegistration(newData: EventRegistrationPublicData
             success: false,
             id: null,
             error: 'Die Daten konnten nicht validiert werden',
+            warteliste: null,
         };
     }
 
     const maxRegistrationsExceeded = await checkMaxRegistrationsExceeded(eventSlot.id, eventSlot.maxRegistrations)
     if (maxRegistrationsExceeded) {
-        return {
-            success: false,
-            id: null,
-            error: "Das ausgewählt Element ist bereits ausgebucht",
-        }
+        newData.waitlist = true;
     }
 
     const supabase = await createClient();
@@ -58,11 +60,13 @@ export async function saveEventRegistration(newData: EventRegistrationPublicData
             success: false,
             id: null,
             error: `Es ist ein Fehler aufgetreten: ${status} - ${statusText}`,
+            warteliste: null,
         }
     }
 
     return {
         success: true,
+        warteliste: newData.waitlist,
         id: null,
         error: null,
     };

@@ -7,6 +7,9 @@ interface EventCardProps {
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event }) => {
+    const confirmedParticipants = event.registrations.filter(r => !r.waitlist);
+    const waitlistParticipants = event.registrations.filter(r => r.waitlist);
+
     return (
         <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
             {/* Card Header */}
@@ -35,16 +38,14 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
                     </p>
                 </div>
 
-                {/* Stats Counter */}
                 <div className="text-center bg-gray-50 dark:bg-gray-800 rounded-lg p-3 min-w-[80px]">
                     <span className="block text-xl font-bold text-gray-800 dark:text-white">
-                        {event.registrations.length} {event.maxRegistrations && ` von ${event.maxRegistrations}`}
+                        {confirmedParticipants.length} {event.maxRegistrations && ` von ${event.maxRegistrations}`}
                     </span>
                     <span className="text-[10px] text-gray-400 uppercase font-medium">Teilnehmer</span>
                 </div>
             </div>
 
-            {/* Teilnehmer Liste */}
             <div className="p-0">
                 <div className="bg-gray-50/50 dark:bg-gray-800/30 px-6 py-2 border-b border-gray-100 dark:border-gray-800">
                     <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Teilnehmerliste</h4>
@@ -52,7 +53,34 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
 
                 {event.registrations.length > 0 ? (
                     <ul className="divide-y divide-gray-100 dark:divide-gray-800">
-                        {event.registrations.map((participant) => (
+
+                        {/* 1. Feste Teilnehmer */}
+                        {confirmedParticipants.map((participant) => (
+                            <ParticipantRow
+                                key={participant.id}
+                                participant={participant}
+                            />
+                        ))}
+
+                        {/* 2. Trennstrich (nur wenn Warteliste existiert) */}
+                        {waitlistParticipants.length > 0 && (
+                            <li className="relative py-5">
+                                <div
+                                    className="absolute inset-0 flex items-center"
+                                    aria-hidden="true"
+                                >
+                                    <div className="w-full border-t border-gray-300 dark:border-gray-700 border-dashed"></div>
+                                </div>
+                                <div className="relative flex justify-center">
+                                    <span className="bg-white dark:bg-gray-900 px-3 text-sm font-semibold text-gray-500">
+                                        Warteliste ({waitlistParticipants.length})
+                                    </span>
+                                </div>
+                            </li>
+                        )}
+
+                        {/* 3. Wartelisten Teilnehmer */}
+                        {waitlistParticipants.map((participant) => (
                             <ParticipantRow
                                 key={participant.id}
                                 participant={participant}
