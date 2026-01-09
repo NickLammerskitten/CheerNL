@@ -29,3 +29,14 @@ export const IcsDayMap: Record<DayOfWeek, string> = {
     FRIDAY: "FR",
     SATURDAY: "SA",
 };
+
+// Mapping für Frontend-Anzeige
+export const days = [
+    { enum: DayOfWeek.MONDAY, string: "Montags" },
+    { enum: DayOfWeek.TUESDAY, string: "Dienstags" },
+    { enum: DayOfWeek.WEDNESDAY, string: "Mittwochs" },
+    { enum: DayOfWeek.THURSDAY, string: "Donnerstags" },
+    { enum: DayOfWeek.FRIDAY, string: "Freitags" },
+    { enum: DayOfWeek.SATURDAY, string: "Samstags" },
+    { enum: DayOfWeek.SUNDAY, string: "Sonntags" },
+];

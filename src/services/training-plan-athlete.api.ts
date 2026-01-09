@@ -12,7 +12,7 @@ import {
 } from "@/schemas/training-plan-athlete.schema";
 import { TrainingPlanListItemData } from "@/schemas/training-plan.schema";
 import { UpsertResponseSchema } from "@/schemas/upsert-response.schema";
-import { createAthleteFolder, deleteFolder } from "@/services/google-drive/google-drive-files.api";
+import { createAthleteFolder, deleteFolder } from "@/services/external/google-drive-files.api";
 import { fetchTrainingPlan } from "@/services/training-plan.api";
 import { createClient } from "@/utils/supabase/server";
 

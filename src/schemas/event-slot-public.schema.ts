@@ -3,7 +3,7 @@ import {
     EventSlotCoachPublicListDataSchema,
 } from "@/schemas/event-slot-coach-public.schema";
 import { DayOfWeek } from "@/types/day-of-week";
-import { RecurrenceType } from "@/types/recurrence-type";
+import { EventRecurrenceType } from "@/types/event-recurrence-type";
 import { z } from "zod";
 
 export const ApiSlotPublicListDataSchema = z.object({
@@ -34,7 +34,7 @@ export const EventSlotPublicListItemDataSchema = ApiSlotPublicListDataSchema.tra
         title: apiData.title,
         location: apiData.location,
         durationMinutes: apiData.duration_minutes,
-        recurrenceType: apiData.recurrence_type as RecurrenceType,
+        recurrenceType: apiData.recurrence_type as EventRecurrenceType,
         slotStart: apiData.slot_start,
         slotEnd: apiData.slot_end,
         dayOfWeek: apiData.day_of_week as DayOfWeek,

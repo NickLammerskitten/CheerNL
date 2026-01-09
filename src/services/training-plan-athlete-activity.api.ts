@@ -5,7 +5,7 @@ import {
     TrainingPlanAthleteActivityListDataSchema,
 } from "@/schemas/training-plan-athlete-activity.schema";
 import { UpsertResponseSchema } from "@/schemas/upsert-response.schema";
-import { listDriveActivities } from "@/services/google-drive/google-drive-activities.api";
+import { listDriveActivities } from "@/services/external/google-drive-activities.api";
 import { fetchTrainingPlanAthlete } from "@/services/training-plan-athlete.api";
 import { createClient } from "@/utils/supabase/server";
 import { addHours, isAfter } from "date-fns";

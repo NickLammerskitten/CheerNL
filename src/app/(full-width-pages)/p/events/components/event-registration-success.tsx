@@ -2,8 +2,8 @@
 
 import Button from "@/components/ui/button/Button";
 import { EventPublicDetailData } from "@/schemas/event-public.schema";
-import { generateIcsData } from "@/services/event-slot-occurence/slot-to-ics-mapper";
-import { RecurrenceType } from "@/types/recurrence-type";
+import { generateIcsData } from "@/utils/slot-to-ics-mapper";
+import { EventRecurrenceType } from "@/types/event-recurrence-type";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
 import { calculateEndTimeOnce, calculateEndTimeRecurrent, calculateStartTimeOnce } from "@/utils/event-time-calculator";
 import { format } from "date-fns";
@@ -88,7 +88,7 @@ export const RegistrationSuccess: React.FC<RegistrationSuccessProps> = ({
                     <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Wann?</span>
                     <p className="font-medium text-gray-800">
                         {slot.slotStart ? (
-                            slot.recurrenceType === RecurrenceType.WEEKLY && slot.slotEnd ? (
+                            slot.recurrenceType === EventRecurrenceType.WEEKLY && slot.slotEnd ? (
                                 <span>
                                     {format(slot.slotStart, "d. MMMM yyyy", { locale: de })} - {format(slot.slotEnd, "d. MMMM yyyy", { locale: de })}
                                     <span className="block font-normal text-sm text-gray-600 mt-0.5">

@@ -1,22 +1,13 @@
 "use server";
 
-import { createGoogleDriveClient } from "@/utils/google/google-drive";
-import { drive_v3 } from 'googleapis';
-import { GaxiosResponseWithHTTP2 } from "googleapis-common";
+import {createGoogleDriveClient} from "@/utils/google/google-drive";
+import {drive_v3} from 'googleapis';
+import {GaxiosResponseWithHTTP2} from "googleapis-common";
+import {
+    FilePermissionListItemData
+} from "@/schemas/training-plan-athlete-file-permission.schema";
 
 const TRAININGSPLAN_FOLDER_ID = process.env.TRAININGSPLAN_FOLDER_ID!;
-const TRAININGSPLAN_VORLAGEN_FOLDER_ID = process.env.TRAININGSPLAN_VORLAGEN_FOLDER_ID!;
-
-export const listTrainingsplanVorlagenFiles = async (): Promise<GaxiosResponseWithHTTP2<drive_v3.Schema$FileList>> => {
-    const drive = await createGoogleDriveClient();
-
-    const searchString = `'${TRAININGSPLAN_VORLAGEN_FOLDER_ID}' in parents`
-
-    return await drive.files.list({
-        q: searchString,
-        supportsAllDrives: true,
-    });
-}
 
 export const getFile = async (fileId: string): Promise<GaxiosResponseWithHTTP2<drive_v3.Schema$File>> => {
     const drive = await createGoogleDriveClient();
@@ -26,15 +17,7 @@ export const getFile = async (fileId: string): Promise<GaxiosResponseWithHTTP2<d
     });
 }
 
-export interface FilePermission {
-    id?: string;
-    name?: string;
-    emailAddress?: string;
-    role?: string;
-    photoLink?: string;
-}
-
-export const getFilePermissions = async (fileId: string): Promise<FilePermission[]> => {
+export const getFilePermissions = async (fileId: string): Promise<FilePermissionListItemData[]> => {
     const drive = await createGoogleDriveClient();
 
     const response = await drive.files.get({
@@ -47,12 +30,12 @@ export const getFilePermissions = async (fileId: string): Promise<FilePermission
 
     return permissions?.map((permission) => {
         return {
-            id: permission.id ?? undefined,
-            name: permission.displayName ?? undefined,
-            emailAddress: permission.emailAddress ?? undefined,
-            role: permission.role ?? undefined,
-            photoLink: permission.photoLink ?? undefined,
-        }
+            id: permission.id ?? null,
+            name: permission.displayName ?? null,
+            emailAddress: permission.emailAddress ?? null,
+            role: permission.role ?? null,
+            photoLink: permission.photoLink ?? null,
+        } as FilePermissionListItemData;
     }) ?? []
 }
 
@@ -89,7 +72,7 @@ export const shareRessource = async (driveId: string, email: string, role: 'read
     const drive = await createGoogleDriveClient();
     await drive.permissions.create({
         fileId: driveId,
-        requestBody: { role, type: 'user', emailAddress: email },
+        requestBody: {role, type: 'user', emailAddress: email},
     });
 }
 

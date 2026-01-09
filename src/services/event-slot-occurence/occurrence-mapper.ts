@@ -2,22 +2,13 @@ import { EventSlotOccurrence } from "@/schemas/event-slot-occurence.schema";
 import { EventSlotDetailData } from "@/schemas/event-slot.schema";
 import { EventListData } from "@/schemas/event.schema";
 import { DayMap, DayOfWeek } from "@/types/day-of-week";
-import { RecurrenceType } from "@/types/recurrence-type";
+import { EventRecurrenceType } from "@/types/event-recurrence-type";
 import { calculateEndTimeOnce, calculateEndTimeRecurrent, calculateStartTimeOnce } from "@/utils/event-time-calculator";
 import { addDays, getDay, isAfter, isBefore, isWithinInterval, startOfDay } from "date-fns";
 
 export type SlotWithEvent = {
     slot: EventSlotDetailData;
     event: EventListData;
-}
-
-function isSameWeekDay(date: Date, dbDayString: DayOfWeek | null): boolean {
-    if (!dbDayString) {
-        return false;
-    }
-    const dateDayIndex = getDay(date);
-    const requiredDayIndex = DayMap[dbDayString];
-    return dateDayIndex === requiredDayIndex;
 }
 
 export function mapSlotsToOccurrences(
@@ -29,11 +20,11 @@ export function mapSlotsToOccurrences(
 
     for (const { slot, event } of joinedSlots) {
 
-        if (slot.recurrenceType === RecurrenceType.ONCE && slot.slotStart) {
+        if (slot.recurrenceType === EventRecurrenceType.ONCE && slot.slotStart) {
             if (isWithinInterval(slot.slotStart, { start: viewStart, end: viewEnd })) {
                 occurrences.push(onceOccurrence(slot, event));
             }
-        } else if (slot.recurrenceType === RecurrenceType.WEEKLY && slot.slotStart) {
+        } else if (slot.recurrenceType === EventRecurrenceType.WEEKLY && slot.slotStart) {
             let currentCursor = isBefore(viewStart, slot.slotStart)
                 ? startOfDay(slot.slotStart)
                 : startOfDay(viewStart);
@@ -56,6 +47,15 @@ export function mapSlotsToOccurrences(
     }
 
     return sortOccurrences(occurrences);
+}
+
+function isSameWeekDay(date: Date, dbDayString: DayOfWeek | null): boolean {
+    if (!dbDayString) {
+        return false;
+    }
+    const dateDayIndex = getDay(date);
+    const requiredDayIndex = DayMap[dbDayString];
+    return dateDayIndex === requiredDayIndex;
 }
 
 function onceOccurrence(slot: EventSlotDetailData, event: EventListData) {

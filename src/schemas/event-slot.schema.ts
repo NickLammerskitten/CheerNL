@@ -4,7 +4,7 @@ import {
     EventSlotRegistrationListDataSchema,
 } from "@/schemas/event-slot-registration.schema";
 import { DayOfWeek } from "@/types/day-of-week";
-import { RecurrenceType } from "@/types/recurrence-type";
+import { EventRecurrenceType } from "@/types/event-recurrence-type";
 import { z } from "zod";
 
 export const ApiSlotListDataSchema = z.object({
@@ -64,7 +64,7 @@ const mapBaseSlotData = (apiData: z.infer<typeof ApiSlotListDataSchema>) => {
         title: apiData.title,
         location: apiData.location,
         durationMinutes: apiData.duration_minutes,
-        recurrenceType: apiData.recurrence_type as RecurrenceType,
+        recurrenceType: apiData.recurrence_type as EventRecurrenceType,
         slotStart: apiData.slot_start,
         slotEnd: apiData.slot_end,
         dayOfWeek: apiData.day_of_week as DayOfWeek,
@@ -90,9 +90,9 @@ export const EventSlotCreateSchema = z.object({
     max_registrations: z.int().min(1, { message: "Die Maximale Teilnehmeranzahl muss größer als 0 sein" }).nullable(),
 })
     .refine((data) => {
-        const recurrenceType = data.recurrence_type as RecurrenceType;
+        const recurrenceType = data.recurrence_type as EventRecurrenceType;
 
-        if (recurrenceType === RecurrenceType.WEEKLY) {
+        if (recurrenceType === EventRecurrenceType.WEEKLY) {
             const hasRequiredFields =
                 data.slot_start !== null &&
                 data.slot_end !== null &&
@@ -111,7 +111,7 @@ export const EventSlotCreateSchema = z.object({
             }
 
             return start < end;
-        } else if (recurrenceType === RecurrenceType.ONCE) {
+        } else if (recurrenceType === EventRecurrenceType.ONCE) {
             data.slot_end = null;
             data.day_of_week = null;
             data.start_time = null;

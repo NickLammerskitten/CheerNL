@@ -10,7 +10,7 @@ import { CoachListData } from "@/schemas/coach.schema";
 import { EventSlotCreateSchema } from "@/schemas/event-slot.schema";
 import { saveEventSlot } from "@/services/event-slot.api";
 import { DayOfWeek } from "@/types/day-of-week";
-import { RecurrenceType } from "@/types/recurrence-type";
+import { EventRecurrenceType } from "@/types/event-recurrence-type";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -28,7 +28,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
     const [title, setTitle] = useState<string | undefined>()
     const [location, setLocation] = useState<string | undefined>()
     const [durationMinutes, setDurationMinutes] = useState<number>(90)
-    const [recurrenceType, setRecurrenceType] = useState<RecurrenceType>(RecurrenceType.WEEKLY)
+    const [recurrenceType, setRecurrenceType] = useState<EventRecurrenceType>(EventRecurrenceType.WEEKLY)
     const [slotStart, setSlotStart] = useState<string | undefined>(undefined)
     const [slotEnd, setSlotEnd] = useState<string | undefined>(undefined)
     const [dayOfWeek, setDayOfWeek] = useState<DayOfWeek | undefined>(undefined)
@@ -54,7 +54,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
         setTitle(undefined);
         setLocation(undefined);
         setDurationMinutes(90);
-        setRecurrenceType(RecurrenceType.WEEKLY);
+        setRecurrenceType(EventRecurrenceType.WEEKLY);
         setSlotStart(undefined);
         setSlotEnd(undefined);
         setDayOfWeek(undefined);
@@ -184,17 +184,17 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
                             <select
                                 id="type"
                                 value={recurrenceType}
-                                onChange={(e) => setRecurrenceType(e.target.value as RecurrenceType)}
+                                onChange={(e) => setRecurrenceType(e.target.value as EventRecurrenceType)}
                                 className="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-3 text-sm dark:border-gray-600 dark:text-white/90"
                             >
-                                {Object.values(RecurrenceType).map((enumValue) => (
+                                {Object.values(EventRecurrenceType).map((enumValue) => (
                                     <option
                                         key={enumValue}
                                         value={enumValue}
                                     >
-                                        {enumValue === RecurrenceType.WEEKLY
+                                        {enumValue === EventRecurrenceType.WEEKLY
                                             ? 'Wöchentlich'
-                                            : enumValue === RecurrenceType.ONCE ? 'Einmalig' : enumValue}
+                                            : enumValue === EventRecurrenceType.ONCE ? 'Einmalig' : enumValue}
                                     </option>
                                 ))}
                             </select>
@@ -203,7 +203,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
                             )}
                         </div>
 
-                        {recurrenceType === RecurrenceType.WEEKLY ? (
+                        {recurrenceType === EventRecurrenceType.WEEKLY ? (
                             <>
                                 <Label
                                     htmlFor="slotStart"
@@ -281,7 +281,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
                                     )}
                                 </div>
                             </>
-                        ) : RecurrenceType.ONCE ? (
+                        ) : EventRecurrenceType.ONCE ? (
                             <>
                                 <Label
                                     htmlFor="slotStart"

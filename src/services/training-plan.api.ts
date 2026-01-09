@@ -10,7 +10,7 @@ import {
     TrainingPlanUpdateSchema,
 } from "@/schemas/training-plan.schema";
 import { UpsertResponseSchema } from "@/schemas/upsert-response.schema";
-import { getFile } from "@/services/google-drive/google-drive-files.api";
+import { getFile } from "@/services/external/google-drive-files.api";
 import { createClient } from "@/utils/supabase/server";
 
 export async function fetchTrainingPlanList(): Promise<TrainingPlanListData> {

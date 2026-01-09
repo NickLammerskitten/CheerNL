@@ -1,7 +1,7 @@
 import { EventSlotPublicListData } from "@/schemas/event-slot-public.schema";
 import { EventSlotDetailData } from "@/schemas/event-slot.schema";
 import { DayMap, IcsDayMap } from "@/types/day-of-week";
-import { RecurrenceType } from "@/types/recurrence-type";
+import { EventRecurrenceType } from "@/types/event-recurrence-type";
 import { addDays, addMinutes, format, getDay, parse } from "date-fns";
 
 /**
@@ -18,7 +18,7 @@ export function generateIcsData(slot: EventSlotDetailData | EventSlotPublicListD
 
     let effectiveStartDate = new Date(slot.slotStart);
 
-    if (slot.recurrenceType === RecurrenceType.WEEKLY && slot.dayOfWeek) {
+    if (slot.recurrenceType === EventRecurrenceType.WEEKLY && slot.dayOfWeek) {
         const targetDayIndex = DayMap[slot.dayOfWeek];
         const currentDayIndex = getDay(effectiveStartDate);
 
@@ -62,7 +62,7 @@ export function generateIcsData(slot: EventSlotDetailData | EventSlotPublicListD
         `DESCRIPTION:${description}`,
     ];
 
-    if (slot.recurrenceType === RecurrenceType.WEEKLY && slot.dayOfWeek) {
+    if (slot.recurrenceType === EventRecurrenceType.WEEKLY && slot.dayOfWeek) {
         const icsDay = IcsDayMap[slot.dayOfWeek];
 
         let rrule = `RRULE:FREQ=WEEKLY;BYDAY=${icsDay}`;

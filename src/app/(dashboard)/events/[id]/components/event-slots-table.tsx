@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { EventSlotListData } from "@/schemas/event-slot.schema";
-import { RecurrenceType } from "@/types/recurrence-type";
+import { EventRecurrenceType } from "@/types/event-recurrence-type";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
 import { format } from "date-fns";
 
@@ -53,9 +53,9 @@ export default function EventSlotsTable({ slots }: EventSlotsTableProps) {
                             </TableCell>
 
                             <TableCell dataLabel={"Art"}>
-                                {slot.recurrenceType === RecurrenceType.ONCE
+                                {slot.recurrenceType === EventRecurrenceType.ONCE
                                     ? 'Einmalig'
-                                    : slot.recurrenceType === RecurrenceType.WEEKLY
+                                    : slot.recurrenceType === EventRecurrenceType.WEEKLY
                                         ? 'Wöchentlich'
                                         : slot.recurrenceType}
                             </TableCell>
@@ -95,11 +95,11 @@ interface SlotTimeTableCellProps {
 function SlotTimeTableCell({ slot }: SlotTimeTableCellProps) {
     return (
         <TableCell dataLabel={"Zeitpunkt"}>
-            {slot.recurrenceType === RecurrenceType.ONCE ? (
+            {slot.recurrenceType === EventRecurrenceType.ONCE ? (
                 <>
                     {format(slot.slotStart!, "dd.MM.yyyy HH:mm")} Uhr, {slot.durationMinutes} Minuten
                 </>
-            ) : slot.recurrenceType === RecurrenceType.WEEKLY ? (
+            ) : slot.recurrenceType === EventRecurrenceType.WEEKLY ? (
                     <>
                         {slot.slotStart ? format(slot.slotStart, "dd.MM.yyyy") : ""}
                         {" - "}

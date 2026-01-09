@@ -13,7 +13,7 @@ import { createEventSlotRegistrationSchema } from "@/schemas/event-slot-registra
 import { TeamPublicListData } from "@/schemas/team-public.schema";
 import { fetchEventRegistrationCount, saveEventRegistration } from "@/services/event-registration-public.api";
 import { EventType } from "@/types/event-type";
-import { RecurrenceType } from "@/types/recurrence-type";
+import { EventRecurrenceType } from "@/types/event-recurrence-type";
 import { dayOfWeekToString } from "@/utils/day-of-week-to-string";
 import { calculateEndTimeOnce, calculateEndTimeRecurrent } from "@/utils/event-time-calculator";
 import { parseHtmlOrDefault } from "@/utils/parse-html-or-default";
@@ -414,11 +414,11 @@ const slotTitle = (slot: EventSlotPublicListData) => {
 }
 
 const slotTime = (slot: EventSlotPublicListData) => {
-    return slot.recurrenceType === RecurrenceType.ONCE
+    return slot.recurrenceType === EventRecurrenceType.ONCE
         ? `${slot.slotStart?.toLocaleDateString()}, 
             ${slot.slotStart?.toLocaleTimeString().slice(0, 5)} - 
             ${calculateEndTimeOnce(slot.slotStart, slot.durationMinutes)} Uhr`
-        : slot.recurrenceType === RecurrenceType.WEEKLY
+        : slot.recurrenceType === EventRecurrenceType.WEEKLY
             ? `${dayOfWeekToString(slot.dayOfWeek)}, ${slot.startTime?.slice(0, 5)} - ${calculateEndTimeRecurrent(slot.startTime, slot.durationMinutes)} Uhr`
             : null;
 }

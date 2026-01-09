@@ -1,27 +1,24 @@
-import { ActivityDashboard } from "@/app/(dashboard)/training-plan/[id]/components/activity-dashboard";
+import {ActivityDashboard} from "@/app/(dashboard)/training-plan/[id]/components/activity-dashboard";
 import TrainingPlanAthleteActivities
     from "@/app/(dashboard)/training-plan/[id]/components/training-plan-athlete-activities";
 import TrainingPlanAthleteDetails from "@/app/(dashboard)/training-plan/[id]/components/training-plan-athlete-details";
 import ComponentCard from "@/components/common/ComponentCard";
-import { FilePermission, getFilePermissions } from "@/services/google-drive/google-drive-files.api";
-import { fetchActivities } from "@/services/training-plan-athlete-activity.api";
-import { fetchTrainingPlanAthlete } from "@/services/training-plan-athlete.api";
+import {fetchActivities} from "@/services/training-plan-athlete-activity.api";
+import {fetchTrainingPlanAthlete} from "@/services/training-plan-athlete.api";
+import {fetchTrainingPlanAthleteFilePermissionList} from "@/services/training-plan-athlete-file-permission.api";
 
 export default async function TrainingPlanAthletePage({
-    params,
-}: {
+                                                          params,
+                                                      }: {
     params: Promise<{ id: string }>
 }) {
     const paramValues = await params;
 
-    const trainingPlanAthlete = await fetchTrainingPlanAthlete(paramValues.id);
-
-    let permissions: FilePermission[] | undefined = undefined;
-    if (trainingPlanAthlete.googleDriveFolderId) {
-        permissions = await getFilePermissions(trainingPlanAthlete.googleDriveFolderId)
-    }
-
-    const activities = await fetchActivities(trainingPlanAthlete.id);
+    const [trainingPlanAthlete, permissions, activities] = await Promise.all([
+        fetchTrainingPlanAthlete(paramValues.id),
+        fetchTrainingPlanAthleteFilePermissionList(paramValues.id),
+        fetchActivities(paramValues.id)
+    ]);
 
     return (
         <ComponentCard title={"Kraft und Ausdauertraining > Athlet"}>
@@ -30,9 +27,9 @@ export default async function TrainingPlanAthletePage({
                 folderPermissions={permissions}
             />
 
-            <ActivityDashboard data={activities} />
+            <ActivityDashboard data={activities}/>
 
-            <TrainingPlanAthleteActivities activities={activities} />
+            <TrainingPlanAthleteActivities activities={activities}/>
         </ComponentCard>
     )
 }
