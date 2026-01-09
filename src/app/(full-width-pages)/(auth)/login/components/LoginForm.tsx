@@ -4,9 +4,9 @@ import Button from "@/components/ui/button/Button";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { EyeCloseIcon, EyeIcon } from "../../icons";
-import Input from "../form/input/InputField";
-import Label from "../form/Label";
+import { EyeCloseIcon, EyeIcon } from "../../../../../icons";
+import Input from "../../../../../components/form/input/InputField";
+import Label from "../../../../../components/form/Label";
 
 export default function LoginForm() {
     const supabase = createClient();

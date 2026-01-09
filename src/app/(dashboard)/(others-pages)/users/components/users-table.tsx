@@ -1,8 +1,8 @@
 "use client"
 
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
-import DeleteUserModal from "@/components/users/delete-user-modal";
-import ResetUserPasswordModal from "@/components/users/reset-user-password-modal";
+import DeleteUserModal from "@/app/(dashboard)/(others-pages)/users/components/delete-user-modal";
+import ResetUserPasswordModal from "@/app/(dashboard)/(others-pages)/users/components/reset-user-password-modal";
 import { UserListData } from "@/schemas/user.schema";
 import React from "react";
 
