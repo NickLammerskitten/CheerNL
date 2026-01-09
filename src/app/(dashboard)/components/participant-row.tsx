@@ -34,7 +34,7 @@ export const ParticipantRow: React.FC<ParticipantRowProps> = ({ participant: par
             </div>
 
             {/* Notizen */}
-            <div className="shrink-0 text-right">
+            <div className="shrink-0 text-left w-full sm:w-1/2 min-w-0">
                 {participant.note ? (
                     <div className="bg-yellow-50 border border-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-900/30 dark:text-yellow-200 text-xs p-2 rounded-lg inline-block max-w-full break-words">
                         <span className="font-semibold mr-1">Hinweis:</span>
