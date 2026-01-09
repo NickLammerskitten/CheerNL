@@ -1,11 +1,11 @@
 import { EyeIcon, LockIcon, PencilIcon } from "@/icons";
 import { TrainingPlanAthleteListItemData } from "@/schemas/training-plan-athlete.schema";
-import { FilePermission } from "@/services/external/google-drive-files.api";
 import React from "react";
+import { FilePermissionListItemData } from "@/schemas/training-plan-athlete-file-permission.schema";
 
 interface TrainingPlanAthleteDetailsProps {
     trainingPlanAthlete: TrainingPlanAthleteListItemData;
-    folderPermissions: FilePermission[] | undefined;
+    folderPermissions: FilePermissionListItemData[] | undefined;
 }
 
 export default function TrainingPlanAthleteDetails({
