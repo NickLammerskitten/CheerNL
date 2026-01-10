@@ -4,6 +4,7 @@ import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal/Modal";
 import ComponentCard from "@/components/common/ComponentCard";
 import deleteEventRegistration from "@/services/event-registration.api";
+import {useEventCalendar} from "@/app/(dashboard)/context/useEventCalendar";
 
 interface CancelEventRegistrationModalProps {
     registrationId: string;
@@ -12,6 +13,8 @@ interface CancelEventRegistrationModalProps {
 }
 
 export default function DeleteEventRegistrationModal({registrationId, modalOpen, onClose}: CancelEventRegistrationModalProps) {
+    const { refreshData } = useEventCalendar();
+
     const router = useRouter();
 
     const [loading, setLoading] = useState<boolean>(false);
@@ -19,20 +22,26 @@ export default function DeleteEventRegistrationModal({registrationId, modalOpen,
 
     const handleAction = async () => {
         setLoading(true);
-        await deleteEventRegistration(registrationId);
-        setLoading(false);
+        setError(null);
+        try {
+            await deleteEventRegistration(registrationId);
 
-        if (error) {
-            setError("Es ist ein Fehler aufgetreten. " + error);
-        } else {
-            closeModal();
+            onClose();
+
             router.refresh();
+            refreshData();
+
+            // @ts-expect-error: No specific error type
+        } catch (e: Error) {
+            console.error(e);
+            setError("Es ist ein Fehler aufgetreten: " + (e.message || "Unbekannter Fehler"));
+        } finally {
+            setLoading(false);
         }
     }
 
     const closeModal = () => {
         onClose();
-        router.refresh();
     }
 
     return (

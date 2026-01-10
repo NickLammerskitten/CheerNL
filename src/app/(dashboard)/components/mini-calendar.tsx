@@ -1,28 +1,33 @@
-import { format, isSameDay, isSameMonth, isToday } from "date-fns";
+import {
+    addMonths,
+    eachDayOfInterval, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, isToday, startOfMonth, startOfWeek,
+    subMonths
+} from "date-fns";
 import { de } from "date-fns/locale";
-import React, { useState, TouchEvent } from "react";
+import React, {useState, TouchEvent, useMemo} from "react";
+import {useEventCalendar} from "@/app/(dashboard)/context/useEventCalendar";
 
-interface MiniCalendarProps {
-    currentDate: Date;
-    selectedDate: Date;
-    calendarDays: Date[];
-    onSelectDate: (date: Date) => void;
-    onNextMonth: () => void;
-    onPrevMonth: () => void;
-    hasEvents: (date: Date) => boolean;
-    isLoading: boolean;
-}
+export default function MiniCalendar() {
+    const { events, isLoading, currentDate, onDateChange, selectedDate, setSelectedDate } = useEventCalendar();
 
-export const MiniCalendar: React.FC<MiniCalendarProps> = ({
-    currentDate,
-    selectedDate,
-    calendarDays,
-    onSelectDate,
-    onNextMonth,
-    onPrevMonth,
-    hasEvents,
-    isLoading,
-}) => {
+    const monthStart = startOfMonth(currentDate);
+    const monthEnd = endOfMonth(monthStart);
+    const startDate = startOfWeek(monthStart, {weekStartsOn: 1});
+    const endDate = endOfWeek(monthEnd, {weekStartsOn: 1});
+    const calendarDays = eachDayOfInterval({start: startDate, end: endDate});
+
+    const nextMonth = () => onDateChange(addMonths(currentDate, 1));
+    const prevMonth = () => onDateChange(subMonths(currentDate, 1));
+
+    const eventDatesSet = useMemo(() => {
+        const set = new Set<string>();
+        events.forEach(e => set.add(format(e.date, 'yyyy-MM-dd')));
+        return set;
+    }, [events]);
+
+    const hasEvents = (date: Date) => eventDatesSet.has(format(date, 'yyyy-MM-dd'));
+
+
     const [touchStart, setTouchStart] = useState<number | null>(null);
     const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
@@ -46,12 +51,10 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
         const isRightSwipe = distance < -minSwipeDistance;
 
         if (isLeftSwipe) {
-            // Finger bewegt sich nach links -> Inhalt kommt von rechts -> Nächster Monat
-            onNextMonth();
+            nextMonth();
         }
         if (isRightSwipe) {
-            // Finger bewegt sich nach rechts -> Inhalt kommt von links -> Vorheriger Monat
-            onPrevMonth();
+            prevMonth();
         }
     };
 
@@ -77,7 +80,7 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
                 {/* Header Navigation */}
                 <div className="flex items-center justify-between mb-4">
                     <button
-                        onClick={onPrevMonth}
+                        onClick={prevMonth}
                         className="p-1 hover:bg-gray-100 rounded text-gray-500"
                         disabled={isLoading}
                     >←
@@ -86,7 +89,7 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
                         {format(currentDate, "MMMM yyyy", { locale: de })}
                     </span>
                     <button
-                        onClick={onNextMonth}
+                        onClick={nextMonth}
                         className="p-1 hover:bg-gray-100 rounded text-gray-500"
                         disabled={isLoading}
                     >→
@@ -109,7 +112,7 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
                         return (
                             <button
                                 key={idx}
-                                onClick={() => onSelectDate(day)}
+                                onClick={() => setSelectedDate(day)}
                                 className={`
                                     h-9 w-9 rounded-full flex items-center justify-center text-sm relative transition-all mx-auto select-none
                                     ${!isCurrent

@@ -14,7 +14,7 @@ interface ModalStates {
     cancelEventRegistrationModal: boolean;
 }
 
-export default function ParticipantRowActions({participant}: ParticipantRowActionsProps) {
+export default function ParticipantRowActions({ participant }: ParticipantRowActionsProps) {
     const [isOpen, setIsOpen] = useState(false);
 
     const [modalStates, setModalStates] = useState<ModalStates>({

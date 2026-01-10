@@ -1,16 +1,18 @@
-import { EventSlotOccurrence } from "@/schemas/event-slot-occurence.schema";
-import { format, isToday } from "date-fns";
+import {format, isSameDay, isToday} from "date-fns";
 import { de } from "date-fns/locale";
-import React from "react";
+import React, {useMemo} from "react";
 import { EventCard } from "./event-card";
+import { useEventCalendar } from "@/app/(dashboard)/context/useEventCalendar";
 
-interface EventListProps {
-    selectedDate: Date;
-    events: EventSlotOccurrence[];
-    isLoading: boolean;
-}
+export default function EventList() {
+    const { events, isLoading, selectedDate } = useEventCalendar();
 
-export const EventList: React.FC<EventListProps> = ({ selectedDate, events, isLoading }) => {
+    const selectedDayEvents = useMemo(() => {
+        return events
+            .filter(event => isSameDay(event.date, selectedDate))
+            .sort((a, b) => a.startTime.localeCompare(b.startTime));
+    }, [events, selectedDate]);
+
     return (
         <div className="flex-1 flex flex-col gap-6 overflow-y-auto relative">
 
@@ -28,8 +30,8 @@ export const EventList: React.FC<EventListProps> = ({ selectedDate, events, isLo
                 {isToday(selectedDate) ? "Heute, " : ""} {format(selectedDate, "eeee, d. MMMM", { locale: de })}
             </h2>
 
-            {events.length > 0 ? (
-                events.map((event) => <EventCard
+            {selectedDayEvents.length > 0 ? (
+                selectedDayEvents.map((event) => <EventCard
                     key={event.id}
                     event={event}
                 />)
