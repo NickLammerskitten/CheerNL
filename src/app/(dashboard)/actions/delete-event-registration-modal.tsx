@@ -3,16 +3,21 @@ import React, {useState} from "react";
 import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal/Modal";
 import ComponentCard from "@/components/common/ComponentCard";
-import deleteEventRegistration from "@/services/event-registration.api";
-import {useEventCalendar} from "@/app/(dashboard)/context/useEventCalendar";
+import { deleteEventRegistration } from "@/services/event-registration.api";
+import { useEventCalendar } from "@/app/(dashboard)/context/useEventCalendar";
+import { EventRegistrationData } from "@/schemas/event-slot-registration.schema";
 
 interface CancelEventRegistrationModalProps {
-    registrationId: string;
+    registration: EventRegistrationData;
     modalOpen: boolean;
     onClose: () => void;
 }
 
-export default function DeleteEventRegistrationModal({registrationId, modalOpen, onClose}: CancelEventRegistrationModalProps) {
+export default function DeleteEventRegistrationModal({
+                                                         registration,
+                                                         modalOpen,
+                                                         onClose
+                                                     }: CancelEventRegistrationModalProps) {
     const { refreshData } = useEventCalendar();
 
     const router = useRouter();
@@ -24,7 +29,7 @@ export default function DeleteEventRegistrationModal({registrationId, modalOpen,
         setLoading(true);
         setError(null);
         try {
-            await deleteEventRegistration(registrationId);
+            await deleteEventRegistration(registration.id);
 
             onClose();
 
@@ -48,7 +53,10 @@ export default function DeleteEventRegistrationModal({registrationId, modalOpen,
         <Modal isOpen={modalOpen} onClose={closeModal}>
             <ComponentCard title={"Registrierung wirklich löschen?"}>
                 <p>
-                    Möchstest du die Registrierung wirklich löschen? Diese Aktion ist unwiderruflich.
+                    Möchstest du die Registrierung von <b>{registration.firstName + " " + registration.lastName}</b> wirklich
+                    löschen? Diese Aktion ist unwiderruflich.<br/>
+
+                    Achtung: Die Person wird <b>nicht</b> automatisch informiert.
                 </p>
 
                 {error && (

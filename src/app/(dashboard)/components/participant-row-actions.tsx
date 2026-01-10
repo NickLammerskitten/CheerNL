@@ -1,23 +1,26 @@
 import Button from "@/components/ui/button/Button";
-import {HorizontaLDots} from "@/icons";
-import React, {useState} from "react";
-import {Dropdown} from "@/components/ui/dropdown/Dropdown";
-import {DropdownItem} from "@/components/ui/dropdown/DropdownItem";
-import {EventRegistrationData} from "@/schemas/event-slot-registration.schema";
+import { HorizontaLDots } from "@/icons";
+import React, { useState } from "react";
+import { Dropdown } from "@/components/ui/dropdown/Dropdown";
+import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
+import { EventRegistrationData } from "@/schemas/event-slot-registration.schema";
 import DeleteEventRegistrationModal from "@/app/(dashboard)/actions/delete-event-registration-modal";
+import MoveFromWaitlistModal from "@/app/(dashboard)/actions/move-from-waitlist-modal";
 
 interface ParticipantRowActionsProps {
     participant: EventRegistrationData;
 }
 
 interface ModalStates {
+    moveFromWaitlistModal: boolean;
     cancelEventRegistrationModal: boolean;
 }
 
-export default function ParticipantRowActions({ participant }: ParticipantRowActionsProps) {
+export default function ParticipantRowActions({participant}: ParticipantRowActionsProps) {
     const [isOpen, setIsOpen] = useState(false);
 
     const [modalStates, setModalStates] = useState<ModalStates>({
+        moveFromWaitlistModal: false,
         cancelEventRegistrationModal: false,
     });
 
@@ -56,6 +59,14 @@ export default function ParticipantRowActions({ participant }: ParticipantRowAct
                 onClose={closeDropdown}
                 className={"w-48"}
             >
+                {participant.waitlist && (
+                    <DropdownItem
+                        onItemClick={() => openModal("moveFromWaitlistModal")}
+                    >
+                        Registrierung bestätigen
+                    </DropdownItem>
+                )}
+
                 <DropdownItem
                     onItemClick={() => openModal("cancelEventRegistrationModal")}
                     className="text-red-600 hover:text-red-700 hover:bg-red-50"
@@ -64,8 +75,14 @@ export default function ParticipantRowActions({ participant }: ParticipantRowAct
                 </DropdownItem>
             </Dropdown>
 
+            <MoveFromWaitlistModal
+                registration={participant}
+                modalOpen={modalStates.moveFromWaitlistModal}
+                onClose={() => closeModal("moveFromWaitlistModal")}
+            />
+
             <DeleteEventRegistrationModal
-                registrationId={participant.id}
+                registration={participant}
                 modalOpen={modalStates.cancelEventRegistrationModal}
                 onClose={() => closeModal("cancelEventRegistrationModal")}
             />

@@ -151,7 +151,7 @@ create policy "Event_Registration-All for authenticated"
     true
     );
 
-CREATE OR REPLACE FUNCTION public.get_event_registration_count(event_id_input uuid)
+CREATE OR REPLACE FUNCTION public.get_event_registration_count(event_id_input uuid, withWaitlist bool)
     RETURNS integer
     LANGUAGE plpgsql
     SECURITY DEFINER
@@ -160,7 +160,8 @@ $function$
 begin
     return (select count(*)
             from "public"."event_registration"
-            where event_registration.event_slot_id = event_id_input);
+            where event_registration.event_slot_id = event_id_input
+              AND (withWaitlist IS TRUE OR waitlist IS NOT TRUE));
 end;
 $function$
 ;

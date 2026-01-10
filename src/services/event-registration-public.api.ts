@@ -7,11 +7,12 @@ import {
 import { UpsertResponseSchema } from "@/schemas/upsert-response.schema";
 import { fetchEventPublic } from "@/services/event-public.api";
 import { createClient } from "@/utils/supabase/server";
+import { checkMaxRegistrationsExceeded } from "@/utils/check-max-registrations-exceeded";
 
 export async function fetchEventRegistrationCount(eventSlotId: string): Promise<number> {
     const supabase = await createClient();
     const { data, error } = await supabase
-        .rpc('get_event_registration_count', { event_id_input: eventSlotId })
+        .rpc('get_event_registration_count', { event_id_input: eventSlotId, with_waitlist: true })
 
     if (error) {
         return 0;
@@ -45,7 +46,8 @@ export async function saveEventRegistration(newData: CreateEventRegistrationPubl
         };
     }
 
-    const maxRegistrationsExceeded = await checkMaxRegistrationsExceeded(eventSlot.id, eventSlot.maxRegistrations)
+    const registrationCount = await fetchEventRegistrationCount(eventSlot.id)
+    const maxRegistrationsExceeded = checkMaxRegistrationsExceeded(eventSlot.maxRegistrations, registrationCount)
     if (maxRegistrationsExceeded) {
         newData.waitlist = true;
     }
@@ -70,14 +72,4 @@ export async function saveEventRegistration(newData: CreateEventRegistrationPubl
         id: null,
         error: null,
     };
-}
-
-async function checkMaxRegistrationsExceeded(eventSlotId: string, maxRegistrations: number | null) {
-    if (!maxRegistrations) {
-        return false;
-    }
-
-    const registrationCount = await fetchEventRegistrationCount(eventSlotId);
-
-    return registrationCount >= maxRegistrations;
 }
