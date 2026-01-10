@@ -1,6 +1,6 @@
 import ComponentCard from "@/components/common/ComponentCard";
 import Button from "@/components/ui/button/Button";
-import { Modal } from "@/components/ui/modal";
+import { Modal } from "@/components/ui/modal/Modal";
 import { TrashBinIcon } from "@/icons";
 import { deleteUser } from "@/services/user-admin.api";
 import { useRouter } from "next/navigation";
@@ -53,10 +53,7 @@ export default function DeleteUserModal({ userId }: DeleteUserModelProps) {
                     </p>
 
                     <div className={"flex flex-col items-end"}>
-                        <Button
-                            onClick={handleDeleteUser}
-                            className={"fc-bg-danger"}
-                        >
+                        <Button onClick={handleDeleteUser}>
                             Benutzer löschen
                         </Button>
                     </div>

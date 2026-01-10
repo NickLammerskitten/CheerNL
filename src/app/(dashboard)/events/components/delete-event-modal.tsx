@@ -2,7 +2,7 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import Button from "@/components/ui/button/Button";
-import { Modal } from "@/components/ui/modal";
+import { Modal } from "@/components/ui/modal/Modal";
 import { TrashBinIcon } from "@/icons";
 import { deleteEvent } from "@/services/event.api";
 import { useRouter } from "next/navigation";

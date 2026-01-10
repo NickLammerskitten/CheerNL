@@ -4,7 +4,7 @@ import Checkbox from "@/components/form/input/Checkbox";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
-import { Modal } from "@/components/ui/modal";
+import { Modal } from "@/components/ui/modal/Modal";
 import { PasswordRequirements } from "@/components/users/PasswordRequirements";
 import { EyeCloseIcon, EyeIcon } from "@/icons";
 import { createUser } from "@/services/user-admin.api";

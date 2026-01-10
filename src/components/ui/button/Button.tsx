@@ -1,14 +1,14 @@
 import React, { ReactNode } from "react";
 
 interface ButtonProps {
-    children: ReactNode; // Button text or content
-    size?: "sm" | "md"; // Button size
-    variant?: "primary" | "outline"; // Button variant
-    startIcon?: ReactNode; // Icon before the text
-    endIcon?: ReactNode; // Icon after the text
-    onClick?: () => void; // Click handler
-    disabled?: boolean; // Disabled state
-    className?: string; // Disabled state
+    children: ReactNode;
+    size?: "sm" | "md";
+    variant?: "primary" | "outline";
+    startIcon?: ReactNode;
+    endIcon?: ReactNode;
+    onClick?: () => void;
+    disabled?: boolean;
+    className?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({

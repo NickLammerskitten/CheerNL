@@ -27,4 +27,4 @@ export const createEventSlotRegistrationSchema = (eventType: EventType) => {
     return EventSlotRegistrationPublicCreateSchema;
 };
 
-export type EventRegistrationPublicData = z.infer<typeof EventSlotRegistrationPublicCreateSchema>;
+export type CreateEventRegistrationPublicData = z.infer<typeof EventSlotRegistrationPublicCreateSchema>;

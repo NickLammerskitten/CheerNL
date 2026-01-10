@@ -4,7 +4,7 @@ import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import MultiSelect from "@/components/form/MultiSelect";
 import Button from "@/components/ui/button/Button";
-import { Modal } from "@/components/ui/modal";
+import { Modal } from "@/components/ui/modal/Modal";
 import { PlusIcon } from "@/icons";
 import { CoachListData } from "@/schemas/coach.schema";
 import { EventSlotCreateSchema } from "@/schemas/event-slot.schema";

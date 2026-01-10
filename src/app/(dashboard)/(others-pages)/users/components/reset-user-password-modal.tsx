@@ -3,7 +3,7 @@ import Form from "@/components/form/Form";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
-import { Modal } from "@/components/ui/modal";
+import { Modal } from "@/components/ui/modal/Modal";
 import { PasswordRequirements } from "@/components/users/PasswordRequirements";
 import { EyeCloseIcon, EyeIcon, PencilIcon } from "@/icons";
 import { resetPasswort } from "@/services/user-admin.api";

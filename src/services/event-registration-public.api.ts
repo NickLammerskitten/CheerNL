@@ -2,7 +2,7 @@
 
 import {
     createEventSlotRegistrationSchema,
-    EventRegistrationPublicData,
+    CreateEventRegistrationPublicData,
 } from "@/schemas/event-slot-registration-public.schema";
 import { UpsertResponseSchema } from "@/schemas/upsert-response.schema";
 import { fetchEventPublic } from "@/services/event-public.api";
@@ -24,7 +24,7 @@ interface EventRegistrationUpsertResponseSchema extends UpsertResponseSchema {
     warteliste: boolean | null;
 }
 
-export async function saveEventRegistration(newData: EventRegistrationPublicData): Promise<EventRegistrationUpsertResponseSchema> {
+export async function saveEventRegistration(newData: CreateEventRegistrationPublicData): Promise<EventRegistrationUpsertResponseSchema> {
     const event = await fetchEventPublic(newData.event_id);
     const eventSlot = event.slots.find(s => s.id === newData.event_slot_id);
     if (!eventSlot) {
