@@ -1,44 +1,24 @@
 "use client"
 
 import {Table, TableBody, TableCell, TableHeader, TableRow} from "@/components/ui/table";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {CoachListData} from "@/schemas/coach.schema";
-import Input from "@/components/form/input/InputField";
+import Search from "@/components/tables/Search";
 
 interface CoachesTableProps {
     coaches: CoachListData[];
 }
 
 export default function CoachesTable({coaches}: CoachesTableProps) {
-    const [searchString, setSearchString] = useState<string>("");
-
     const [filteredCoaches, setFilteredCoaches] = useState(coaches);
-
-    useEffect(() => {
-        const filterCoaches = (items: CoachListData[], search: string) => {
-            return items.filter((eachItem) => {
-                return eachItem.name.toLowerCase().includes(search.toLowerCase()) ||
-                    eachItem.teams.filter((eachTeam) => {
-                        return eachTeam.teamName.toLowerCase().includes(search.toLowerCase())
-                    }).length > 0
-            })
-        }
-
-        if (searchString === "" || searchString === null) {
-            setFilteredCoaches(coaches);
-            return;
-        }
-
-        setFilteredCoaches(filterCoaches(coaches, searchString));
-    }, [coaches, searchString]);
 
     return (
         <div>
-            <div className="flex">
-                <Input
-                    onChange={(e) => setSearchString(e.target.value)}
-                    defaultValue={searchString}
-                    placeholder="Suche"
+            <div className={"flex flex-col mb-1 sm:flex-row"}>
+                <Search
+                    objects={coaches}
+                    searchableFields={["name", "teams.teamName"]}
+                    onFilter={setFilteredCoaches}
                 />
             </div>
 
