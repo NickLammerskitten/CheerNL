@@ -1,0 +1,100 @@
+"use client"
+
+import {Table, TableBody, TableCell, TableHeader, TableRow} from "@/components/ui/table";
+import React, {useEffect, useState} from "react";
+import {CoachListData} from "@/schemas/coach.schema";
+import Input from "@/components/form/input/InputField";
+
+interface CoachesTableProps {
+    coaches: CoachListData[];
+}
+
+export default function CoachesTable({coaches}: CoachesTableProps) {
+    const [searchString, setSearchString] = useState<string>("");
+
+    const [filteredCoaches, setFilteredCoaches] = useState(coaches);
+
+    useEffect(() => {
+        const filterCoaches = (items: CoachListData[], search: string) => {
+            return items.filter((eachItem) => {
+                return eachItem.name.toLowerCase().includes(search.toLowerCase()) ||
+                    eachItem.teams.filter((eachTeam) => {
+                        return eachTeam.teamName.toLowerCase().includes(search.toLowerCase())
+                    }).length > 0
+            })
+        }
+
+        if (searchString === "" || searchString === null) {
+            setFilteredCoaches(coaches);
+            return;
+        }
+
+        setFilteredCoaches(filterCoaches(coaches, searchString));
+    }, [coaches, searchString]);
+
+    return (
+        <div>
+            <div className="flex">
+                <Input
+                    onChange={(e) => setSearchString(e.target.value)}
+                    defaultValue={searchString}
+                    placeholder="Suche"
+                />
+            </div>
+
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableCell
+                            isHeader
+                        >
+                            Name
+                        </TableCell>
+
+                        <TableCell
+                            isHeader
+                        >
+                            Teams
+                        </TableCell>
+
+                        <TableCell
+                            isHeader
+                        >
+                            Erstellt am
+                        </TableCell>
+                    </TableRow>
+                </TableHeader>
+
+                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                    {filteredCoaches.map((coach, index) => {
+                        return (
+                            <TableRow key={index}>
+                                <TableCell dataLabel={"Name"}>
+                                    {coach.name}
+                                </TableCell>
+
+                                <TableCell dataLabel={"Teams"}>
+                                    {
+                                        coach.teams.length > 0
+                                            ? coach.teams
+                                                .map((team) => team.teamName)
+                                                .join(', ')
+                                            : 'Keine'
+                                    }
+                                </TableCell>
+
+                                <TableCell dataLabel={"Erstellt am"}>
+                                    {coach.createdAt.toLocaleDateString("de-DE")}
+                                </TableCell>
+                            </TableRow>
+                        )
+                    })}
+                </TableBody>
+            </Table>
+
+            {filteredCoaches.length === 0 && (
+                <p className={"text-gray-500 dark:text-gray-400"}>Keine Einträge vorhanden</p>
+            )}
+        </div>
+    )
+}
