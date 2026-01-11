@@ -6,7 +6,7 @@ import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal/Modal";
 import { PasswordRequirements } from "@/components/users/PasswordRequirements";
-import { EyeCloseIcon, EyeIcon } from "@/icons";
+import {EyeCloseIcon, EyeIcon, PlusIcon} from "@/icons";
 import { createUser } from "@/services/user-admin.api";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -55,6 +55,7 @@ export function AddUserModal() {
             <Button
                 variant={"outline"}
                 onClick={() => setIsOpen(true)}
+                startIcon={<PlusIcon />}
             >
                 Benutzer hinzufügen
             </Button>

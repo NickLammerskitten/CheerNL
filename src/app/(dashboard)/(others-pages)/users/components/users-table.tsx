@@ -1,82 +1,96 @@
 "use client"
 
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import {Table, TableBody, TableCell, TableHeader, TableRow} from "@/components/ui/table";
 import DeleteUserModal from "@/app/(dashboard)/(others-pages)/users/components/delete-user-modal";
 import ResetUserPasswordModal from "@/app/(dashboard)/(others-pages)/users/components/reset-user-password-modal";
-import { UserListData } from "@/schemas/user.schema";
-import React from "react";
+import {UserListData} from "@/schemas/user.schema";
+import React, {useState} from "react";
+import {AddUserModal} from "@/app/(dashboard)/(others-pages)/users/components/add-user-modal";
+import Search from "@/components/tables/Search";
 
 interface UsersTableProps {
     users: UserListData
 }
 
-export default function UsersTable({ users }: UsersTableProps) {
+export default function UsersTable({users}: UsersTableProps) {
+    const [filteredUsers, setFilteredUsers] = useState(users);
 
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableCell isHeader>
-                        Name
-                    </TableCell>
+        <>
+            <div className={"flex flex-col mb-1 gap-1 sm:flex-row sm:justify-between"}>
+                <Search objects={users} searchableFields={["email", "displayName"]} onFilter={setFilteredUsers}/>
+                <AddUserModal/>
+            </div>
 
-                    <TableCell isHeader>
-                        E-Mail
-                    </TableCell>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableCell isHeader>
+                            Name
+                        </TableCell>
 
-                    <TableCell isHeader>
-                        Rolle
-                    </TableCell>
+                        <TableCell isHeader>
+                            E-Mail
+                        </TableCell>
 
-                    <TableCell isHeader>
-                        Erstellt am
-                    </TableCell>
+                        <TableCell isHeader>
+                            Rolle
+                        </TableCell>
 
-                    <TableCell isHeader>
-                        <></>
-                    </TableCell>
-                </TableRow>
-            </TableHeader>
+                        <TableCell isHeader>
+                            Erstellt am
+                        </TableCell>
 
-            <TableBody className="divide-y divide-gray-100">
-                {users.map((user, index) => {
-                    return (
+                        <TableCell isHeader>
+                            <></>
+                        </TableCell>
+                    </TableRow>
+                </TableHeader>
 
-                        <TableRow key={index}>
-                            <TableCell
-                                dataLabel={"Name"}
-                            >
-                                {user.displayName ?? "Unbekannt"}
-                            </TableCell>
+                <TableBody className="divide-y divide-gray-100">
+                    {filteredUsers.map((user, index) => {
+                        return (
 
-                            <TableCell
-                                dataLabel={"E-Mail"}
-                            >
-                                <span>{user.email} {!user.emailVerified && '(Nicht verifiziert)'}</span>
-                            </TableCell>
+                            <TableRow key={index}>
+                                <TableCell
+                                    dataLabel={"Name"}
+                                >
+                                    {user.displayName ?? "Unbekannt"}
+                                </TableCell>
 
-                            <TableCell
-                                dataLabel={"Rolle"}
-                            >
-                                {user.role === "authenticated" ? 'Benutzer' : user.role === 'service_role'
-                                    ? 'Admin'
-                                    : user.role}
-                            </TableCell>
+                                <TableCell
+                                    dataLabel={"E-Mail"}
+                                >
+                                    <span>{user.email} {!user.emailVerified && '(Nicht verifiziert)'}</span>
+                                </TableCell>
 
-                            <TableCell
-                                dataLabel={"Erstellt am"}
-                            >
-                                {user.createdAt.toLocaleDateString("de-DE")}
-                            </TableCell>
+                                <TableCell
+                                    dataLabel={"Rolle"}
+                                >
+                                    {user.role === "authenticated" ? 'Benutzer' : user.role === 'service_role'
+                                        ? 'Admin'
+                                        : user.role}
+                                </TableCell>
 
-                            <TableCell className="px-5 py-4 sm:px-6 text-start">
-                                <DeleteUserModal userId={user.id} />
-                                <ResetUserPasswordModal userId={user.id} />
-                            </TableCell>
-                        </TableRow>
-                    )
-                })}
-            </TableBody>
-        </Table>
+                                <TableCell
+                                    dataLabel={"Erstellt am"}
+                                >
+                                    {user.createdAt.toLocaleDateString("de-DE")}
+                                </TableCell>
+
+                                <TableCell className="px-5 py-4 sm:px-6 text-start">
+                                    <DeleteUserModal userId={user.id}/>
+                                    <ResetUserPasswordModal userId={user.id}/>
+                                </TableCell>
+                            </TableRow>
+                        )
+                    })}
+                </TableBody>
+            </Table>
+
+            {filteredUsers.length === 0 && (
+                <p className={"text-gray-500 dark:text-gray-400"}>Keine Einträge vorhanden</p>
+            )}
+        </>
     )
 }
