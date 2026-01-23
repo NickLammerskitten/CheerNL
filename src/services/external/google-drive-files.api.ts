@@ -7,7 +7,7 @@ import {
     FilePermissionListItemData
 } from "@/schemas/training-plan-athlete-file-permission.schema";
 
-const TRAININGSPLAN_FOLDER_ID = process.env.TRAININGSPLAN_FOLDER_ID!;
+const TRAININGSPLAN_FOLDER_ID = process.env.NEXT_PUBLIC_TRAININGSPLAN_FOLDER_ID!;
 
 export const getFile = async (fileId: string): Promise<GaxiosResponseWithHTTP2<drive_v3.Schema$File>> => {
     const drive = await createGoogleDriveClient();
