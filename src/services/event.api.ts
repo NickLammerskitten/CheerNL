@@ -13,6 +13,7 @@ import {
 } from "@/schemas/event.schema";
 import { UpsertResponseSchema } from "@/schemas/upsert-response.schema";
 import { createClient } from "@/utils/supabase/server";
+import { fullTextSearchToSupabaseQuery } from "@/utils/full-text-search-to-supabase-query";
 
 export type PaginatedEventListResponse = {
     data: EventListData[];
@@ -32,7 +33,7 @@ export async function fetchEventList(page: number, pageSize: number, fullTextSea
         .order('created_at', { ascending: false });
 
     if (fullTextSearch) {
-        const parsedQuery = fullTextSearch.replaceAll(' ', '+');
+        const parsedQuery = fullTextSearchToSupabaseQuery(fullTextSearch);
         query = query.textSearch('title', parsedQuery);
     }
 

@@ -19,6 +19,10 @@ create table public.training_plan_athlete
     created_at             timestamp with time zone default now()             not null
 );
 
+create function training_plan_athlete_full_name(training_plan_athlete) returns text as $$
+select $1.first_name || ' ' || $1.last_name;
+$$ language sql immutable;
+
 create table public.training_plan_athlete_activity
 (
     id                       uuid                     default gen_random_uuid() not null

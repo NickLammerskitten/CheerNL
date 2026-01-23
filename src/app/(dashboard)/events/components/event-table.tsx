@@ -13,11 +13,11 @@ import React from "react";
 import ServersideSearch from "@/components/tables/ServersideSearch";
 
 interface EventTableProps {
-    initialEvents: EventListData[];
+    events: EventListData[];
     totalPages: number;
 }
 
-export default function EventTable({ initialEvents, totalPages }: EventTableProps) {
+export default function EventTable({ events, totalPages }: EventTableProps) {
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -74,7 +74,7 @@ export default function EventTable({ initialEvents, totalPages }: EventTableProp
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {initialEvents.map((event, index) =>
+                    {events.map((event, index) =>
                         <TableRow key={index}>
                             <TableCell dataLabel={"Titel"}>
                                 {event.title}
@@ -107,6 +107,10 @@ export default function EventTable({ initialEvents, totalPages }: EventTableProp
                     )}
                 </TableBody>
             </Table>
+
+            {events.length === 0 && (
+                <p className={"text-gray-500 dark:text-gray-400"}>Keine Einträge vorhanden</p>
+            )}
 
             <div className={"flex flex-col items-center"}>
                 <Pagination

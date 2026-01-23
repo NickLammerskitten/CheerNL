@@ -19,12 +19,14 @@ export default async function EventsPage({
         searchQuery
     );
 
-    const totalPages = Math.ceil(totalCount ?? 0 / PAGE_SIZE);
+    const totalPages = totalCount === 0 || totalCount === undefined
+        ? 1
+        : Math.ceil(totalCount / PAGE_SIZE);
 
     return (
         <ComponentCard title={"Events"}>
             <EventTable
-                initialEvents={data}
+                events={data}
                 totalPages={totalPages}
             />
         </ComponentCard>

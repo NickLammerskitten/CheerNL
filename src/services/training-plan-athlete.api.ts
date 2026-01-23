@@ -15,21 +15,45 @@ import { UpsertResponseSchema } from "@/schemas/upsert-response.schema";
 import { createAthleteFolder, deleteFolder } from "@/services/external/google-drive-files.api";
 import { fetchTrainingPlan } from "@/services/training-plan.api";
 import { createClient } from "@/utils/supabase/server";
+import {fullTextSearchToSupabaseQuery} from "@/utils/full-text-search-to-supabase-query";
 
-export async function fetchTrainingPlanAthleteList(): Promise<TrainingPlanAthleteListData> {
+interface PaginatedTrainingPlanAthleteListResponse {
+    data: TrainingPlanAthleteListData;
+    totalCount?: number;
+}
+
+export async function fetchTrainingPlanAthleteList(page: number, pageSize: number, fullTextSearch?: string): Promise<PaginatedTrainingPlanAthleteListResponse> {
     const supabase = await createClient();
 
-    const { data: rawData, error } = await supabase
+    const from = (page - 1) * pageSize;
+    const to = page * pageSize - 1;
+
+    let query = supabase
         .from('training_plan_athlete')
         .select('*, training_plan(name)')
+        .range(from, to)
         .order('created_at', { ascending: false });
 
+    if (fullTextSearch) {
+        const parsedQuery = fullTextSearchToSupabaseQuery(fullTextSearch);
+        query = query.textSearch('training_plan_athlete_full_name', parsedQuery);
+    }
+
+    const { data: rawData, error, count } = await query
+
+
     if (error) {
-        throw new Error(`Supabase-Fehler: ${error.message}`);
+        console.error(`Supabase-Fehler: ${error.message}`);
+        return { data: [], totalCount: undefined };
     }
 
     try {
-        return TrainingPlanAthleteListDataSchema.parse(rawData);
+        const parsedData = TrainingPlanAthleteListDataSchema.parse(rawData);
+
+        return {
+            data: parsedData,
+            totalCount: count ?? 0
+        }
     } catch (validationError) {
         console.error("Zod Validierungsfehler:", validationError);
         throw new Error("Ungültige Daten von der API empfangen.");
