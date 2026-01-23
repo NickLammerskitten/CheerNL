@@ -24,7 +24,7 @@ export default function TrainingPlanAthletesTable({ athletes, totalPages }: Trai
         const params = new URLSearchParams(searchParams.toString());
         params.set("page", page.toString());
 
-        router.push(`/events?${params.toString()}`)
+        router.push(`/training-plan?${params.toString()}`)
     };
 
     const openDetailPage = (id: string) => {
