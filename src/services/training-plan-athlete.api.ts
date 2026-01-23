@@ -31,7 +31,7 @@ export async function fetchTrainingPlanAthleteList(page: number, fullTextSearch?
 
     let query = supabase
         .from('training_plan_athlete')
-        .select('*, training_plan(name)')
+        .select('*, training_plan(name)', { count: 'exact' })
         .range(from, to)
         .order('created_at', { ascending: false });
 
