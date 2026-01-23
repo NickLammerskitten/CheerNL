@@ -23,7 +23,7 @@ interface PaginatedTrainingPlanAthleteListResponse {
     totalPages: number;
 }
 
-export async function fetchTrainingPlanAthleteList(page: number, fullTextSearch?: string, pageSize: number = 20): Promise<PaginatedTrainingPlanAthleteListResponse> {
+export async function fetchTrainingPlanAthleteList(page: number, fullTextSearch?: string, pageSize: number = 10): Promise<PaginatedTrainingPlanAthleteListResponse> {
     const supabase = await createClient();
 
     const from = (page - 1) * pageSize;

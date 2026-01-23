@@ -21,7 +21,7 @@ export type PaginatedEventListResponse = {
     totalPages: number;
 }
 
-export async function fetchEventList(page: number, fullTextSearch?: string, pageSize: number = 10,): Promise<PaginatedEventListResponse> {
+export async function fetchEventList(page: number, fullTextSearch?: string, pageSize: number = 10): Promise<PaginatedEventListResponse> {
     const supabase = await createClient();
 
     const from = (page - 1) * pageSize;
