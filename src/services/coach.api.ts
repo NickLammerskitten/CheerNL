@@ -6,9 +6,12 @@ import {
     CoachListData,
     CoachListDataSchema,
     CoachListItemDataSchema,
+    CoachUpdateData,
+    CoachUpdateSchema,
 } from "@/schemas/coach.schema";
 import { UpsertResponseSchema } from "@/schemas/upsert-response.schema";
 import { createClient } from "@/utils/supabase/server";
+import {CoachAssignmentCreateData} from "@/schemas/coach-assignment.schema";
 
 export async function fetchCoachList(): Promise<CoachListData[]> {
     const supabase = await createClient();
@@ -72,7 +75,7 @@ export async function fetchMyCoachObject(): Promise<CoachListData | null> {
 export async function fetchCoachCount(): Promise<number> {
     const supabase = await createClient();
     const { count } = await supabase
-        .from('coach, ')
+        .from('coach')
         .select('', { count: 'exact', head: true })
 
     return count ?? 0
@@ -114,6 +117,70 @@ export async function saveCoach(newData: CoachCreateData): Promise<UpsertRespons
     return {
         success: true,
         id: savedData.id,
+        error: null,
+    };
+}
+
+export async function updateCoach(newData: CoachUpdateData): Promise<UpsertResponseSchema> {
+    const dataValid = CoachUpdateSchema.safeParse(newData).success
+    if (!dataValid) {
+        return {
+            success: false,
+            id: null,
+            error: 'Die Daten konnten nicht validiert werden',
+        };
+    }
+
+    const supabase = await createClient()
+    const { data: coachData, error: fetchError } = await supabase
+        .from('coach')
+        .select('*')
+        .eq('id', newData.id)
+        .single();
+
+    if (fetchError || !coachData) {
+        return {
+            success: false,
+            id: null,
+            error: 'Der Coach konnte nicht gefunden werden.',
+        }
+    }
+
+    const newAssignments = newData.team_ids.map(teamId => {
+        return {
+            coach_id: coachData.id,
+            team_id: teamId
+        } as CoachAssignmentCreateData;
+    });
+
+    const { error: cleanAssignmentsError } = await supabase
+        .from('coach_assignment')
+        .delete()
+        .eq('coach_id', coachData.id);
+
+    if (cleanAssignmentsError) {
+        return {
+            success: false,
+            id: null,
+            error: 'Die Zuordnungen konnten nicht gelöscht werden.',
+        }
+    }
+
+    const { status, statusText } = await supabase
+        .from('coach_assignment')
+        .upsert(newAssignments);
+
+    if (status !== 200 && status !== 201) {
+        return {
+            success: false,
+            id: null,
+            error: `Es ist ein Fehler aufgetreten: ${status} - ${statusText}`,
+        }
+    }
+
+    return {
+        success: true,
+        id: coachData.id,
         error: null,
     };
 }

@@ -14,8 +14,6 @@ export default function Search<T>({objects, searchableFields, onFilter}: SearchP
     const [searchString, setSearchString] = useState<string>("");
 
     useEffect(() => {
-        console.log(searchString);
-
         if (searchString === "" || searchString === null) {
             onFilter(objects);
             return;

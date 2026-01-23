@@ -4,12 +4,15 @@ import {Table, TableBody, TableCell, TableHeader, TableRow} from "@/components/u
 import React, {useState} from "react";
 import {CoachListData} from "@/schemas/coach.schema";
 import Search from "@/components/tables/Search";
+import EditCoachModal from "@/app/(dashboard)/(others-pages)/coaches/components/edit-coach-modal";
+import {TeamListData} from "@/schemas/team.schema";
 
 interface CoachesTableProps {
     coaches: CoachListData[];
+    teams: TeamListData[];
 }
 
-export default function CoachesTable({coaches}: CoachesTableProps) {
+export default function CoachesTable({coaches, teams}: CoachesTableProps) {
     const [filteredCoaches, setFilteredCoaches] = useState(coaches);
 
     return (
@@ -65,6 +68,10 @@ export default function CoachesTable({coaches}: CoachesTableProps) {
 
                                 <TableCell dataLabel={"Erstellt am"}>
                                     {coach.createdAt.toLocaleDateString("de-DE")}
+                                </TableCell>
+
+                                <TableCell>
+                                    <EditCoachModal coach={coach} teams={teams}/>
                                 </TableCell>
                             </TableRow>
                         )

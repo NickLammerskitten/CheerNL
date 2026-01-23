@@ -30,3 +30,10 @@ export const CoachCreateSchema = z.object({
 })
 
 export type CoachCreateData = z.infer<typeof CoachCreateSchema>;
+
+export const CoachUpdateSchema = z.object({
+    id: z.string(),
+    team_ids: z.array(z.string())
+})
+
+export type CoachUpdateData = z.infer<typeof CoachUpdateSchema>;
