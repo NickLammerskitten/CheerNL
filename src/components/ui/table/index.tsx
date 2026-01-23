@@ -23,6 +23,7 @@ interface TableRowProps {
 interface TableCellProps {
     children: ReactNode;
     isHeader?: boolean;
+    isActionHeader?: boolean;
     className?: string;
     dataLabel?: string;
 }
@@ -69,6 +70,7 @@ const TableRow: React.FC<TableRowProps> = ({ children, className }) => {
 const TableCell: React.FC<TableCellProps> = ({
     children,
     isHeader = false,
+    isActionHeader = false,
     className,
     dataLabel,
 }) => {
@@ -77,7 +79,7 @@ const TableCell: React.FC<TableCellProps> = ({
     if (isHeader) {
         return (
             <CellTag
-                className={`p-3 font-medium text-gray-500 text-start font-semibold tracking-wide dark:text-gray-400 ${className || ''}`}
+                className={`p-3 font-medium text-gray-500 text-start tracking-wide dark:text-gray-400 ${isActionHeader ? 'w-0' : ''} ${className || ''}`}
             >
                 {children}
             </CellTag>

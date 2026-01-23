@@ -41,7 +41,7 @@ export default function UsersTable({users}: UsersTableProps) {
                             Erstellt am
                         </TableCell>
 
-                        <TableCell isHeader>
+                        <TableCell isHeader isActionHeader>
                             <></>
                         </TableCell>
                     </TableRow>
@@ -79,8 +79,10 @@ export default function UsersTable({users}: UsersTableProps) {
                                 </TableCell>
 
                                 <TableCell className="px-5 py-4 sm:px-6 text-start">
-                                    <DeleteUserModal userId={user.id}/>
-                                    <ResetUserPasswordModal userId={user.id}/>
+                                    <div className="flex flex-row gap-2">
+                                        <ResetUserPasswordModal userId={user.id}/>
+                                        <DeleteUserModal userId={user.id}/>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         )

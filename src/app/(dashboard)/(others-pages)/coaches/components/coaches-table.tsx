@@ -45,6 +45,10 @@ export default function CoachesTable({coaches, teams}: CoachesTableProps) {
                         >
                             Erstellt am
                         </TableCell>
+
+                        <TableCell isHeader isActionHeader>
+                            <></>
+                        </TableCell>
                     </TableRow>
                 </TableHeader>
 

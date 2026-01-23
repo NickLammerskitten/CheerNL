@@ -35,6 +35,10 @@ export default function TrainingPlanAthletesTable({ athletes }: TrainingPlanAthl
                         <TableCell isHeader>
                             Erstellt am
                         </TableCell>
+
+                        <TableCell isHeader isActionHeader>
+                            <></>
+                        </TableCell>
                     </TableRow>
                 </TableHeader>
 

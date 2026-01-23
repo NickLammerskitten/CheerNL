@@ -4,7 +4,7 @@ import DeleteEventModal from "@/app/(dashboard)/events/components/delete-event-m
 import Pagination from "@/components/tables/Pagination";
 import Button from "@/components/ui/button/Button";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
-import { EyeIcon } from "@/icons";
+import {EyeIcon, PlusIcon} from "@/icons";
 import { EventListData } from "@/schemas/event.schema";
 import { EventType } from "@/types/event-type";
 import { format } from "date-fns";
@@ -43,6 +43,7 @@ export default function EventTable({ initialEvents, totalPages }: EventTableProp
             <Button
                 variant={"outline"}
                 onClick={() => handleCreate()}
+                startIcon={<PlusIcon />}
             >
                 Event erstellen
             </Button>
@@ -61,6 +62,10 @@ export default function EventTable({ initialEvents, totalPages }: EventTableProp
                         </TableCell>
                         <TableCell isHeader>
                             Erstellt am
+                        </TableCell>
+
+                        <TableCell isHeader isActionHeader>
+                            <></>
                         </TableCell>
                     </TableRow>
                 </TableHeader>
