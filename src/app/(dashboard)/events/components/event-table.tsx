@@ -10,6 +10,7 @@ import { EventType } from "@/types/event-type";
 import { format } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
+import ServersideSearch from "@/components/tables/ServersideSearch";
 
 interface EventTableProps {
     initialEvents: EventListData[];
@@ -40,13 +41,16 @@ export default function EventTable({ initialEvents, totalPages }: EventTableProp
 
     return (
         <>
-            <Button
-                variant={"outline"}
-                onClick={() => handleCreate()}
-                startIcon={<PlusIcon />}
-            >
-                Event erstellen
-            </Button>
+            <div className={"flex flex-col mb-1 gap-1 sm:flex-row sm:justify-between"}>
+                <ServersideSearch />
+                <Button
+                    variant={"outline"}
+                    onClick={() => handleCreate()}
+                    startIcon={<PlusIcon />}
+                >
+                    Event erstellen
+                </Button>
+            </div>
 
             <Table>
                 <TableHeader>

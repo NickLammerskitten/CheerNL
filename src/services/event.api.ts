@@ -16,23 +16,31 @@ import { createClient } from "@/utils/supabase/server";
 
 export type PaginatedEventListResponse = {
     data: EventListData[];
-    totalCount: number;
+    totalCount?: number;
 }
 
-export async function fetchEventList(page: number, pageSize: number): Promise<PaginatedEventListResponse> {
+export async function fetchEventList(page: number, pageSize: number, fullTextSearch?: string): Promise<PaginatedEventListResponse> {
     const supabase = await createClient();
 
     const from = (page - 1) * pageSize;
     const to = page * pageSize - 1;
 
-    const { data: rawData, error, count } = await supabase
+    let query = supabase
         .from('event')
         .select('*', { count: 'exact' })
         .range(from, to)
         .order('created_at', { ascending: false });
 
+    if (fullTextSearch) {
+        const parsedQuery = fullTextSearch.replaceAll(' ', '+');
+        query = query.textSearch('title', parsedQuery);
+    }
+
+    const { data: rawData, error, count } = await query;
+
     if (error) {
-        throw new Error(`Supabase-Fehler: ${error.message}`);
+        console.error(`Supabase-Fehler: ${error.message}`);
+        return { data: [], totalCount: undefined };
     }
 
     try {
