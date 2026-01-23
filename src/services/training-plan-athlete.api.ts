@@ -16,13 +16,14 @@ import { createAthleteFolder, deleteFolder } from "@/services/external/google-dr
 import { fetchTrainingPlan } from "@/services/training-plan.api";
 import { createClient } from "@/utils/supabase/server";
 import {fullTextSearchToSupabaseQuery} from "@/utils/full-text-search-to-supabase-query";
+import {calculateTotalPages} from "@/utils/calculate-total-pages";
 
 interface PaginatedTrainingPlanAthleteListResponse {
     data: TrainingPlanAthleteListData;
-    totalCount?: number;
+    totalPages: number;
 }
 
-export async function fetchTrainingPlanAthleteList(page: number, pageSize: number, fullTextSearch?: string): Promise<PaginatedTrainingPlanAthleteListResponse> {
+export async function fetchTrainingPlanAthleteList(page: number, fullTextSearch?: string, pageSize: number = 20): Promise<PaginatedTrainingPlanAthleteListResponse> {
     const supabase = await createClient();
 
     const from = (page - 1) * pageSize;
@@ -44,15 +45,16 @@ export async function fetchTrainingPlanAthleteList(page: number, pageSize: numbe
 
     if (error) {
         console.error(`Supabase-Fehler: ${error.message}`);
-        return { data: [], totalCount: undefined };
+        return { data: [], totalPages: 1 };
     }
 
     try {
         const parsedData = TrainingPlanAthleteListDataSchema.parse(rawData);
+        const totalPages = calculateTotalPages(pageSize, count);
 
         return {
             data: parsedData,
-            totalCount: count ?? 0
+            totalPages: totalPages
         }
     } catch (validationError) {
         console.error("Zod Validierungsfehler:", validationError);

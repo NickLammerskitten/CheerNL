@@ -5,8 +5,6 @@ import { fetchTrainingPlanAthleteList } from "@/services/training-plan-athlete.a
 import ServersideSearch from "@/components/tables/ServersideSearch";
 import React from "react";
 
-const PAGE_SIZE = 20;
-
 export default async function TrainingPlanPage({
     searchParams,
 }: {
@@ -16,11 +14,7 @@ export default async function TrainingPlanPage({
     const currentPage = Number(searchParamValues.page) || 1;
     const searchQuery = searchParamValues.search || undefined;
 
-    const { data, totalCount } = await fetchTrainingPlanAthleteList(currentPage, PAGE_SIZE, searchQuery);
-
-    const totalPages = totalCount === 0 || totalCount === undefined
-        ? 1
-        : Math.ceil(totalCount / PAGE_SIZE);
+    const { data, totalPages } = await fetchTrainingPlanAthleteList(currentPage, searchQuery);
 
     return (
         <ComponentCard title={"Kraft- und Ausdauertraining > Athleten"}>

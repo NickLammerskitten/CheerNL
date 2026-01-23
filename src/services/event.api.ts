@@ -14,13 +14,14 @@ import {
 import { UpsertResponseSchema } from "@/schemas/upsert-response.schema";
 import { createClient } from "@/utils/supabase/server";
 import { fullTextSearchToSupabaseQuery } from "@/utils/full-text-search-to-supabase-query";
+import {calculateTotalPages} from "@/utils/calculate-total-pages";
 
 export type PaginatedEventListResponse = {
     data: EventListData[];
-    totalCount?: number;
+    totalPages: number;
 }
 
-export async function fetchEventList(page: number, pageSize: number, fullTextSearch?: string): Promise<PaginatedEventListResponse> {
+export async function fetchEventList(page: number, fullTextSearch?: string, pageSize: number = 10,): Promise<PaginatedEventListResponse> {
     const supabase = await createClient();
 
     const from = (page - 1) * pageSize;
@@ -41,15 +42,19 @@ export async function fetchEventList(page: number, pageSize: number, fullTextSea
 
     if (error) {
         console.error(`Supabase-Fehler: ${error.message}`);
-        return { data: [], totalCount: undefined };
+        return {
+            data: [],
+            totalPages: 1
+        };
     }
 
     try {
         const parsedData = EventListDataSchema.parse(rawData);
+        const totalPages = calculateTotalPages(pageSize, count);
 
         return {
             data: parsedData,
-            totalCount: count ?? 0,
+            totalPages: totalPages
         };
     } catch (validationError) {
         console.error("Zod Validierungsfehler:", validationError);
