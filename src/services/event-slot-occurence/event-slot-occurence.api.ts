@@ -37,10 +37,18 @@ export async function fetchEventSlotOccurrences(
         `, { count: 'exact' })
         .or(`${onceCondition},${weeklyCondition}`);
 
-    // Dynamischer Filter
     if (filterCoachIds && filterCoachIds.length > 0) {
-        // Filtert auf die Tabelle event_slot_coach Spalte coach_id
-        query = query.in("event_slot_coach.coach_id", filterCoachIds);
+        const { data: coachSlots, error: coachSlotError } = await supabase
+            .from("event_slot_coach")
+            .select("slot_id")
+            .in("coach_id", filterCoachIds);
+
+        if (coachSlotError || !coachSlots || coachSlots.length === 0) {
+            return emptyResponse();
+        }
+
+        const slotIds = coachSlots.map(cs => cs.slot_id);
+        query = query.in("id", slotIds);
     }
 
     const { data: slotsRawData, count, error: eventSlotError } = await query;
