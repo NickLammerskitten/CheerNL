@@ -377,7 +377,7 @@ const SlotDetails = ({ slot, registrationCount }: {
     slot?: EventSlotPublicListData,
     registrationCount: number | undefined
 }) => {
-    if (!slot || !registrationCount) {
+    if (!slot || registrationCount === undefined) {
         return null;
     }
 
