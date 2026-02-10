@@ -82,7 +82,7 @@ export default function CreateSlotModal({ eventId, coaches }: CreateSlotModalPro
             location: location ?? null,
             duration_minutes: durationMinutes,
             recurrence_type: recurrenceType,
-            slot_start: slotStart ?? null,
+            slot_start: slotStart ? new Date(slotStart).toISOString() : null,
             slot_end: slotEnd ?? null,
             day_of_week: dayOfWeek ?? DayOfWeek.MONDAY,
             start_time: startTime ?? null,
