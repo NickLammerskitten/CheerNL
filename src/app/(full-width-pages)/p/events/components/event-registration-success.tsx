@@ -95,9 +95,9 @@ export const RegistrationSuccess: React.FC<RegistrationSuccessProps> = ({
                                         {dayOfWeekToString(slot.dayOfWeek)}
                                     </span>
 
-                                    <p className="text-sm text-gray-600">
+                                    <span className="text-sm text-gray-600">
                                         {slot.startTime?.slice(0, 5)} - {calculateEndTimeRecurrent(slot.startTime, slot.durationMinutes)} Uhr
-                                    </p>
+                                    </span>
                                 </span>
                             ) : (
                                 <span>
