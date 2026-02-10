@@ -12,29 +12,38 @@ import { addDays, addMinutes, format, getDay, parse } from "date-fns";
 const formatDateToICS = (date: Date) => format(date, "yyyyMMdd'T'HHmmss");
 
 export function generateIcsData(slot: EventSlotDetailData | EventSlotPublicListData): string {
-    if (!slot.slotStart || !slot.startTime) {
-        throw new Error("Slot hat kein Startdatum oder keine Startzeit");
+    if (!slot.slotStart) {
+        throw new Error("Slot hat kein Startdatum");
     }
 
-    let effectiveStartDate = new Date(slot.slotStart);
+    let startDateTime: Date;
 
-    if (slot.recurrenceType === EventRecurrenceType.WEEKLY && slot.dayOfWeek) {
-        const targetDayIndex = DayMap[slot.dayOfWeek];
-        const currentDayIndex = getDay(effectiveStartDate);
-
-        let daysToAdd = targetDayIndex - currentDayIndex;
-        if (daysToAdd < 0) {
-            daysToAdd += 7;
+    if (slot.recurrenceType === EventRecurrenceType.ONCE) {
+        startDateTime = new Date(slot.slotStart);
+    } else {
+        if (!slot.startTime) {
+            throw new Error("Wöchentlicher Slot hat keine Startzeit");
         }
 
-        effectiveStartDate = addDays(effectiveStartDate, daysToAdd);
+        let effectiveStartDate = new Date(slot.slotStart);
+
+        if (slot.recurrenceType === EventRecurrenceType.WEEKLY && slot.dayOfWeek) {
+            const targetDayIndex = DayMap[slot.dayOfWeek];
+            const currentDayIndex = getDay(effectiveStartDate);
+
+            let daysToAdd = targetDayIndex - currentDayIndex;
+            if (daysToAdd < 0) {
+                daysToAdd += 7;
+            }
+            effectiveStartDate = addDays(effectiveStartDate, daysToAdd);
+        }
+
+        const cleanTime = slot.startTime.slice(0, 5);
+        const parsedTime = parse(cleanTime, 'HH:mm', new Date());
+
+        startDateTime = new Date(effectiveStartDate);
+        startDateTime.setHours(parsedTime.getHours(), parsedTime.getMinutes(), 0, 0);
     }
-
-    const cleanTime = slot.startTime.slice(0, 5);
-    const parsedTime = parse(cleanTime, 'HH:mm', new Date());
-
-    const startDateTime = new Date(effectiveStartDate);
-    startDateTime.setHours(parsedTime.getHours(), parsedTime.getMinutes(), 0, 0);
 
     const endDateTime = addMinutes(startDateTime, slot.durationMinutes);
 
@@ -44,8 +53,9 @@ export function generateIcsData(slot: EventSlotDetailData | EventSlotPublicListD
     const summary = slot.title;
     const location = slot.location ?? "";
     const description = `Trainer: ${(slot.coaches ?? []).map(c => c.coachName)
-        .filter((name) => name)
+        .filter((name) => !!name)
         .join(", ")}`;
+
     const uid = `${slot.id}-${format(startDateTime, 'yyyyMMdd')}`;
 
     const icsContent = [
@@ -64,7 +74,6 @@ export function generateIcsData(slot: EventSlotDetailData | EventSlotPublicListD
 
     if (slot.recurrenceType === EventRecurrenceType.WEEKLY && slot.dayOfWeek) {
         const icsDay = IcsDayMap[slot.dayOfWeek];
-
         let rrule = `RRULE:FREQ=WEEKLY;BYDAY=${icsDay}`;
 
         if (slot.slotEnd) {
@@ -72,7 +81,6 @@ export function generateIcsData(slot: EventSlotDetailData | EventSlotPublicListD
             untilDate.setHours(23, 59, 59);
             rrule += `;UNTIL=${formatDateToICS(untilDate)}`;
         }
-
         icsContent.push(rrule);
     }
 
