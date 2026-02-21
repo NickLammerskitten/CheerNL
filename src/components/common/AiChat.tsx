@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { File as GoogleFile } from "@google/genai";
+import React, { useEffect, useRef, useState } from "react";
 
 type Message = {
     role: "user" | "assistant";
@@ -8,7 +9,9 @@ type Message = {
 };
 
 interface AiChatProps {
-    onSendMessage: (message: string) => Promise<ReadableStream<Uint8Array> | null>;
+    onUploadFile: (file: File) => Promise<GoogleFile | null>;
+    onRemoveFile: (file: GoogleFile) => Promise<void>;
+    onSendMessage: (message: string, video: GoogleFile | null) => Promise<ReadableStream<Uint8Array> | null>;
     headline?: string;
     subHeadline?: string;
     messagesPlaceholder?: string;
@@ -16,6 +19,8 @@ interface AiChatProps {
 }
 
 export default function AiChat({
+    onUploadFile,
+    onRemoveFile,
     onSendMessage,
     headline,
     subHeadline,
@@ -26,6 +31,10 @@ export default function AiChat({
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
+    const [isVideoUploading, setIsFileUploading] = useState(false);
+    const [uploadError, setUploadError] = useState<string | null>(null);
+    const [uploadedVideo, setUploadedFile] = useState<GoogleFile | null>(null);
+
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -35,6 +44,41 @@ export default function AiChat({
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) {
+            return;
+        }
+
+        setIsFileUploading(true);
+        setUploadError(null);
+        setUploadedFile(null);
+
+        try {
+            const uploadedFile = await onUploadFile(file);
+
+            if (uploadedFile) {
+                setUploadedFile(uploadedFile);
+            } else {
+                setUploadError("Upload fehlgeschlagen.");
+            }
+        } catch (error) {
+            setUploadError("Ein Netzwerkfehler ist aufgetreten.");
+        } finally {
+            setIsFileUploading(false);
+            e.target.value = '';
+        }
+    }
+
+    const handleRemoveVideo = () => {
+        if (uploadedVideo) {
+            onRemoveFile(uploadedVideo)
+        }
+
+        setUploadedFile(null);
+        setUploadError(null);
+    };
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -50,7 +94,7 @@ export default function AiChat({
         setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
         try {
-            const stream = await onSendMessage(userMessage);
+            const stream = await onSendMessage(userMessage, uploadedVideo);
 
             if (!stream) {
                 throw new Error("Kein Response Stream gefunden");
@@ -141,7 +185,48 @@ export default function AiChat({
                         placeholder={chatPlaceholder}
                         className="flex-1 bg-slate-100 text-slate-800 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 border border-transparent focus:bg-white"
                     />
-                    <div className="flex flex-col items-end">
+
+                    <div className="flex flex-row justify-between items-center gap-4 mt-2">
+                        <div className="flex-1 flex items-center">
+                            {isVideoUploading ? (
+                                <span className="text-sm text-blue-600 animate-pulse px-4 py-2">
+                                    ⏳ Video wird verarbeitet... das kann einen Moment dauern.
+                                </span>
+                            ) : uploadedVideo ? (
+                                <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium border border-blue-200">
+                                    <span
+                                        className="truncate max-w-[200px]"
+                                        title={uploadedVideo.name}
+                                    >
+                                        {uploadedVideo.displayName}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={handleRemoveVideo}
+                                        disabled={isLoading}
+                                        className="ml-2 w-5 h-5 flex items-center justify-center rounded-full hover:bg-blue-200 text-blue-500 hover:text-blue-800 transition-colors disabled:opacity-50"
+                                        aria-label="Video entfernen"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            ) : (
+                                <input
+                                    type="file"
+                                    accept="video/mp4"
+                                    onChange={handleFileChange}
+                                    disabled={isLoading}
+                                    className="text-sm text-slate-500
+                                            file:mr-4 file:py-2 file:px-4
+                                            file:rounded-full file:border-0
+                                            file:text-sm file:font-semibold
+                                            file:bg-blue-50 file:text-blue-700
+                                            hover:file:bg-blue-100
+                                            disabled:opacity-50 disabled:cursor-not-allowed"
+                                />
+                            )}
+                        </div>
+
                         <button
                             type="submit"
                             disabled={isLoading || !input.trim()}

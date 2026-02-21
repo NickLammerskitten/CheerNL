@@ -1,6 +1,14 @@
 import { systemPrompt } from "@/utils/ai-ruling/system-message";
 import { createGoogleAiClient } from "@/utils/google/googel-ai-client";
-import { GenerateContentConfig, GoogleGenAI, HarmBlockThreshold, HarmCategory, ThinkingLevel } from "@google/genai";
+import {
+    ContentListUnion,
+    createPartFromUri,
+    GenerateContentConfig,
+    GoogleGenAI,
+    HarmBlockThreshold,
+    HarmCategory,
+    ThinkingLevel,
+} from "@google/genai";
 import { NextResponse } from 'next/server';
 
 const generationConfig: GenerateContentConfig = {
@@ -46,18 +54,25 @@ const setupCachedSystemPrompt = async (ai: GoogleGenAI, model: string) => {
     }
 }
 
+export const maxDuration = 120;
+
 export async function POST(request: Request) {
     try {
-        const { message } = await request.json();
+        const { message, video } = await request.json();
 
         const ai = await createGoogleAiClient();
         const model = 'gemini-3-flash-preview';
 
         await setupCachedSystemPrompt(ai, model);
 
+        let contents: ContentListUnion = [{ role: 'user', parts: [{ text: message }] }]
+        if (video) {
+            contents[0].parts?.push(createPartFromUri(video.uri, video.mimeType))
+        }
+
         const responseStream = await ai.models.generateContentStream({
             model: model,
-            contents: [{ role: 'user', parts: [{ text: message }] }],
+            contents: contents,
             config: generationConfig,
         });
 
@@ -86,6 +101,7 @@ export async function POST(request: Request) {
         });
 
     } catch (error) {
-        return NextResponse.json({ error: 'Etwas ist schiefgelaufen' }, { status: 500 });
+        console.error(error);
+        return NextResponse.json({ error: 'Etwas ist schiefgelaufen' + error }, { status: 500 });
     }
 }
