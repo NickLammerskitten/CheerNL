@@ -187,7 +187,7 @@ export default function AiChat({
                         className="flex-1 bg-slate-100 text-slate-800 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 border border-transparent focus:bg-white"
                     />
 
-                    <div className="flex flex-row justify-between items-center gap-4 mt-2">
+                    <div className="flex flex-col items-end sm:flex-row sm:items-center justify-between gap-4 mt-2">
                         <div className="flex-1 flex items-center">
                             {isVideoUploading ? (
                                 <span className="text-sm text-blue-600 animate-pulse px-4 py-2">
