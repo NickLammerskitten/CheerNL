@@ -31,6 +31,7 @@ import FolderIcon from "./folder.svg";
 import GridIcon from "./grid.svg";
 import GroupIcon from "./group.svg";
 import HorizontaLDots from "./horizontal-dots.svg";
+import JudgeIcon from "./judge.svg";
 import ErrorIcon from "./info-hexa.svg";
 import InfoIcon from "./info.svg";
 import ListIcon from "./list.svg";
@@ -105,6 +106,7 @@ export {
     DocsIcon,
     MailIcon,
     HorizontaLDots,
+    JudgeIcon,
     ChevronUpIcon,
     ChatIcon,
     WeightliftingIcon,

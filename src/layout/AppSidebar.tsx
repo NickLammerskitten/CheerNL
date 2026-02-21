@@ -5,7 +5,7 @@ import { User } from "@supabase/auth-js";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
-import { CalenderIcon, GridIcon, GroupIcon, LockIcon, ShootingStarIcon, WeightliftingIcon } from "../icons";
+import { CalenderIcon, GridIcon, GroupIcon, JudgeIcon, LockIcon, ShootingStarIcon, WeightliftingIcon } from "../icons";
 
 type NavItem = {
     name: string;
@@ -28,8 +28,13 @@ const navItems: NavItem[] = [
     {
         icon: <WeightliftingIcon />,
         name: "Kraft-/Ausdauertraining",
-        path: "/training-plan"
-    }
+        path: "/training-plan",
+    },
+    {
+        icon: <JudgeIcon />,
+        name: "AI Rule-Judge (Experimentell)",
+        path: "/legality-checker",
+    },
 ];
 
 const othersItems: NavItem[] = [
