@@ -11,6 +11,7 @@
     "supabasestop": "supabase stop"
   },
   "dependencies": {
+    "@google/genai": "^1.42.0",
     "@react-jvectormap/core": "^1.0.4",
     "@react-jvectormap/world": "^1.1.2",
     "@supabase/ssr": "^0.7.0",
