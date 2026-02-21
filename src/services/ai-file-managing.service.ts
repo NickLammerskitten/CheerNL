@@ -13,7 +13,7 @@ export async function uploadFileToGoogleAi(file: File): Promise<GoogleFile | nul
                 displayName: file.name,
             },
         });
-    } catch (error) {
+    } catch {
         return null;
     }
 }
@@ -28,7 +28,7 @@ export async function removeFileFromGoogleAi(file: GoogleFile): Promise<void> {
         await googleAi.files.delete({
             name: file.name,
         })
-    } catch (error) {
-        console.error(error);
+    } catch {
+        return;
     }
 }

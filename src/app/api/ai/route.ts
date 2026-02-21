@@ -41,7 +41,7 @@ const setupCachedSystemPrompt = async (ai: GoogleGenAI, model: string) => {
         } else {
             throw new Error()
         }
-    } catch (_) {
+    } catch {
         return await ai.caches.create({
             model: model,
             config: {
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
 
         await setupCachedSystemPrompt(ai, model);
 
-        let contents: ContentListUnion = [{ role: 'user', parts: [{ text: message }] }]
+        const contents: ContentListUnion = [{ role: 'user', parts: [{ text: message }] }]
         if (video) {
             contents[0].parts?.push(createPartFromUri(video.uri, video.mimeType))
         }

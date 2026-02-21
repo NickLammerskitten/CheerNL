@@ -32,7 +32,7 @@ export default function AiChat({
     const [isLoading, setIsLoading] = useState(false);
 
     const [isVideoUploading, setIsFileUploading] = useState(false);
-    const [uploadError, setUploadError] = useState<string | null>(null);
+    // const [uploadError, setUploadError] = useState<string | null>(null);
     const [uploadedVideo, setUploadedFile] = useState<GoogleFile | null>(null);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -52,7 +52,7 @@ export default function AiChat({
         }
 
         setIsFileUploading(true);
-        setUploadError(null);
+        // setUploadError(null);
         setUploadedFile(null);
 
         try {
@@ -61,10 +61,11 @@ export default function AiChat({
             if (uploadedFile) {
                 setUploadedFile(uploadedFile);
             } else {
-                setUploadError("Upload fehlgeschlagen.");
+                //setUploadError("Upload fehlgeschlagen.");
             }
         } catch (error) {
-            setUploadError("Ein Netzwerkfehler ist aufgetreten.");
+            console.error(error);
+            //setUploadError("Ein Netzwerkfehler ist aufgetreten.");
         } finally {
             setIsFileUploading(false);
             e.target.value = '';
@@ -77,7 +78,7 @@ export default function AiChat({
         }
 
         setUploadedFile(null);
-        setUploadError(null);
+        //setUploadError(null);
     };
 
     const handleSend = async (e: React.FormEvent) => {
