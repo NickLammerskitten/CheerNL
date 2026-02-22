@@ -7,15 +7,13 @@ import { fetchRulingStream } from "@/services/ai-rule-judge.service";
 export default function LegalityCheckerPage() {
 
     return (
-        <div className={"h-full"}>
-            <AiChat
-                headline={"AI Rule-Judge (Experimentell)"}
-                messagesPlaceholder={"Erhalte deine Einschätzung"}
-                chatPlaceholder={"Level: 3, Element: Standing Flick Flack"}
-                onUploadFile={uploadFileToGoogleAi}
-                onRemoveFile={removeFileFromGoogleAi}
-                onSendMessage={fetchRulingStream}
-            />
-        </div>
+        <AiChat
+            headline={"AI Rule-Judge (Experimentell)"}
+            messagesPlaceholder={"Erhalte deine Einschätzung"}
+            chatPlaceholder={"Level: 3, Element: Standing Flick Flack"}
+            onUploadFile={uploadFileToGoogleAi}
+            onRemoveFile={removeFileFromGoogleAi}
+            onSendMessage={fetchRulingStream}
+        />
     )
 }
