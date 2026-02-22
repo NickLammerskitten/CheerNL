@@ -135,7 +135,7 @@ export default function AiChat({
     };
 
     return (
-        <div className="flex flex-col h-[87vh] md:h-[80vh] max-w-3xl mx-auto bg-slate-50 shadow-xl overflow-hidden sm:rounded-2xl border border-slate-200">
+        <div className="flex flex-col h-[85dvh] sm:h-[82dvh] max-w-3xl mx-auto bg-slate-50 shadow-xl sm:rounded-2xl border border-slate-200">
             {/* Header */}
             <div className="bg-blue-900 px-6 py-4 shadow-md z-10">
                 <h1 className="text-xl font-bold text-white flex items-center gap-2">
@@ -145,7 +145,7 @@ export default function AiChat({
             </div>
 
             {/* Chat Verlauf */}
-            <div className="flex-1 overflow-y-auto p-2 space-y-6 bg-slate-50">
+            <div className="flex-grow overflow-y-auto p-2 space-y-6 bg-slate-50">
                 {messages.length === 0 ? (
                     <div className="text-center text-slate-400 mt-20">
                         <p className="text-lg font-medium">{messagesPlaceholder}</p>
