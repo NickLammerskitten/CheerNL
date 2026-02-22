@@ -1,5 +1,6 @@
 "use client";
 
+import { FileIcon } from "@/icons";
 import { File as GoogleFile } from "@google/genai";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -134,7 +135,7 @@ export default function AiChat({
     };
 
     return (
-        <div className="flex flex-col h-screen max-w-3xl mx-auto bg-slate-50 shadow-xl overflow-hidden sm:rounded-2xl sm:h-[90vh] sm:mt-8 border border-slate-200">
+        <div className="flex flex-col h-[87vh] md:h-[80vh] max-w-3xl mx-auto bg-slate-50 shadow-xl overflow-hidden sm:rounded-2xl border border-slate-200">
             {/* Header */}
             <div className="bg-blue-900 px-6 py-4 shadow-md z-10">
                 <h1 className="text-xl font-bold text-white flex items-center gap-2">
@@ -144,7 +145,7 @@ export default function AiChat({
             </div>
 
             {/* Chat Verlauf */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50">
+            <div className="flex-1 overflow-y-auto p-2 space-y-6 bg-slate-50">
                 {messages.length === 0 ? (
                     <div className="text-center text-slate-400 mt-20">
                         <p className="text-lg font-medium">{messagesPlaceholder}</p>
@@ -173,7 +174,7 @@ export default function AiChat({
             </div>
 
             {/* Input Bereich */}
-            <div className="bg-white p-4 border-t border-slate-200">
+            <div className="flex-none bg-white p-2 border-t border-slate-200">
                 <form
                     onSubmit={handleSend}
                     className="flex gap-3 flex-col"
@@ -187,7 +188,7 @@ export default function AiChat({
                         className="flex-1 bg-slate-100 text-slate-800 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 border border-transparent focus:bg-white"
                     />
 
-                    <div className="flex flex-col items-end sm:flex-row sm:items-center justify-between gap-4 mt-2">
+                    <div className="flex flex-col justify-items-normal sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex-1 flex items-center">
                             {isVideoUploading ? (
                                 <span className="text-sm text-blue-600 animate-pulse px-4 py-2">
@@ -212,19 +213,25 @@ export default function AiChat({
                                     </button>
                                 </div>
                             ) : (
-                                <input
-                                    type="file"
-                                    accept="video/mp4"
-                                    onChange={handleFileChange}
-                                    disabled={isLoading}
-                                    className="text-sm text-slate-500
-                                            file:mr-4 file:py-2 file:px-4
-                                            file:rounded-full file:border-0
-                                            file:text-sm file:font-semibold
-                                            file:bg-blue-50 file:text-blue-700
-                                            hover:file:bg-blue-100
-                                            disabled:opacity-50 disabled:cursor-not-allowed"
-                                />
+                                <label
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all border border-transparent focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2
+                                        ${isLoading
+                                        ? "opacity-50 cursor-not-allowed bg-slate-50 text-slate-500"
+                                        : "bg-blue-50 text-blue-700 hover:bg-blue-100 cursor-pointer"
+                                    }`}
+                                >
+                                    {/* Dein neues Icon */}
+                                    <FileIcon className="w-5 h-5" />
+                                    <span>Video auswählen</span>
+
+                                    <input
+                                        type="file"
+                                        accept="video/mp4,video/quicktime,video/x-m4v,.mp4,.mov,.m4v"
+                                        onChange={handleFileChange}
+                                        disabled={isLoading}
+                                        className="sr-only"
+                                    />
+                                </label>
                             )}
                         </div>
 
