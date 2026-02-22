@@ -33,7 +33,7 @@ export default function AiChat({
     const [isLoading, setIsLoading] = useState(false);
 
     const [isVideoUploading, setIsFileUploading] = useState(false);
-    // const [uploadError, setUploadError] = useState<string | null>(null);
+    const [uploadError, setUploadError] = useState<string | null>(null);
     const [uploadedVideo, setUploadedFile] = useState<GoogleFile | null>(null);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -53,7 +53,7 @@ export default function AiChat({
         }
 
         setIsFileUploading(true);
-        // setUploadError(null);
+        setUploadError(null);
         setUploadedFile(null);
 
         try {
@@ -62,11 +62,11 @@ export default function AiChat({
             if (uploadedFile) {
                 setUploadedFile(uploadedFile);
             } else {
-                //setUploadError("Upload fehlgeschlagen.");
+                setUploadError("Upload fehlgeschlagen.");
             }
         } catch (error) {
             console.error(error);
-            //setUploadError("Ein Netzwerkfehler ist aufgetreten.");
+            setUploadError("Ein Netzwerkfehler ist aufgetreten.");
         } finally {
             setIsFileUploading(false);
             e.target.value = '';
@@ -79,7 +79,7 @@ export default function AiChat({
         }
 
         setUploadedFile(null);
-        //setUploadError(null);
+        setUploadError(null);
     };
 
     const handleSend = async (e: React.FormEvent) => {
@@ -189,7 +189,7 @@ export default function AiChat({
                     />
 
                     <div className="flex flex-col justify-items-normal sm:flex-row sm:items-center justify-between gap-4">
-                        <div className="flex-1 flex items-center">
+                        <div className="flex-1 flex flex-col items-start sm:flex-row sm:items-center">
                             {isVideoUploading ? (
                                 <span className="text-sm text-blue-600 animate-pulse px-4 py-2">
                                     ⏳ Video wird verarbeitet... das kann einen Moment dauern.
@@ -232,6 +232,12 @@ export default function AiChat({
                                         className="sr-only"
                                     />
                                 </label>
+                            )}
+
+                            {uploadError && (
+                                <span className="text-sm text-red-600 px-4 py-2">
+                                    {uploadError}
+                                </span>
                             )}
                         </div>
 
