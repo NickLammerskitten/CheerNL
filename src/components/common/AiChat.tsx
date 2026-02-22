@@ -253,6 +253,10 @@ export default function AiChat({
                             )}
                         </button>
                     </div>
+
+                    <span className={"text-xs text-gray-500"}>
+                        Bei Verwendung wird die anfrage an Google Cloud gesendet und können zu Trainingszwecken genutzt werden.
+                    </span>
                 </form>
             </div>
         </div>
