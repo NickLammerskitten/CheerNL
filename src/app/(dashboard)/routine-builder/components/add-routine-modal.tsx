@@ -7,7 +7,7 @@ import Select from "@/components/form/Select";
 import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal/Modal";
 import { PlusIcon } from "@/icons";
-import { RoutineCreateData } from "@/schemas/routine.schema";
+import { RoutineCreateData, RoutineCreateSchema } from "@/schemas/routine.schema";
 import { TeamListData } from "@/schemas/team.schema";
 import { saveRoutine } from "@/services/routine.api";
 import { useRouter } from "next/navigation";
@@ -23,7 +23,7 @@ export function AddRoutineModal({ teams }: AddRoutineModalProps) {
     const [isOpen, setIsOpen] = useState(false);
 
     const [name, setName] = useState<string>("");
-    const [selectedTeam, setSelectedTeam] = useState<string | null>(null)
+    const [selectedTeam, setSelectedTeam] = useState<string | undefined>(undefined)
 
     const [error, setError] = useState<string | null>(null);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -38,26 +38,55 @@ export function AddRoutineModal({ teams }: AddRoutineModalProps) {
         }) ?? [];
     }
 
+    const resetForm = () => {
+        setName("");
+        setSelectedTeam(undefined);
+    }
+
     const onClose = () => {
-        setIsOpen(false)
+        resetForm();
+        setIsOpen(false);
     }
 
     const handleCreateRoutine = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
+        setFieldErrors({});
+
+        const rawData = {
+            name: name ?? null,
+            team_id: selectedTeam ?? null,
+        } as RoutineCreateData;
+
+        const result = RoutineCreateSchema.safeParse(rawData);
+
+        if (!result.success) {
+            setLoading(false);
+
+            const newFieldErrors: Record<string, string> = {};
+
+            result.error.issues.forEach((issue) => {
+                const path = issue.path.join('.');
+                newFieldErrors[path] = issue.message;
+            });
+
+            setFieldErrors(newFieldErrors);
+
+            setError("Bitte korrigieren Sie die markierten Fehler im Formular.");
+            return;
+        }
+
         setLoading(true);
 
-        const { error } = await saveRoutine({
-            name: name,
-            team_id: selectedTeam,
-        } as RoutineCreateData);
+        const validatedData = result.data;
+        const apiResponse = await saveRoutine(validatedData);
 
         setLoading(false);
 
-        if (error) {
-            console.error(error);
-            setError("Es gab einen Fehler bei der Erstellung der Routine. " + error);
+        if (!apiResponse.success) {
+            setError("Es ist ein Fehler aufgetreten. " + apiResponse.error);
         } else {
+            resetForm();
             setIsOpen(false);
             router.refresh();
         }
@@ -89,7 +118,7 @@ export function AddRoutineModal({ teams }: AddRoutineModalProps) {
                                     htmlFor="name"
                                     className="dark:text-white/70"
                                 >
-                                    Name
+                                    Name*
                                 </Label>
                                 <div className="flex flex-col gap-1">
                                     <Input

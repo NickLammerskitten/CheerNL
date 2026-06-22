@@ -3,7 +3,7 @@ import { z } from "zod";
 
 const ApiDataSchema = z.object({
     id: z.uuid(),
-    name: z.string(),
+    name: z.string().min(1, { message: "Der Name darf nicht leer sein."}),
     team: ApiTeamListDataSchema.nullable(),
     created_at: z.coerce.date(),
 })
@@ -22,7 +22,7 @@ export const RoutineListDataSchema = z.array(RoutineListItemDataSchema);
 export type RoutineListData = z.infer<typeof RoutineListItemDataSchema>
 
 export const RoutineCreateSchema = z.object({
-    name: z.string(),
+    name: z.string().min(1, { message: "Der Name darf nicht leer sein."}),
     team_id: z.uuid().nullable(),
 })
 
