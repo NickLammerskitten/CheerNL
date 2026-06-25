@@ -4,8 +4,6 @@ import { fetchRoutineList } from "@/services/routine.api";
 import { fetchTeamList } from "@/services/team.api";
 
 export default async function routineBuilderPage() {
-    // TODO: Edit page
-
     const routines = await fetchRoutineList();
     const teams = await fetchTeamList();
 

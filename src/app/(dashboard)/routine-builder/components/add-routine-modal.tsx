@@ -86,9 +86,10 @@ export function AddRoutineModal({ teams }: AddRoutineModalProps) {
         if (!apiResponse.success) {
             setError("Es ist ein Fehler aufgetreten. " + apiResponse.error);
         } else {
+            const id = apiResponse.id;
             resetForm();
             setIsOpen(false);
-            router.refresh();
+            router.push(`/routine-builder/${id}`);
         }
     }
 

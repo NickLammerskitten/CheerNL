@@ -3,6 +3,8 @@
 import {
     RoutineCreateData,
     RoutineCreateSchema,
+    RoutineDetailData,
+    RoutineDetailDataSchema,
     RoutineListData,
     RoutineListDataSchema,
     RoutineListItemDataSchema,
@@ -28,6 +30,29 @@ export async function fetchRoutineList(): Promise<RoutineListData[]> {
     try {
         return RoutineListDataSchema.parse(rawData)
             .sort((a, b) => a.name > b.name ? 1 : -1);
+    } catch (validationError) {
+        console.error("Zod Validierungsfehler:", validationError);
+        throw new Error("Ungültige Daten von der API empfangen.");
+    }
+}
+
+export async function fetchRoutine(id: string): Promise<RoutineDetailData> {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+        .from('routine')
+        .select(`
+            *,
+            team(*)
+        `)
+        .eq('id', id)
+        .single();
+
+    if (error) {
+        throw new Error(`Supabase-Fehler: ${error.message}`);
+    }
+
+    try {
+        return RoutineDetailDataSchema.parse(data)
     } catch (validationError) {
         console.error("Zod Validierungsfehler:", validationError);
         throw new Error("Ungültige Daten von der API empfangen.");
