@@ -13,7 +13,7 @@ export default function Floor({ athletes, setAthletes }: FloorProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-    const GRID_SIZE = 12;
+    const GRID_SIZE = 14;
 
     useEffect(() => {
         const handleResize = () => {
@@ -34,20 +34,25 @@ export default function Floor({ athletes, setAthletes }: FloorProps) {
     const floorSize = Math.min(dimensions.width, dimensions.height) * 0.95;
     const cellSize = floorSize / GRID_SIZE;
 
+    const center = floorSize / 2;
+    const crossSize = cellSize * 0.4;
+
     const offsetX = (dimensions.width - floorSize) / 2;
     const offsetY = (dimensions.height - floorSize) / 2;
 
     const gridLines = [];
     for (let i = 0; i <= GRID_SIZE; i++) {
         const position = i * cellSize;
+        const isMatBorder = i % 2 === 0;
         gridLines.push(
             <Line
                 key={`v-${i}`}
                 points={[position, 0, position, floorSize]}
-                stroke="#ddd"
-                strokeWidth={1}
+                stroke={isMatBorder ? "#bbb" : "#ddd"}
+                strokeWidth={isMatBorder ? 3 : 1}
             />,
         );
+
         gridLines.push(
             <Line
                 key={`h-${i}`}
@@ -58,7 +63,6 @@ export default function Floor({ athletes, setAthletes }: FloorProps) {
         );
     }
 
-    // Die Logik bleibt im Parent, da hier der "athletes" State liegt
     const handleDragEnd = (e: any, dancerId: string) => {
         const node = e.target;
         const dropX = node.x();
@@ -112,6 +116,17 @@ export default function Floor({ athletes, setAthletes }: FloorProps) {
                         />
 
                         {gridLines}
+
+                        <Line
+                            points={[center - crossSize, center, center + crossSize, center]}
+                            stroke="#333"
+                            strokeWidth={2}
+                        />
+                        <Line
+                            points={[center, center - crossSize, center, center + crossSize]}
+                            stroke="#333"
+                            strokeWidth={2}
+                        />
 
                         {athletes.map(athlete => (
                             <AthleteObject

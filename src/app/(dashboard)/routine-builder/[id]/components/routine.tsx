@@ -12,7 +12,7 @@ export interface RoutineProps {
 
 export default function Routine({ routine }: RoutineProps) {
     const [athletes, setAthletes] = useState([
-        { id: 'athlete-1', x: 6.0, y: 6.0, color: '#ff0044', number: 1, name: 'Athlet 1' },
+        { id: 'athlete-1', x: 7.0, y: 7.0, color: '#ff0044', number: 1, name: 'Athlet 1' },
     ]);
 
     const handleAddAthlete = () => {
@@ -24,8 +24,8 @@ export default function Routine({ routine }: RoutineProps) {
 
         const newAthlete = {
             id: `athlete-${Date.now()}`,
-            x: 6.0,
-            y: 6.0,
+            x: 7.0,
+            y: 7.0,
             color: '#ff0044',
             number: number,
             name: name.trim(),
