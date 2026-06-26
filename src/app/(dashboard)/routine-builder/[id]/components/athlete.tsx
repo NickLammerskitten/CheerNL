@@ -4,7 +4,7 @@ import { Circle, Group, Text } from 'react-konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 
 interface AthleteProps {
-    athlete: { id: string; x: number; y: number; color: string; name?: string };
+    athlete: { id: string; x: number; y: number; number: number, color: string; name?: string };
     cellSize: number;
     onDragEnd: (e: KonvaEventObject<DragEvent>) => void;
 }
@@ -13,7 +13,6 @@ export default function AthleteObject({ athlete, cellSize, onDragEnd }: AthleteP
     const radius = cellSize * 0.3;
 
     return (
-        // Wir machen die gesamte Gruppe draggable. Dadurch wandert der Text automatisch mit!
         <Group
             x={athlete.x * cellSize}
             y={athlete.y * cellSize}
@@ -51,17 +50,21 @@ export default function AthleteObject({ athlete, cellSize, onDragEnd }: AthleteP
             />
 
             {/* Der Name (Nur rendern, wenn vorhanden) */}
-            {athlete.name && (
+            {athlete.number && (
                 <Text
-                    text={athlete.name}
-                    fontSize={Math.max(10, cellSize * 0.25)} // Schickes mitskalieren der Schrift
+                    text={athlete.number.toString()}
+                    fontSize={Math.max(12, cellSize * 0.25)} // Schriftgröße
                     fontFamily="sans-serif"
-                    fill="#333"
+                    fontStyle="bold"
+                    fill="#ffffff"
+
+                    x={-radius}
+                    y={-radius}
+                    width={radius * 2}
+                    height={radius * 2}
+
                     align="center"
-                    y={-radius - 16}
-                    x={0}
-                    offsetX={50}
-                    width={100}
+                    verticalAlign="middle"
                 />
             )}
         </Group>
