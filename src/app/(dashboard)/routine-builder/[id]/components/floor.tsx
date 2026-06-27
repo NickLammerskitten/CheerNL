@@ -84,7 +84,7 @@ export default function Floor({ formationPositions, onFormationPositionMove }: F
     }
 
     // --- AREA SELECT & DESELECT ---
-    const handleStageMouseDown = (e: KonvaEventObject<MouseEvent>) => {
+    const handleStageMouseDown = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
         const isBackgroundClick = e.target === e.target.getStage() || e.target.name() === 'background';
 
         if (isBackgroundClick) {
@@ -103,7 +103,7 @@ export default function Floor({ formationPositions, onFormationPositionMove }: F
         }
     };
 
-    const handleStageMouseMove = (e: KonvaEventObject<MouseEvent>) => {
+    const handleStageMouseMove = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
         if (!selectionRect.visible) {
             return;
         }
@@ -152,7 +152,7 @@ export default function Floor({ formationPositions, onFormationPositionMove }: F
     };
 
     // --- ITEM KLICK & DRAG ---
-    const handleItemClick = (e: KonvaEventObject<MouseEvent>, id: string) => {
+    const handleItemClick = (e: KonvaEventObject<MouseEvent | TouchEvent>, id: string) => {
         e.cancelBubble = true; // Verhindert, dass der Stage-Klick feuert
         if (e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey) {
             updateSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -233,6 +233,7 @@ export default function Floor({ formationPositions, onFormationPositionMove }: F
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
+                touchAction: 'none'
             }}
         >
             {dimensions.width > 0 && (
@@ -242,6 +243,9 @@ export default function Floor({ formationPositions, onFormationPositionMove }: F
                     onMouseDown={handleStageMouseDown}
                     onMouseMove={handleStageMouseMove}
                     onMouseUp={handleStageMouseUp}
+                    onTouchStart={handleStageMouseDown}
+                    onTouchMove={handleStageMouseMove}
+                    onTouchEnd={handleStageMouseUp}
                 >
                     <Layer
                         x={offsetX}

@@ -10,7 +10,7 @@ interface FormationPositionProps {
     cellSize: number;
     isSelected: boolean;
     registerNode: (node: Konva.Group | null) => void;
-    onClick: (e: KonvaEventObject<MouseEvent>) => void;
+    onClick: (e: KonvaEventObject<MouseEvent | TouchEvent>) => void;
     onDragStart: (e: KonvaEventObject<DragEvent>) => void;
     onDragMove: (e: KonvaEventObject<DragEvent>) => void;
     onDragEnd: (e: KonvaEventObject<DragEvent>) => void;
@@ -35,6 +35,7 @@ export default function FormationPositionObject({
             y={formationPosition.posY * cellSize}
             draggable
             onClick={onClick}
+            onTap={onClick}
             onDragStart={onDragStart}
             onDragMove={onDragMove}
             onDragEnd={onDragEnd}
