@@ -16,7 +16,7 @@ export const FormationItemDataSchema = ApiFormationSchema.transform((apiData) =>
         routineId: apiData.routine_id,
         sortIndex: apiData.sort_index,
         name: apiData.name,
-        athletePositions: FormationPositionListDataSchema.parse(apiData.athlete_positions),
+        athletePositions: FormationPositionListDataSchema.parse(apiData.athlete_positions) ?? [],
         createdAt: apiData.created_at,
     };
 });

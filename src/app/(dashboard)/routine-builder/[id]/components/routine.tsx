@@ -136,7 +136,7 @@ export default function Routine({ routine, formations: initialFormations }: Rout
         }
     };
 
-    const activeFormation = formations[activeIndex];
+    const activeFormation = formations.length > 0 ? formations[activeIndex] : undefined;
 
     const handleFormationPositionMove = async (formation_position_id: string, newX: number, newY: number) => {
         await updateAthletePosition(
@@ -162,10 +162,15 @@ export default function Routine({ routine, formations: initialFormations }: Rout
             </div>
 
             <div className="flex-grow w-full relative">
-                <Floor
-                    formationPositions={activeFormation.athletePositions}
-                    onFormationPositionMove={handleFormationPositionMove}
-                />
+                {activeFormation
+                    ? <Floor
+                        formationPositions={activeFormation.athletePositions}
+                        onFormationPositionMove={handleFormationPositionMove}
+                    />
+                    : <span>
+                        Erstelle eine Formation.
+                    </span>
+                }
             </div>
 
             <div className="p-4 bg-white border-t flex gap-3 overflow-x-auto items-center flex-nowrap [overflow-wrap:anywhere]">
