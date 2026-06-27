@@ -27,9 +27,9 @@ export type FormationItemData = z.infer<typeof FormationItemDataSchema>;
 
 
 /* Create */
-export const FormationClientCreateSchema = z.object({
+export const FormationCreateSchema = z.object({
     routine_id: z.string(),
     name: z.string().nullable(),
 });
 
-export type FormationClientCreateData = z.infer<typeof FormationClientCreateSchema>;
+export type FormationClientCreateData = z.infer<typeof FormationCreateSchema>;

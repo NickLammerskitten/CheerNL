@@ -29,3 +29,12 @@ export const RoutineAthleteCreateSchema = z.object({
 })
 
 export type RoutineAthleteCreateData = z.infer<typeof RoutineAthleteCreateSchema>;
+
+/* Update */
+export const RoutineAthleteUpdateSchema = z.object({
+    id: z.uuid(),
+    routine_id: z.uuid(),
+    name: z.string().nullable(),
+})
+
+export type RoutineAthleteUpdateData = z.infer<typeof RoutineAthleteUpdateSchema>;

@@ -3,10 +3,9 @@
 import Floor from "@/app/(dashboard)/routine-builder/[id]/components/floor";
 import Button from "@/components/ui/button/Button";
 import { PlusIcon } from "@/icons";
-import { FormationClientCreateData, FormationClientCreateSchema, FormationItemData } from "@/schemas/formation.schema";
-import { RoutineAthleteCreateData, RoutineAthleteCreateSchema } from "@/schemas/routine-athlete.schema";
+import { FormationClientCreateData, FormationCreateSchema, FormationItemData } from "@/schemas/formation.schema";
 import { RoutineDetailData } from "@/schemas/routine.schema";
-import { addAthlete, addFormation, updateAthletePosition } from "@/services/routine.api";
+import { addFormation, updateAthletePosition } from "@/services/routine.api";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -96,24 +95,8 @@ export default function Routine({ routine, formations: initialFormations }: Rout
         };
     }, [routine.id]);
 
-    const handleAddAthlete = async () => {
-        const rawData = {
-            routine_id: routine.id,
-            name: null,
-        } as RoutineAthleteCreateData;
-
-        const saveData = RoutineAthleteCreateSchema.safeParse(rawData);
-
-        if (!saveData.success) {
-            console.error(saveData.error)
-            return;
-        }
-
-        const result = await addAthlete(saveData.data);
-        if (!result) {
-            console.error('An error occurred while saving formation');
-            return;
-        }
+    const goToAthleteListPage = async () => {
+        router.push(`/routine-builder/${routine.id}/athletes`);
     }
 
     const handleAddFormation = async () => {
@@ -122,7 +105,7 @@ export default function Routine({ routine, formations: initialFormations }: Rout
             name: null,
         } as FormationClientCreateData;
 
-        const saveData = FormationClientCreateSchema.safeParse(rawData);
+        const saveData = FormationCreateSchema.safeParse(rawData);
 
         if (!saveData.success) {
             console.log(saveData);
@@ -130,34 +113,38 @@ export default function Routine({ routine, formations: initialFormations }: Rout
         }
 
         const result = await addFormation(saveData.data);
-        if (!result) {
-            console.error('An error occurred while saving formation');
+        if (!result.success) {
+            console.error('An error occurred while saving formation', result.error);
             return;
         }
     };
 
     const activeFormation = formations.length > 0 ? formations[activeIndex] : undefined;
 
-    const handleFormationPositionMove = async (formation_position_id: string, newX: number, newY: number) => {
-        await updateAthletePosition(
+    const handleFormationPositionMove = async (formation_position_id: string, newX: number, newY: number): Promise<void> => {
+        const result = await updateAthletePosition(
             formation_position_id,
             {
                 pos_x: newX,
                 pos_y: newY,
             },
         );
+
+        if (!result.success) {
+            router.refresh()
+        }
     };
 
     return (
         <div className="flex flex-col h-full w-full bg-gray-50 overflow-hidden">
             <div className="flex justify-between items-center p-4 bg-white border-b">
                 <span className="font-bold text-lg">{routine.name}</span>
+
                 <Button
                     variant={"outline"}
-                    onClick={handleAddAthlete}
-                    startIcon={<PlusIcon />}
+                    onClick={goToAthleteListPage}
                 >
-                    Athlet hinzufügen
+                    Athleten verwalten
                 </Button>
             </div>
 

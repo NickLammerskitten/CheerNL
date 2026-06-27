@@ -1,8 +1,20 @@
 "use server"
 
 import { FormationPositionUpdateData, FormationPositionUpdateSchema } from "@/schemas/formation-position.model";
-import { FormationClientCreateData, FormationItemData, FormationListDataSchema } from "@/schemas/formation.schema";
-import { RoutineAthleteCreateData, RoutineAthleteCreateSchema } from "@/schemas/routine-athlete.schema";
+import {
+    FormationClientCreateData,
+    FormationCreateSchema,
+    FormationItemData,
+    FormationListDataSchema,
+} from "@/schemas/formation.schema";
+import {
+    RoutineAthleteCreateData,
+    RoutineAthleteCreateSchema,
+    RoutineAthleteItemData,
+    RoutineAthleteListDataSchema,
+    RoutineAthleteUpdateData,
+    RoutineAthleteUpdateSchema,
+} from "@/schemas/routine-athlete.schema";
 import {
     RoutineCreateData,
     RoutineCreateSchema,
@@ -125,10 +137,14 @@ export async function fetchRoutineFormations(routineId: string): Promise<Formati
     }
 }
 
-export async function addFormation(newData: FormationClientCreateData): Promise<string | null> {
-    const dataValid = RoutineCreateSchema.safeParse(newData)
-    if (!dataValid) {
-        return null;
+export async function addFormation(newData: FormationClientCreateData): Promise<UpsertResponseSchema> {
+    const dataValid = FormationCreateSchema.safeParse(newData)
+    if (!dataValid.success) {
+        return {
+            success: false,
+            id: null,
+            error: 'Die Daten konnten nicht validiert werden',
+        }
     }
 
     const supabase = await createClient();
@@ -139,40 +155,83 @@ export async function addFormation(newData: FormationClientCreateData): Promise<
         .single();
 
     if (error) {
-        return null;
+        return {
+            success: false,
+            id: null,
+            error: error.message,
+        }
     } else {
-        return data.id;
+        return {
+            success: true,
+            id: data.id,
+            error: null,
+        }
     }
 }
 
-export async function addAthlete(newData: RoutineAthleteCreateData): Promise<string | null> {
-    const dataValid = RoutineAthleteCreateSchema.safeParse(newData)
-    if (!dataValid) {
-        return null;
-    }
-
+export async function fetchAthleteList(routineId: string): Promise<RoutineAthleteItemData[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
         .from('routine_athlete')
-        .insert(newData)
+        .select(`*`)
+        .eq('routine_id', routineId)
+        .order('index', { ascending: true })
+
+    if (error) {
+        throw new Error(`Supabase-Fehler: ${error.message}`);
+    }
+
+    try {
+        return RoutineAthleteListDataSchema.parse(data)
+    } catch (validationError) {
+        console.error("Zod Validierungsfehler:", validationError);
+        throw new Error("Ungültige Daten von der API empfangen.");
+    }
+}
+
+export async function saveAthlete(newData: RoutineAthleteCreateData | RoutineAthleteUpdateData): Promise<UpsertResponseSchema> {
+    const dataValid = RoutineAthleteCreateSchema.safeParse(newData).success || RoutineAthleteUpdateSchema.safeParse(newData).success
+    if (!dataValid) {
+        return {
+            success: false,
+            id: null,
+            error: 'Die Daten konnten nicht validiert werden',
+        } as UpsertResponseSchema;
+    }
+
+    const supabase = await createClient();
+    const { data, status, statusText } = await supabase
+        .from('routine_athlete')
+        .upsert(newData)
         .select('id')
         .single();
 
-    if (error) {
-        return null;
-    } else {
-        return data.id;
+    if (status !== 200 && status !== 201) {
+        return {
+            success: false,
+            id: null,
+            error: `Es ist ein Fehler aufgetreten: ${status} - ${statusText}`,
+        }
     }
+
+    return {
+        success: true,
+        id: data?.id,
+        error: null,
+    };
 }
 
 export async function updateAthletePosition(
     athletePositionId: string,
     newData: FormationPositionUpdateData,
-): Promise<string | null> {
+): Promise<UpsertResponseSchema> {
     const dataValid = FormationPositionUpdateSchema.safeParse(newData)
-    if (!dataValid) {
-        console.log(newData)
-        return null;
+    if (!dataValid.success) {
+        return {
+            success: false,
+            id: null,
+            error: "Die Daten konnten nicht validiert werden",
+        }
     }
 
     const supabase = await createClient();
@@ -184,8 +243,16 @@ export async function updateAthletePosition(
         .single();
 
     if (error) {
-        return null;
+        return {
+            success: false,
+            id: null,
+            error: error.message,
+        }
     } else {
-        return data.id;
+        return {
+            success: true,
+            id: data.id,
+            error: null,
+        }
     }
 }
