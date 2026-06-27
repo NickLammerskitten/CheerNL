@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
-const ApiDataSchema = z.object({
+export const ApiTeamListDataSchema = z.object({
     id: z.uuid(),
     name: z.string(),
     created_at: z.coerce.date(),
 });
 
-export const TeamListItemDataSchema = ApiDataSchema.transform((apiData) => {
+export const TeamListItemDataSchema = ApiTeamListDataSchema.transform((apiData) => {
     return {
         id: apiData.id,
         name: apiData.name,
