@@ -7,6 +7,7 @@ import { FormationClientCreateData, FormationCreateSchema, FormationItemData } f
 import { RoutineDetailData } from "@/schemas/routine.schema";
 import { addFormation, updateAthletePosition } from "@/services/routine.api";
 import { createClient } from "@/utils/supabase/client";
+import { RealtimeChannel } from "@supabase/realtime-js";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -21,7 +22,7 @@ export default function Routine({ routine, formations: initialFormations }: Rout
     const [formations, setFormations] = useState<FormationItemData[]>(initialFormations);
     const [activeIndex, setActiveIndex] = useState(0);
 
-    const channelRef = useRef<any>(null);
+    const channelRef = useRef<RealtimeChannel | null>(null);
 
     useEffect(() => {
         setFormations(initialFormations);
