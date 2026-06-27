@@ -15,7 +15,7 @@ create table public.routine_athlete
     id         uuid                     default gen_random_uuid() not null
         primary key,
     routine_id uuid references public.routine on update cascade on delete cascade,
-    index      int                                                not null default 0,
+    index      int,
     name       text,
     created_at timestamp with time zone default now()             not null
 );

@@ -1,6 +1,6 @@
 "use client"
 
-import FormationPositionObject from "@/app/(dashboard)/routine-builder/[id]/components/athlete";
+import FormationPositionObject from "@/app/(dashboard)/routine-builder/[id]/components/formation-position";
 import { FormationPositionItemData } from "@/schemas/formation-position.model";
 import React, { useEffect, useRef, useState } from 'react';
 import { Layer, Line, Rect, Stage } from 'react-konva';

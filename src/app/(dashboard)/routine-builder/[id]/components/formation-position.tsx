@@ -60,7 +60,7 @@ export default function FormationPositionObject({ formationPosition, cellSize, o
             {/* Der Name (Nur rendern, wenn vorhanden) */}
             {formationPosition.athlete && (
                 <Text
-                    text={formationPosition.athlete.index.toString()}
+                    text={(formationPosition.athlete.index + 1).toString()}
                     fontSize={Math.max(12, cellSize * 0.25)} // Schriftgröße
                     fontFamily="sans-serif"
                     fontStyle="bold"
