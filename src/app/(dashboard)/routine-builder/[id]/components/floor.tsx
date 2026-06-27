@@ -2,6 +2,7 @@
 
 import FormationPositionObject from "@/app/(dashboard)/routine-builder/[id]/components/formation-position";
 import { FormationPositionItemData } from "@/schemas/formation-position.model";
+import { KonvaEventObject } from "konva/lib/Node";
 import React, { useEffect, useRef, useState } from 'react';
 import { Layer, Line, Rect, Stage } from 'react-konva';
 
@@ -64,7 +65,7 @@ export default function Floor({ formationPositions, onFormationPositionMove }: F
         );
     }
 
-    const handleDragEnd = (e: any, formationPositionId: string) => {
+    const handleDragEnd = ((e: KonvaEventObject<DragEvent>, formationPositionId: string) => {
         const node = e.target;
         const dropX = node.x();
         const dropY = node.y();
@@ -79,7 +80,7 @@ export default function Floor({ formationPositions, onFormationPositionMove }: F
         snappedGridY = Math.max(0, Math.min(GRID_SIZE, snappedGridY));
 
         onFormationPositionMove(formationPositionId, snappedGridX, snappedGridY);
-    };
+    });
 
     return (
         <div

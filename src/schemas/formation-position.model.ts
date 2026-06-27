@@ -1,8 +1,4 @@
-import {
-    ApiRoutineAthleteSchema,
-    RoutineAthleteItemDataSchema,
-    RoutineAthleteListDataSchema,
-} from "@/schemas/routine-athlete.schema";
+import { ApiRoutineAthleteSchema, RoutineAthleteItemDataSchema } from "@/schemas/routine-athlete.schema";
 import { z } from "zod";
 
 export const ApiFormationPositionSchema = z.object({

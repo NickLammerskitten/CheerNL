@@ -70,7 +70,7 @@ export default function Routine({ routine, formations: initialFormations }: Rout
                     table: 'routine_formation',
                     filter: `routine_id=eq.${routine.id}`,
                 },
-                (_) => {
+                () => {
                     router.refresh()
                 },
             )
@@ -84,7 +84,7 @@ export default function Routine({ routine, formations: initialFormations }: Rout
                     table: 'routine_athlete',
                     filter: `routine_id=eq.${routine.id}`,
                 },
-                (_) => {
+                () => {
                     router.refresh();
                 },
             )

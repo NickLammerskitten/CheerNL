@@ -1,6 +1,5 @@
 "use client"
 
-import DeleteEventModal from "@/app/(dashboard)/events/components/delete-event-modal";
 import { AddRoutineModal } from "@/app/(dashboard)/routine-builder/components/add-routine-modal";
 import Button from "@/components/ui/button/Button";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
