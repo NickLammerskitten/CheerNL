@@ -8,7 +8,7 @@ import { RoutineDetailData } from "@/schemas/routine.schema";
 import { addFormation, updateAthletePosition } from "@/services/routine.api";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export interface RoutineProps {
     routine: RoutineDetailData
@@ -21,6 +21,8 @@ export default function Routine({ routine, formations: initialFormations }: Rout
     const [formations, setFormations] = useState<FormationItemData[]>(initialFormations);
     const [activeIndex, setActiveIndex] = useState(0);
 
+    const channelRef = useRef<any>(null);
+
     useEffect(() => {
         setFormations(initialFormations);
     }, [initialFormations]);
@@ -28,9 +30,38 @@ export default function Routine({ routine, formations: initialFormations }: Rout
     useEffect(() => {
         const supabase = createClient();
 
-        const channel = supabase.channel(`routine_${routine.id}`)
+        const channel = supabase.channel(`routine_${routine.id}`, {
+            config: {
+                broadcast: { ack: false },
+            },
+        })
+            // EVENT: Broadcast für Position Updates
+            .on(
+                'broadcast',
+                { event: 'position_update' },
+                (payload) => {
+                    const { formation_position_id, newX, newY, formation_id } = payload.payload;
 
-            // EVENT: Position eines Athleten wurde aktualisiert (Drag & Drop)
+                    setFormations((prevFormations) =>
+                        prevFormations.map((formation) => {
+                            if (formation.id !== formation_id) {
+                                return formation;
+                            }
+
+                            return {
+                                ...formation,
+                                athletePositions: formation.athletePositions.map((pos) =>
+                                    pos.id === formation_position_id
+                                        ? { ...pos, posX: newX, posY: newY }
+                                        : pos,
+                                ),
+                            };
+                        }),
+                    );
+                },
+            )
+
+            // EVENT: Position eines Athleten wurde aktualisiert (Datenbank Fallback)
             .on(
                 'postgres_changes',
                 {
@@ -69,9 +100,7 @@ export default function Routine({ routine, formations: initialFormations }: Rout
                     table: 'routine_formation',
                     filter: `routine_id=eq.${routine.id}`,
                 },
-                () => {
-                    router.refresh()
-                },
+                () => router.refresh(),
             )
 
             // EVENT: Neuer Athlet erstellt
@@ -83,17 +112,17 @@ export default function Routine({ routine, formations: initialFormations }: Rout
                     table: 'routine_athlete',
                     filter: `routine_id=eq.${routine.id}`,
                 },
-                () => {
-                    router.refresh();
-                },
+                () => router.refresh(),
             )
-
             .subscribe();
+
+        // Channel-Instanz im Ref speichern
+        channelRef.current = channel;
 
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [routine.id]);
+    }, [routine.id, router]);
 
     const goToCollaboratorsListPage = async () => {
         router.push(`/routine-builder/${routine.id}/collaborators`);
@@ -112,7 +141,7 @@ export default function Routine({ routine, formations: initialFormations }: Rout
         const saveData = FormationCreateSchema.safeParse(rawData);
 
         if (!saveData.success) {
-            console.log(saveData);
+            console.error(saveData);
             return;
         }
 
@@ -125,7 +154,28 @@ export default function Routine({ routine, formations: initialFormations }: Rout
 
     const activeFormation = formations.length > 0 ? formations[activeIndex] : undefined;
 
-    const handleFormationPositionMove = async (formation_position_id: string, newX: number, newY: number): Promise<void> => {
+    const handleFormationPositionMove = async (
+        formation_position_id: string,
+        newX: number,
+        newY: number,
+    ): Promise<void> => {
+        if (!activeFormation) {
+            return;
+        }
+
+        if (channelRef.current) {
+            channelRef.current.send({
+                type: 'broadcast',
+                event: 'position_update',
+                payload: {
+                    formation_position_id,
+                    newX,
+                    newY,
+                    formation_id: activeFormation.id,
+                },
+            });
+        }
+
         const result = await updateAthletePosition(
             formation_position_id,
             {
@@ -134,8 +184,10 @@ export default function Routine({ routine, formations: initialFormations }: Rout
             },
         );
 
+        // Bei Fehlschlag neu laden
         if (!result.success) {
-            router.refresh()
+            console.error('Fehler beim Speichern der Position');
+            router.refresh();
         }
     };
 

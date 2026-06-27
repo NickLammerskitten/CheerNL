@@ -211,6 +211,11 @@ export default function Floor({ formationPositions, onFormationPositionMove }: F
             let snappedGridX = Math.round(rawGridX * 2) / 2;
             let snappedGridY = Math.round(rawGridY * 2) / 2;
 
+            node.position({
+                x: snappedGridX * cellSize,
+                y: snappedGridY * cellSize,
+            });
+
             snappedGridX = Math.max(0, Math.min(GRID_SIZE, snappedGridX));
             snappedGridY = Math.max(0, Math.min(GRID_SIZE, snappedGridY));
 
