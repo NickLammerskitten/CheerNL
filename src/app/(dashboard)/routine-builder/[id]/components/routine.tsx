@@ -2,7 +2,7 @@
 
 import Floor from "@/app/(dashboard)/routine-builder/[id]/components/floor";
 import Button from "@/components/ui/button/Button";
-import { PlusIcon } from "@/icons";
+import { PencilIcon, PlusIcon } from "@/icons";
 import { FormationClientCreateData, FormationCreateSchema, FormationItemData } from "@/schemas/formation.schema";
 import { RoutineDetailData } from "@/schemas/routine.schema";
 import { addFormation, updateAthletePosition } from "@/services/routine.api";
@@ -95,6 +95,10 @@ export default function Routine({ routine, formations: initialFormations }: Rout
         };
     }, [routine.id]);
 
+    const goToCollaboratorsListPage = async () => {
+        router.push(`/routine-builder/${routine.id}/collaborators`);
+    }
+
     const goToAthleteListPage = async () => {
         router.push(`/routine-builder/${routine.id}/athletes`);
     }
@@ -140,12 +144,24 @@ export default function Routine({ routine, formations: initialFormations }: Rout
             <div className="flex justify-between items-center p-4 bg-white border-b">
                 <span className="font-bold text-lg">{routine.name}</span>
 
-                <Button
-                    variant={"outline"}
-                    onClick={goToAthleteListPage}
-                >
-                    Athleten verwalten
-                </Button>
+                <div className={"flex gap-1"}>
+                    {routine.isOwner && (
+                        <Button
+                            variant={"outline"}
+                            onClick={goToCollaboratorsListPage}
+                            startIcon={<PencilIcon />}
+                        >
+                            Mitwirkende
+                        </Button>
+                    )}
+                    <Button
+                        variant={"outline"}
+                        onClick={goToAthleteListPage}
+                        startIcon={<PencilIcon />}
+                    >
+                        Athleten
+                    </Button>
+                </div>
             </div>
 
             <div className="flex-grow w-full relative">

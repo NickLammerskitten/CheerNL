@@ -27,7 +27,9 @@ const ApiDetailDataSchema = z.object({
     id: z.uuid(),
     name: z.string().min(1, { message: "Der Name darf nicht leer sein."}),
     team: ApiTeamListDataSchema.nullable(),
+    owner_id: z.uuid(),
     created_at: z.coerce.date(),
+    is_owner: z.boolean().optional(),
 })
 
 export const RoutineDetailDataSchema = ApiDetailDataSchema.transform((apiData) => {
@@ -35,7 +37,10 @@ export const RoutineDetailDataSchema = ApiDetailDataSchema.transform((apiData) =
         id: apiData.id,
         name: apiData.name,
         team: apiData.team && TeamListItemDataSchema.parse(apiData.team),
+        ownerId: apiData.owner_id,
         createdAt: apiData.created_at,
+
+        isOwner: apiData.is_owner ?? false,
     }
 })
 

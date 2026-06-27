@@ -6,7 +6,19 @@ create table public.routine
     team_id    uuid
                                                                   references public.team
                                                                       on update cascade on delete set null,
-    created_at timestamp with time zone default now()             not null
+    created_at timestamp with time zone default now()             not null,
+    owner_id   uuid                                               NOT NULL DEFAULT auth.uid()
+);
+
+CREATE TABLE public.routine_collaborator
+(
+    id         uuid                     DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
+    routine_id uuid REFERENCES public.routine ON UPDATE CASCADE ON DELETE CASCADE,
+    user_id    uuid                                               NOT NULL
+        references auth.users
+            on update cascade on delete cascade,
+    created_at timestamp with time zone DEFAULT now()             NOT NULL,
+    UNIQUE (routine_id, user_id)
 );
 
 
@@ -45,6 +57,9 @@ create table public.routine_formation_position
 ALTER TABLE public.routine
     ENABLE ROW LEVEL SECURITY;
 
+ALTER TABLE public.routine_collaborator
+    ENABLE ROW LEVEL SECURITY;
+
 ALTER TABLE public.routine_athlete
     ENABLE ROW LEVEL SECURITY;
 
@@ -60,7 +75,11 @@ create policy "Routine-All for Authenticated"
     FOR ALL
     to authenticated
     using (
-    true
+    owner_id = auth.uid() OR
+    EXISTS (SELECT 1
+            FROM public.routine_collaborator
+            WHERE routine_id = public.routine.id
+              AND user_id = auth.uid())
     );
 
 create policy "Routine_Athlete-All for Authenticated"
@@ -69,7 +88,9 @@ create policy "Routine_Athlete-All for Authenticated"
     FOR ALL
     to authenticated
     using (
-    true
+    EXISTS (SELECT 1
+            FROM public.routine
+            WHERE id = public.routine_athlete.routine_id)
     );
 
 create policy "Routine_Formation-All for Authenticated"
@@ -78,7 +99,9 @@ create policy "Routine_Formation-All for Authenticated"
     FOR ALL
     to authenticated
     using (
-    true
+    EXISTS (SELECT 1
+            FROM public.routine
+            WHERE id = public.routine_formation.routine_id)
     );
 
 create policy "Routine_Formation_Position-All for Authenticated"
@@ -87,7 +110,9 @@ create policy "Routine_Formation_Position-All for Authenticated"
     FOR ALL
     to authenticated
     using (
-    true
+    EXISTS (SELECT 1
+            FROM public.routine_formation
+            WHERE id = public.routine_formation_position.routine_formation_id)
     );
 
 

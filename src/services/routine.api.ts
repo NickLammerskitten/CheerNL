@@ -16,6 +16,13 @@ import {
     RoutineAthleteUpdateSchema,
 } from "@/schemas/routine-athlete.schema";
 import {
+    RoutineCollaboratorCreateData,
+    RoutineCollaboratorCreateSchema,
+    RoutineCollaboratorItemData,
+    RoutineCollaboratorItemDataSchema,
+    RoutineCollaboratorListDataSchema,
+} from "@/schemas/routine-collaborator.schema";
+import {
     RoutineCreateData,
     RoutineCreateSchema,
     RoutineDetailData,
@@ -53,6 +60,16 @@ export async function fetchRoutineList(): Promise<RoutineListData[]> {
 
 export async function fetchRoutine(id: string): Promise<RoutineDetailData> {
     const supabase = await createClient();
+
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !userData.user) {
+        console.error("Current User not found. ", userError);
+        throw new Error("Error fetching user data");
+    }
+
+    const user_id = userData.user.id;
+
     const { data, error } = await supabase
         .from('routine')
         .select(`
@@ -66,8 +83,13 @@ export async function fetchRoutine(id: string): Promise<RoutineDetailData> {
         throw new Error(`Supabase-Fehler: ${error.message}`);
     }
 
+    const enrichedData = {
+        ...data,
+        is_owner: data.owner_id === user_id
+    };
+
     try {
-        return RoutineDetailDataSchema.parse(data)
+        return RoutineDetailDataSchema.parse(enrichedData)
     } catch (validationError) {
         console.error("Zod Validierungsfehler:", validationError);
         throw new Error("Ungültige Daten von der API empfangen.");
@@ -109,6 +131,71 @@ export async function saveRoutine(newData: RoutineCreateData | RoutineUpdateData
         id: savedData.id,
         error: null,
     };
+}
+
+export async function fetchRoutineCollaborators(routineId: string): Promise<RoutineCollaboratorItemData[]> {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+        .from('routine_collaborator')
+        .select(`*`)
+        .eq('routine_id', routineId);
+
+    if (error) {
+        throw new Error(`Supabase-Fehler: ${error.message}`);
+    }
+
+    try {
+        return RoutineCollaboratorListDataSchema.parse(data)
+    } catch (validationError) {
+        console.error("Zod Validierungsfehler:", validationError);
+        throw new Error("Ungültige Daten von der API empfangen.");
+    }
+}
+
+export async function addRoutineCollaborator(newData: RoutineCollaboratorCreateData): Promise<UpsertResponseSchema> {
+    const dataValid = RoutineCollaboratorCreateSchema.safeParse(newData).success;
+    if (!dataValid) {
+        return {
+            success: false,
+            id: null,
+            error: 'Die Daten konnten nicht validiert werden',
+        };
+    }
+
+    const supabase = await createClient();
+    const { data, status, statusText } = await supabase
+        .from('routine_collaborator')
+        .insert(newData)
+        .select(`*`)
+        .single()
+
+    if (status !== 200 && status !== 201) {
+        return {
+            success: false,
+            id: null,
+            error: `Es ist ein Fehler aufgetreten: ${status} - ${statusText}`,
+        }
+    }
+
+    const savedData = RoutineCollaboratorItemDataSchema.parse(data);
+
+    return {
+        success: true,
+        id: savedData.id,
+        error: null,
+    };
+}
+
+export async function removeRoutineCollaborator(id: string) {
+    const supabase = await createClient();
+    const { status, statusText } = await supabase
+        .from('routine_collaborator')
+        .delete()
+        .eq('id', id);
+
+    if (status !== 204) {
+        throw new Error(`Beim Löschen ist ein Fehler aufgetreten: ${status} - ${statusText}`)
+    }
 }
 
 export async function fetchRoutineFormations(routineId: string): Promise<FormationItemData[]> {
