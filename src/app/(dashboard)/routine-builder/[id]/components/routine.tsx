@@ -4,8 +4,9 @@ import Floor from "@/app/(dashboard)/routine-builder/[id]/components/floor";
 import Button from "@/components/ui/button/Button";
 import { PlusIcon } from "@/icons";
 import { FormationClientCreateData, FormationClientCreateSchema, FormationItemData } from "@/schemas/formation.schema";
+import { RoutineAthleteCreateData, RoutineAthleteCreateSchema } from "@/schemas/routine-athlete.schema";
 import { RoutineDetailData } from "@/schemas/routine.schema";
-import { addFormation, updateAthletePosition } from "@/services/routine.api";
+import { addAthlete, addFormation, updateAthletePosition } from "@/services/routine.api";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -27,8 +28,6 @@ export default function Routine({ routine, formations: initialFormations }: Rout
 
     useEffect(() => {
         const supabase = createClient();
-
-        console.log("Setup realtime", routine.id);
 
         const channel = supabase.channel(`routine_${routine.id}`)
 
@@ -75,6 +74,21 @@ export default function Routine({ routine, formations: initialFormations }: Rout
                     router.refresh()
                 },
             )
+
+            // EVENT: Neuer Athlet erstellt
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'routine_athlete',
+                    filter: `routine_id=eq.${routine.id}`,
+                },
+                (_) => {
+                    router.refresh();
+                },
+            )
+
             .subscribe();
 
         return () => {
@@ -82,7 +96,24 @@ export default function Routine({ routine, formations: initialFormations }: Rout
         };
     }, [routine.id]);
 
-    const handleAddAthlete = () => {
+    const handleAddAthlete = async () => {
+        const rawData = {
+            routine_id: routine.id,
+            name: null,
+        } as RoutineAthleteCreateData;
+
+        const saveData = RoutineAthleteCreateSchema.safeParse(rawData);
+
+        if (!saveData.success) {
+            console.error(saveData.error)
+            return;
+        }
+
+        const result = await addAthlete(saveData.data);
+        if (!result) {
+            console.error('An error occurred while saving formation');
+            return;
+        }
     }
 
     const handleAddFormation = async () => {

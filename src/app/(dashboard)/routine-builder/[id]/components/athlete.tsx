@@ -1,8 +1,8 @@
 "use client"
 
+import { Circle, Group, Text } from 'react-konva';
 import { FormationPositionItemData } from "@/schemas/formation-position.model";
 import { KonvaEventObject } from 'konva/lib/Node';
-import { Circle, Group } from 'react-konva';
 
 interface FormationPositionProps {
     formationPosition: FormationPositionItemData;
@@ -44,7 +44,6 @@ export default function FormationPositionObject({ formationPosition, cellSize, o
                 }
             }}
         >
-
             <Circle
                 x={0}
                 y={0}
@@ -57,6 +56,25 @@ export default function FormationPositionObject({ formationPosition, cellSize, o
                 shadowOffset={{ x: 1, y: 1 }}
                 shadowOpacity={0.3}
             />
+
+            {/* Der Name (Nur rendern, wenn vorhanden) */}
+            {formationPosition.athlete && (
+                <Text
+                    text={formationPosition.athlete.index.toString()}
+                    fontSize={Math.max(12, cellSize * 0.25)} // Schriftgröße
+                    fontFamily="sans-serif"
+                    fontStyle="bold"
+                    fill="#ffffff"
+
+                    x={-radius}
+                    y={-radius}
+                    width={radius * 2}
+                    height={radius * 2}
+
+                    align="center"
+                    verticalAlign="middle"
+                />
+            )}
         </Group>
     )
 }

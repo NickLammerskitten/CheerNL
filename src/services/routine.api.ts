@@ -1,11 +1,7 @@
 "use server"
 
 import { FormationPositionUpdateData, FormationPositionUpdateSchema } from "@/schemas/formation-position.model";
-import {
-    FormationClientCreateData,
-    FormationItemData,
-    FormationListDataSchema,
-} from "@/schemas/formation.schema";
+import { FormationClientCreateData, FormationItemData, FormationListDataSchema } from "@/schemas/formation.schema";
 import { RoutineAthleteCreateData, RoutineAthleteCreateSchema } from "@/schemas/routine-athlete.schema";
 import {
     RoutineCreateData,
@@ -169,14 +165,15 @@ export async function addAthlete(newData: RoutineAthleteCreateData): Promise<str
     }
 }
 
-export async function updateAthletePosition(athletePositionId: string, newData: FormationPositionUpdateData): Promise<string | null> {
+export async function updateAthletePosition(
+    athletePositionId: string,
+    newData: FormationPositionUpdateData,
+): Promise<string | null> {
     const dataValid = FormationPositionUpdateSchema.safeParse(newData)
     if (!dataValid) {
         console.log(newData)
         return null;
     }
-
-    console.log("Lets go", athletePositionId, newData)
 
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -185,8 +182,6 @@ export async function updateAthletePosition(athletePositionId: string, newData: 
         .eq('id', athletePositionId)
         .select('id')
         .single();
-
-    console.log(data, error);
 
     if (error) {
         return null;
