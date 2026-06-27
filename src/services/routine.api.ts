@@ -1,5 +1,12 @@
 "use server"
 
+import { FormationPositionUpdateData, FormationPositionUpdateSchema } from "@/schemas/formation-position.model";
+import {
+    FormationClientCreateData,
+    FormationItemData,
+    FormationListDataSchema,
+} from "@/schemas/formation.schema";
+import { RoutineAthleteCreateData, RoutineAthleteCreateSchema } from "@/schemas/routine-athlete.schema";
 import {
     RoutineCreateData,
     RoutineCreateSchema,
@@ -94,4 +101,96 @@ export async function saveRoutine(newData: RoutineCreateData | RoutineUpdateData
         id: savedData.id,
         error: null,
     };
+}
+
+export async function fetchRoutineFormations(routineId: string): Promise<FormationItemData[]> {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+        .from('routine_formation')
+        .select(`
+            *,
+            athlete_positions: routine_formation_position(
+                *,
+                athlete: routine_athlete(*) 
+            )
+        `)
+        .eq('routine_id', routineId)
+        .order('sort_index', { ascending: true })
+
+    if (error) {
+        throw new Error(`Supabase-Fehler: ${error.message}`);
+    }
+
+    try {
+        return FormationListDataSchema.parse(data)
+    } catch (validationError) {
+        console.error("Zod Validierungsfehler:", validationError);
+        throw new Error("Ungültige Daten von der API empfangen.");
+    }
+}
+
+export async function addFormation(newData: FormationClientCreateData): Promise<string | null> {
+    const dataValid = RoutineCreateSchema.safeParse(newData)
+    if (!dataValid) {
+        return null;
+    }
+
+    const supabase = await createClient();
+    const { data, error } = await supabase
+        .from('routine_formation')
+        .insert(newData)
+        .select('id')
+        .single();
+
+    if (error) {
+        return null;
+    } else {
+        return data.id;
+    }
+}
+
+export async function addAthlete(newData: RoutineAthleteCreateData): Promise<string | null> {
+    const dataValid = RoutineAthleteCreateSchema.safeParse(newData)
+    if (!dataValid) {
+        return null;
+    }
+
+    const supabase = await createClient();
+    const { data, error } = await supabase
+        .from('routine_athlete')
+        .insert(newData)
+        .select('id')
+        .single();
+
+    if (error) {
+        return null;
+    } else {
+        return data.id;
+    }
+}
+
+export async function updateAthletePosition(athletePositionId: string, newData: FormationPositionUpdateData): Promise<string | null> {
+    const dataValid = FormationPositionUpdateSchema.safeParse(newData)
+    if (!dataValid) {
+        console.log(newData)
+        return null;
+    }
+
+    console.log("Lets go", athletePositionId, newData)
+
+    const supabase = await createClient();
+    const { data, error } = await supabase
+        .from('routine_formation_position')
+        .update(newData)
+        .eq('id', athletePositionId)
+        .select('id')
+        .single();
+
+    console.log(data, error);
+
+    if (error) {
+        return null;
+    } else {
+        return data.id;
+    }
 }

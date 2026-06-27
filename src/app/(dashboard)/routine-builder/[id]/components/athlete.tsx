@@ -1,46 +1,55 @@
 "use client"
 
-import { Circle, Group, Text } from 'react-konva';
+import { FormationPositionItemData } from "@/schemas/formation-position.model";
 import { KonvaEventObject } from 'konva/lib/Node';
+import { Circle, Group } from 'react-konva';
 
-interface AthleteProps {
-    athlete: { id: string; x: number; y: number; number: number, color: string; name?: string };
+interface FormationPositionProps {
+    formationPosition: FormationPositionItemData;
     cellSize: number;
     onDragEnd: (e: KonvaEventObject<DragEvent>) => void;
 }
 
-export default function AthleteObject({ athlete, cellSize, onDragEnd }: AthleteProps) {
+export default function FormationPositionObject({ formationPosition, cellSize, onDragEnd }: FormationPositionProps) {
     const radius = cellSize * 0.3;
 
     return (
         <Group
-            x={athlete.x * cellSize}
-            y={athlete.y * cellSize}
+            x={formationPosition.posX * cellSize}
+            y={formationPosition.posY * cellSize}
             draggable
             onDragEnd={onDragEnd}
             onMouseEnter={e => {
                 const container = e.target.getStage()?.container();
-                if(container) container.style.cursor = 'grab';
+                if (container) {
+                    container.style.cursor = 'grab';
+                }
             }}
             onMouseLeave={e => {
                 const container = e.target.getStage()?.container();
-                if(container) container.style.cursor = 'default';
+                if (container) {
+                    container.style.cursor = 'default';
+                }
             }}
             onMouseDown={e => {
                 const container = e.target.getStage()?.container();
-                if(container) container.style.cursor = 'grabbing';
+                if (container) {
+                    container.style.cursor = 'grabbing';
+                }
             }}
             onMouseUp={e => {
                 const container = e.target.getStage()?.container();
-                if(container) container.style.cursor = 'grab';
+                if (container) {
+                    container.style.cursor = 'grab';
+                }
             }}
         >
-            {/* Der Athleten-Kreis (Zentriert bei 0,0 innerhalb der Gruppe) */}
+
             <Circle
                 x={0}
                 y={0}
                 radius={radius}
-                fill={athlete.color}
+                fill="#ff0044"
                 stroke="#fff"
                 strokeWidth={1}
                 shadowColor="black"
@@ -48,25 +57,6 @@ export default function AthleteObject({ athlete, cellSize, onDragEnd }: AthleteP
                 shadowOffset={{ x: 1, y: 1 }}
                 shadowOpacity={0.3}
             />
-
-            {/* Der Name (Nur rendern, wenn vorhanden) */}
-            {athlete.number && (
-                <Text
-                    text={athlete.number.toString()}
-                    fontSize={Math.max(12, cellSize * 0.25)} // Schriftgröße
-                    fontFamily="sans-serif"
-                    fontStyle="bold"
-                    fill="#ffffff"
-
-                    x={-radius}
-                    y={-radius}
-                    width={radius * 2}
-                    height={radius * 2}
-
-                    align="center"
-                    verticalAlign="middle"
-                />
-            )}
         </Group>
     )
 }

@@ -1,16 +1,23 @@
+import {
+    ApiRoutineAthleteSchema,
+    RoutineAthleteItemDataSchema,
+    RoutineAthleteListDataSchema,
+} from "@/schemas/routine-athlete.schema";
 import { z } from "zod";
 
-const ApiFormationPositionSchema = z.object({
-    formation_id: z.uuid(),
-    routine_athlete_id: z.uuid(),
+export const ApiFormationPositionSchema = z.object({
+    id: z.uuid(),
+    routine_formation_id: z.uuid(),
+    athlete: ApiRoutineAthleteSchema,
     pos_x: z.number(),
     pos_y: z.number(),
 });
 
 export const FormationPositionItemDataSchema = ApiFormationPositionSchema.transform((apiData) => {
     return {
-        formationId: apiData.formation_id,
-        routineAthleteId: apiData.routine_athlete_id,
+        id: apiData.id,
+        formationId: apiData.routine_formation_id,
+        athlete: RoutineAthleteItemDataSchema.parse(apiData.athlete),
         posX: apiData.pos_x,
         posY: apiData.pos_y,
     };
@@ -19,3 +26,11 @@ export const FormationPositionItemDataSchema = ApiFormationPositionSchema.transf
 export const FormationPositionListDataSchema = z.array(FormationPositionItemDataSchema);
 
 export type FormationPositionItemData = z.infer<typeof FormationPositionItemDataSchema>;
+
+/* Update */
+export const FormationPositionUpdateSchema = z.object({
+    pos_x: z.number(),
+    pos_y: z.number(),
+})
+
+export type FormationPositionUpdateData = z.infer<typeof FormationPositionUpdateSchema>;

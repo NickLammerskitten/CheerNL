@@ -15,7 +15,7 @@ create table public.routine_athlete
     id         uuid                     default gen_random_uuid() not null
         primary key,
     routine_id uuid references public.routine on update cascade on delete cascade,
-    index      int                                                not null,
+    index      int                                                not null default 0,
     name       text,
     created_at timestamp with time zone default now()             not null
 );
@@ -173,3 +173,54 @@ create trigger after_insert_routine_athlete_add_positions
     on public.routine_athlete
     for each row
 execute function public.add_athlete_to_all_formations();
+
+
+
+create or replace function public.copy_positions_from_previous_formation()
+    returns trigger
+    language plpgsql
+    security definer
+as
+$$
+declare
+    prev_formation_id uuid;
+begin
+    -- 1. Finde die ID der Formation, die vor dieser (new.sort_index) den höchsten Index hatte
+    select id
+    into prev_formation_id
+    from public.routine_formation
+    where routine_id = new.routine_id
+      and sort_index < new.sort_index
+    order by sort_index desc
+    limit 1;
+
+    -- 2. Fallunterscheidung: Gibt es eine vorherige Formation?
+    if prev_formation_id is not null then
+        -- JA: Kopiere alle Positionen dieser vorherigen Formation für die neue Formation
+        insert into public.routine_formation_position (routine_formation_id, routine_athlete_id, pos_x, pos_y)
+        select new.id, routine_athlete_id, pos_x, pos_y
+        from public.routine_formation_position
+        where routine_formation_id = prev_formation_id;
+    else
+        -- NEIN: Es ist die erste Formation. Initialisiere alle existierenden Athleten in der Mitte (7.0, 7.0)
+        insert into public.routine_formation_position (routine_formation_id, routine_athlete_id, pos_x, pos_y)
+        select new.id, id, 7.0, 7.0
+        from public.routine_athlete
+        where routine_id = new.routine_id;
+    end if;
+
+    return new;
+end;
+$$;
+
+-- Trigger: Feuert, nachdem eine neue Formation in der DB angelegt wurde
+create trigger after_insert_routine_formation_copy_positions
+    after insert
+    on public.routine_formation
+    for each row
+execute function public.copy_positions_from_previous_formation();
+
+
+ALTER PUBLICATION supabase_realtime ADD TABLE public.routine_formation;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.routine_athlete;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.routine_formation_position;

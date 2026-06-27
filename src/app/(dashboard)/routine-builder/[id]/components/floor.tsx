@@ -1,15 +1,16 @@
 "use client"
 
-import AthleteObject from "@/app/(dashboard)/routine-builder/[id]/components/athlete";
+import FormationPositionObject from "@/app/(dashboard)/routine-builder/[id]/components/athlete";
+import { FormationPositionItemData } from "@/schemas/formation-position.model";
 import React, { useEffect, useRef, useState } from 'react';
 import { Layer, Line, Rect, Stage } from 'react-konva';
 
 interface FloorProps {
-    athletes: any[];
-    setAthletes: React.Dispatch<React.SetStateAction<any[]>>;
+    formationPositions: FormationPositionItemData[];
+    onFormationPositionMove: (formationPositionId: string, x: number, y: number) => void;
 }
 
-export default function Floor({ athletes, setAthletes }: FloorProps) {
+export default function Floor({ formationPositions, onFormationPositionMove }: FloorProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
@@ -63,7 +64,7 @@ export default function Floor({ athletes, setAthletes }: FloorProps) {
         );
     }
 
-    const handleDragEnd = (e: any, dancerId: string) => {
+    const handleDragEnd = (e: any, formationPositionId: string) => {
         const node = e.target;
         const dropX = node.x();
         const dropY = node.y();
@@ -77,13 +78,7 @@ export default function Floor({ athletes, setAthletes }: FloorProps) {
         snappedGridX = Math.max(0, Math.min(GRID_SIZE, snappedGridX));
         snappedGridY = Math.max(0, Math.min(GRID_SIZE, snappedGridY));
 
-        setAthletes(prevDancers =>
-            prevDancers.map(dancer =>
-                dancer.id === dancerId
-                    ? { ...dancer, x: snappedGridX, y: snappedGridY }
-                    : dancer,
-            ),
-        );
+        onFormationPositionMove(formationPositionId, snappedGridX, snappedGridY);
     };
 
     return (
@@ -128,12 +123,12 @@ export default function Floor({ athletes, setAthletes }: FloorProps) {
                             strokeWidth={2}
                         />
 
-                        {athletes.map(athlete => (
-                            <AthleteObject
-                                key={athlete.id}
-                                athlete={athlete}
+                        {formationPositions.map(formationPosition => (
+                            <FormationPositionObject
+                                key={formationPosition.athlete.id}
+                                formationPosition={formationPosition}
                                 cellSize={cellSize}
-                                onDragEnd={(e) => handleDragEnd(e, athlete.id)}
+                                onDragEnd={(e) => handleDragEnd(e, formationPosition.id)}
                             />
                         ))}
                     </Layer>

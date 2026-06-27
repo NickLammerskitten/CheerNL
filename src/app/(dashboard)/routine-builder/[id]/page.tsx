@@ -1,5 +1,5 @@
 import Routine from "@/app/(dashboard)/routine-builder/[id]/components/routine";
-import { fetchRoutine } from "@/services/routine.api";
+import { fetchRoutine, fetchRoutineFormations } from "@/services/routine.api";
 
 export default async function RoutineBuilderDetailPage({
     params,
@@ -9,8 +9,9 @@ export default async function RoutineBuilderDetailPage({
     const paramValues = await params;
 
     const routine = await fetchRoutine(paramValues.id);
+    const formations = await fetchRoutineFormations(paramValues.id);
 
     return (
-        <Routine routine={routine} />
+        <Routine routine={routine} formations={formations} />
     )
 }
